@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hybrid Vacations//Lanzarote Camp//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Arrival and free play
+BEGIN:VEVENT
+UID:ev-20270214T100000Z-arrival-and-free-play@hybridvacations.com
+DTSTAMP:20260822T110903Z
+DTSTART:20270214T100000Z
+DTEND:20270214T180000Z
+SUMMARY:Arrival and free play
+LOCATION:Playa Grande
+DESCRIPTION:Come down once you have dropped bags. Courts are open. Meet the group. No session.
+END:VEVENT
+END:VCALENDAR

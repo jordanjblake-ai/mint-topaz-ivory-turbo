@@ -1,0 +1,301 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hybrid Vacations//Lanzarote Camp//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Hybrid Lanzarote camp
+BEGIN:VEVENT
+UID:ev-20270130T090000Z-court-setup@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270130T090000Z
+DTEND:20270130T130000Z
+SUMMARY:Court setup
+LOCATION:Playa Grande
+DESCRIPTION:Nets\, lines\, balls. Courts ready before anyone lands.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270130T140000Z-welcome-arriving-players@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270130T140000Z
+DTEND:20270130T180000Z
+SUMMARY:Welcome arriving players
+LOCATION:Playa Grande
+DESCRIPTION:Some land Saturday. Meet them\, point them at Moraña\, keep the courts open.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270131T100000Z-arrival-and-free-play@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270131T100000Z
+DTEND:20270131T180000Z
+SUMMARY:Arrival and free play
+LOCATION:Playa Grande
+DESCRIPTION:Come down once you have dropped bags. Courts are open. Meet the group. No session.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270131T100000Z-stay-on@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270131T100000Z
+DTEND:20270131T180000Z
+SUMMARY:Stay on
+LOCATION:Playa Grande
+DESCRIPTION:You are already here. New arrivals today. Courts stay open.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270201T084500Z-welcome-and-registration@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270201T084500Z
+DTEND:20270201T093000Z
+SUMMARY:Welcome and registration
+LOCATION:Playa Grande
+DESCRIPTION:Mark runs it. Groups are confirmed here if they were still open. Then you are with your coach.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270201T094500Z-session-1-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270201T094500Z
+DTEND:20270201T111500Z
+SUMMARY:Session 1 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:First look. Serving\, sideout\, how the group moves.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 1 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270201T144500Z-session-2-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270201T144500Z
+DTEND:20270201T161500Z
+SUMMARY:Session 2 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Defence and first match play in groups.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 2 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270201T163000Z-scramble-tournament@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270201T163000Z
+DTEND:20270201T180000Z
+SUMMARY:Scramble tournament
+LOCATION:Playa Grande
+DESCRIPTION:Mixed\, social\, still a game. Issa runs it. Katya on support.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Scramble tournament starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270202T090000Z-session-3-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270202T090000Z
+DTEND:20270202T113000Z
+SUMMARY:Session 3 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Sideout under pressure. Same coach as yesterday.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 3 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270202T153000Z-session-4-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270202T153000Z
+DTEND:20270202T173000Z
+SUMMARY:Session 4 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Serving plus live games inside your group.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 4 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270202T173000Z-sunset-stretch@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270202T173000Z
+DTEND:20270202T181500Z
+SUMMARY:Sunset stretch
+LOCATION:Playa Grande
+DESCRIPTION:Mark. Short\, on the sand. Optional if you are cooked.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270202T200000Z-camp-dinner@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270202T200000Z
+DTEND:20270202T220000Z
+SUMMARY:Camp dinner
+LOCATION:Puerto del Carmen
+DESCRIPTION:The sit-down night. Martha is the coach in the room.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270203T090000Z-morning-yoga@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270203T090000Z
+DTEND:20270203T094500Z
+SUMMARY:Morning yoga
+LOCATION:Playa Grande
+DESCRIPTION:Optional. Katya. Hips and shoulders before the shorter session.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270203T100000Z-session-5-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270203T100000Z
+DTEND:20270203T120000Z
+SUMMARY:Session 5 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Lighter technical. Wednesday on purpose.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 5 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270203T120000Z-afternoon-off@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270203T120000Z
+DTEND:20270203T153000Z
+SUMMARY:Afternoon off
+LOCATION:Lanzarote
+DESCRIPTION:Rest day. Explore the island or stay on the beach. No session.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270203T153000Z-optional-excursion@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270203T153000Z
+DTEND:20270203T180000Z
+SUMMARY:Optional excursion
+LOCATION:Lanzarote
+DESCRIPTION:Volcano or coast if it is on. Mark is the point of contact. Other coaches are off.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270204T093000Z-session-6-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270204T093000Z
+DTEND:20270204T113000Z
+SUMMARY:Session 6 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Sharp morning. Same coach.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 6 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270204T153000Z-session-7-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270204T153000Z
+DTEND:20270204T173000Z
+SUMMARY:Session 7 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Match play. Winner stays on\, still inside the group.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 7 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270204T173000Z-sunset-stretch@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270204T173000Z
+DTEND:20270204T181500Z
+SUMMARY:Sunset stretch
+LOCATION:Playa Grande
+DESCRIPTION:Mark. Ten to twenty minutes\, then you are free.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270205T093000Z-session-8-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270205T093000Z
+DTEND:20270205T113000Z
+SUMMARY:Session 8 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Last morning session. Take into it what you actually use.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 8 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270205T143000Z-session-9-group-b@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270205T143000Z
+DTEND:20270205T163000Z
+SUMMARY:Session 9 · Group B
+LOCATION:Playa Grande
+DESCRIPTION:Last numbered session. Then the camp tournament.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Session 9 · Group B starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270205T164500Z-camp-tournament@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270205T164500Z
+DTEND:20270205T180000Z
+SUMMARY:Camp tournament
+LOCATION:Playa Grande
+DESCRIPTION:The camp one. Mixed. Issa runs it. Katya on support and scoring.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Camp tournament starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270205T200000Z-awards-and-party@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270205T200000Z
+DTEND:20270205T230000Z
+SUMMARY:Awards and party
+LOCATION:Puerto del Carmen
+DESCRIPTION:End of this camp week. Show up.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270206T090000Z-free-day@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270206T090000Z
+DTEND:20270206T170000Z
+SUMMARY:Free day
+LOCATION:Playa Grande
+DESCRIPTION:Courts open if you want a hit. Explore the island. Saturday is also a departure day.
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270206T090000Z-optional-local-tournament@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270206T090000Z
+DTEND:20270206T170000Z
+SUMMARY:Optional local tournament
+LOCATION:Playa Grande
+DESCRIPTION:Organised by Playa Grande Volley. Optional. Katya is the Hybrid contact if you play.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Optional local tournament starts in 30 minutes
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:ev-20270207T080000Z-departure@hybridvacations.com
+DTSTAMP:20260822T223827Z
+DTSTART:20270207T080000Z
+DTEND:20270207T120000Z
+SUMMARY:Departure
+LOCATION:Puerto del Carmen
+DESCRIPTION:Flights are yours unless we arranged them. Leave keys if you were in Moraña.
+END:VEVENT
+END:VCALENDAR

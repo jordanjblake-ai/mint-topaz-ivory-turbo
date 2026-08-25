@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 2920,
+      "bodyTextHash": "59e504e291d4e33efc6af1a8d0edb7df9e374fd9becb81a5dc6482e775351b81",
+      "bodyTextPrefix": "HYBRID Camps UK Coaching Coaches Plan a trip About Contact us Pl",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/smoke-home.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 2839,
+      "bodyTextHash": "2eef4a129b70a8f5618f95b16fd629dcc83b14f6cb06eec69cbcb7303e5c8b1f",
+      "bodyTextPrefix": "HYBRID SPORT × TRAVEL × COMMUNITY × ADVENTURE Travel through wha",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/smoke-home-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/smoke-home.json"
+}

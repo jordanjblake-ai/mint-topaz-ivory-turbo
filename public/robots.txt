@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /ops
+Disallow: /camp
+Disallow: /portal
+Disallow: /coaches-corner
+Disallow: /book/thanks
+Disallow: /health
+Disallow: /healthz
+Disallow: /livez
+Disallow: /readyz
+Disallow: /login
+Disallow: /api
+
+Sitemap: https://hybridvacations.com/sitemap.xml

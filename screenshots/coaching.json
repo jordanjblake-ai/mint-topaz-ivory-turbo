@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/coaching",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 1812,
+      "bodyTextHash": "1d3e14afd6ca9a1deaffa01613330b154429372ee547a8d40d713ed3742d7da4",
+      "bodyTextPrefix": "HYBRID Camps UK Coaching Coaches Travel Agency About BOOK A CAMP",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/coaching.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 1754,
+      "bodyTextHash": "01ff2f8b95ff29c609ce19f7b11ad017f7820215f74f235eb427089e5553488b",
+      "bodyTextPrefix": "HYBRID UK COACHING Train here. Travel later. Private sessions, c",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/coaching-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/coaching.json"
+}

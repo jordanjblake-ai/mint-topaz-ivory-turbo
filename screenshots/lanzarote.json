@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/vacations/lanzarote",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 4041,
+      "bodyTextHash": "3053153da8d60e9b285637e00c16c9d8ce2599e8547601c4706733675f12fbde",
+      "bodyTextPrefix": "HYBRID Camps UK Coaching Coaches Travel Agency About BOOK A CAMP",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/lanzarote.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 3983,
+      "bodyTextHash": "8903101338426fcdbef67f579ded3bc0d8b5bd7d0aa9fb0b7806cea0019224c4",
+      "bodyTextPrefix": "HYBRID BEACH VOLLEYBALL · LANZAROTE 2027 Train on Playa Grande P",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/lanzarote-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/lanzarote.json"
+}

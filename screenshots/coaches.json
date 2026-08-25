@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/coaches",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 2461,
+      "bodyTextHash": "681bb8454aac193335fc46db6997ff0656d1eeaade0334d836fc526917e6abec",
+      "bodyTextPrefix": "HYBRID Camps UK Coaching Coaches Travel Agency About BOOK A CAMP",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/coaches.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 2403,
+      "bodyTextHash": "d811f98802f96cd0f1eadf8adaa5d0ff7c4acf060c4fa4c8c3e0437910c7e2ed",
+      "bodyTextPrefix": "HYBRID THE ROSTER Coaches who still compete England internationa",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/coaches-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/coaches.json"
+}

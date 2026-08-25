@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hybrid Vacations//Lanzarote Camp//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Welcome and registration
+BEGIN:VEVENT
+UID:ev-20270208T084500Z-welcome-and-registration@hybridvacations.com
+DTSTAMP:20260822T110903Z
+DTSTART:20270208T084500Z
+DTEND:20270208T093000Z
+SUMMARY:Welcome and registration
+LOCATION:Playa Grande
+DESCRIPTION:Mark runs it. Groups are confirmed here if they were still open. Then you are with your coach.
+END:VEVENT
+END:VCALENDAR
