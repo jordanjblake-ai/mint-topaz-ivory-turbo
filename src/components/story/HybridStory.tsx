@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { CHAPTERS, scenes, type Cam, type ChapterId, type SoundBed } from "@/data/scenes";
 import { hybridSound } from "@/lib/sound";
 import { bindPress } from "@/lib/ios-press";
+import "./story.css";
 
 function envelope(
   p: number,
@@ -264,7 +265,7 @@ export function HybridStory() {
   }
 
   return (
-    <main ref={rootRef} className={`hybrid-story bg-charcoal text-paper is-ch-${runningChapter}`}>
+    <main ref={rootRef} className={`hybrid-story is-ch-${runningChapter}`}>
       <div className="story-progress" aria-hidden="true" />
       <Link to="/" className="story-home">
         Hybrid
