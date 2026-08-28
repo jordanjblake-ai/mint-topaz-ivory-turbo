@@ -11,8 +11,6 @@ import { grokPwaPlugin } from "./scripts/grok-pwa-plugin.mjs";
 // @ts-expect-error JS plugin alongside the TS vite config
 import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
-import { applyCacheToNodeResponse } from "./src/lib/cache-headers";
-import { edgeCacheKey, nitroRouteRules } from "./src/lib/edge-cache";
 
 /** The files `src/lib/db.ts` globs — same directory, same non-recursive scope. */
 function hasGlobbedMigrations(root: string): boolean {
@@ -37,16 +35,6 @@ function pgliteBootstrapPlugin(): Plugin {
     name: "app-builder:pglite-bootstrap",
     apply: "serve",
     async configureServer(server) {
-      server.middlewares.use((_req, res, next) => {
-        res.setHeader("X-Content-Type-Options", "nosniff");
-        res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-        res.setHeader(
-          "Permissions-Policy",
-          "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
-        );
-        res.setHeader("X-DNS-Prefetch-Control", "off");
-        next();
-      });
       if (!hasGlobbedMigrations(server.config.root)) return;
       try {
         const mod = (await server.ssrLoadModule("/src/lib/db.ts")) as {
@@ -154,37 +142,6 @@ function authPopupPlugin(): Plugin {
   };
 }
 
-function cdnCacheDevPlugin(): Plugin {
-  return {
-    name: "hybrid-cdn-cache",
-    apply: "serve",
-    configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        const original = res.writeHead;
-        res.writeHead = function writeHeadWithCache(statusCode: number, ...rest: unknown[]) {
-          const raw = String(req.url ?? "/");
-          const pathOnly = raw.split("?", 1)[0] || "/";
-          const search = raw.includes("?") ? raw.slice(raw.indexOf("?")) : "";
-          applyCacheToNodeResponse(res, pathOnly, req.method ?? "GET", statusCode);
-          res.setHeader("x-hybrid-edge-key", edgeCacheKey(pathOnly, search));
-          for (const arg of rest) {
-            if (!arg || typeof arg !== "object" || Array.isArray(arg)) continue;
-            const headers = arg as Record<string, unknown>;
-            for (const key of Object.keys(headers)) {
-              const lower = key.toLowerCase();
-              if (lower === "cache-control" || lower === "pragma" || lower === "cdn-cache-control") {
-                delete headers[key];
-              }
-            }
-          }
-          return original.call(this, statusCode, ...rest);
-        } as typeof res.writeHead;
-        next();
-      });
-    },
-  };
-}
-
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
@@ -202,7 +159,6 @@ export default defineConfig(({ command, isPreview }) => ({
   resolve: { tsconfigPaths: true },
   plugins: [
     pgliteBootstrapPlugin(),
-    cdnCacheDevPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
     // Dev-only /__app-env, read by scripts/check-auth-invariant.mjs.
@@ -219,7 +175,10 @@ export default defineConfig(({ command, isPreview }) => ({
             // manifest + head-tag middleware). Nitro v3 defaults serverDir to
             // false, so removing this silently unwires /?install=1 on deploys.
             serverDir: "./server",
-            routeRules: nitroRouteRules(),
+            // Vite 8 + Rolldown can emit an SSR chunk that re-exports an
+            // undeclared `ssr_exports` binding, so every request 500s.
+            // https://github.com/TanStack/router/issues/8031
+            inlineDynamicImports: true,
           }),
         ]
       : []),
