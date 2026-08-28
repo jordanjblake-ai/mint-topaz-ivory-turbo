@@ -11,6 +11,7 @@ export const publicPages = [
   { path: "/travel", changefreq: "monthly", priority: "0.6" },
   { path: "/book", changefreq: "weekly", priority: "0.8" },
   { path: "/about", changefreq: "monthly", priority: "0.5" },
+  { path: "/story-time", changefreq: "monthly", priority: "0.6" },
   { path: "/contact", changefreq: "monthly", priority: "0.7" },
   { path: "/terms", changefreq: "yearly", priority: "0.3" },
   { path: "/privacy", changefreq: "yearly", priority: "0.3" },

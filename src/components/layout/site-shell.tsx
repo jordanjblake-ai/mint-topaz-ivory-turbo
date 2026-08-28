@@ -14,7 +14,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const isPrivate =
     pathname.startsWith("/ops") ||
     pathname.startsWith("/camp") ||
-    pathname.startsWith("/coaches-corner");
+    pathname.startsWith("/coaches-corner") ||
+    pathname.startsWith("/story-time") ||
+    pathname === "/history";
 
   useEffect(() => {
     hydrate();

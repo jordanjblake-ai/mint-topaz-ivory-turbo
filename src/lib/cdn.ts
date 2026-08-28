@@ -15,7 +15,7 @@ const deployRaw =
   "";
 export const DEPLOY_ID = deployRaw.slice(0, 24);
 
-const CDN_PATHS = ["/images/", "/assets/", "/calendar/", "/og.jpg", "/x-banner.jpg", "/favicon.svg"];
+const CDN_PATHS = ["/images/", "/assets/", "/art/", "/logos/", "/calendar/", "/og.jpg", "/x-banner.jpg", "/favicon.svg"];
 
 export function isCdnPath(path: string) {
   return CDN_PATHS.some((prefix) => (prefix.endsWith("/") ? path.startsWith(prefix) : path === prefix));
@@ -65,4 +65,4 @@ export function cdnPreconnectLinks(): {
 }
 
 export const FONT_STYLESHEET =
-  "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap";
+  "https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat:wght@500;600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap";

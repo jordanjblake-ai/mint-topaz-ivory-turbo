@@ -16,20 +16,20 @@ export function SiteHeader() {
           <span className="font-display text-xl tracking-wide text-fg">HYBRID</span>
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex">
+        <nav className="hidden items-center gap-4 xl:flex">
           {nav.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className="text-sm text-muted transition-colors hover:text-fg"
+              className="whitespace-nowrap text-sm text-muted transition-colors hover:text-fg"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-5 lg:flex">
-          <Link to="/portal" className="text-sm text-muted hover:text-fg">
+        <div className="hidden items-center gap-4 xl:flex">
+          <Link to="/portal" className="whitespace-nowrap text-sm text-muted hover:text-fg">
             Player Portal
           </Link>
           <Button asChild>
@@ -39,7 +39,7 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="inline-flex size-11 items-center justify-center rounded-sm text-fg lg:hidden"
+          className="inline-flex size-11 items-center justify-center rounded-sm text-fg xl:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((v) => !v)}
         >
@@ -48,7 +48,7 @@ export function SiteHeader() {
       </div>
 
       {open ? (
-        <div className="border-t border-border bg-bg px-4 py-4 lg:hidden">
+        <div className="border-t border-border bg-bg px-4 py-4 xl:hidden">
           <nav className="flex flex-col gap-1">
             {nav.map((item) => (
               <Link
