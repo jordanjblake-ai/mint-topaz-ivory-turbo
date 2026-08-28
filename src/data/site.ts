@@ -5,6 +5,7 @@ export const site = {
   email: "support@hybridvacations.com",
   instagram: "https://www.instagram.com/hybridvacations/",
   instagramHandle: "@hybridvacations",
+  facebook: "https://www.facebook.com/profile.php?id=61573843287750",
 };
 
 export const coaches = [
@@ -14,7 +15,7 @@ export const coaches = [
     handle: "@mgarciakidd",
     url: "https://www.instagram.com/mgarciakidd/",
     role: "Founder and coach",
-    bio: "Former England beach volleyball international and founder of Hybrid. Mark has competed for England on the world circuit and is known as one of the UK's strongest setters and coaches. He built Hybrid around quality coaching, real community, and destinations worth travelling for, from London sessions to weeks on the sand in Lanzarote.",
+    bio: "Former England Beach Volleyball international and founder of Hybrid. Mark has competed for England on the world circuit and is known as one of the UK's strongest setters and coaches. He built Hybrid around quality coaching, real community, and destinations worth travelling for, from London sessions to weeks on the sand in Lanzarote.",
     image: "/images/coach-mark.jpg",
     imageClass: "object-top",
   },
@@ -24,7 +25,7 @@ export const coaches = [
     handle: "@_marthab",
     url: "https://www.instagram.com/_marthab/",
     role: "England player and coach",
-    bio: "England beach volleyball player and Hybrid coach. Martha competes on the UKBT and Beach Pro Tour, has represented England at senior level, and plays indoor for Richmond. Her coaching is direct, purposeful, and focused on the fundamentals that win points.",
+    bio: "England Beach Volleyball player and Hybrid coach. Martha competes on the UKBT and Beach Pro Tour, has represented England at senior level, and plays indoor for Richmond. Her coaching is direct, purposeful, and focused on the fundamentals that win points.",
     image: "/images/coach-martha.jpg",
     imageClass: "object-top",
   },
@@ -34,7 +35,7 @@ export const coaches = [
     handle: "@issabatrane",
     url: "https://www.instagram.com/issabatrane/",
     role: "England international",
-    bio: "England beach volleyball international and Hybrid coach. Issa competes on the Beach Pro Tour with partner Freddie Bialokoz. He brings high-level competitive experience and a clear focus on effort, defence, and player development.",
+    bio: "England Beach Volleyball international and Hybrid coach. Issa competes on the Beach Pro Tour with partner Freddie Bialokoz. He brings high-level competitive experience and a clear focus on effort, defence, and player development.",
     image: "/images/coach-issa.jpg",
     imageClass: "object-center",
   },
@@ -54,7 +55,7 @@ export const coaches = [
     handle: "@beachvolleycamps.ch",
     url: "https://www.instagram.com/beachvolleycamps.ch/",
     role: "Swiss coach and camp organiser",
-    bio: "Swiss coach and camp organiser with long experience in the European beach volleyball scene. Marco brings structure and the Swiss coaching network behind Hybrid's collaboration with beachvolleycamps.ch.",
+    bio: "Swiss coach and camp organiser with long experience in the European Beach Volleyball scene. Marco brings structure and the Swiss coaching network behind Hybrid's collaboration with beachvolleycamps.ch.",
     image: "/images/coach-marco.jpg",
     imageClass: "object-center",
   },
@@ -146,7 +147,7 @@ export const experiences: Experience[] = [
     weeks: ["April 2027"],
     status: "preregister",
     priceFrom: "Pre-register",
-    image: "/images/padel.jpg",
+    image: "/images/tennis-open.jpg",
     href: "/vacations/tennis",
     cta: "Pre-register",
     blurb: "Clay courts minutes from the coast. Serious sessions, island living, and a social week around the game.",
@@ -309,35 +310,53 @@ export const lanzarote = {
 
 export const coachingOffers = [
   {
-    title: "Private sessions",
-    body: "1-to-1 through to a group of 8. Technical work, match prep, or a reset with a Hybrid coach.",
-  },
-  {
     title: "Clinics",
     body: "Short, focused group sessions. A way in for clubs, friends, and players who want Hybrid without a full camp week.",
   },
   {
     title: "Mini-camps",
-    body: "A longer UK block. The camp rhythm, closer to home.",
+    body: "A longer UK block. The camp rhythm, closer to home. Train, recover, come back the next day.",
   },
 ];
 
 export const nav = [
-  { label: "Camps", href: "/vacations" },
-  { label: "UK Coaching", href: "/coaching" },
-  { label: "Coaches", href: "/coaches" },
-  { label: "Plan a trip", href: "/travel" },
+  {
+    label: "Vacations",
+    href: "/vacations",
+    children: [
+      { label: "All Camps", href: "/vacations", note: "2027 and 2028" },
+      { label: "Lanzarote Beach Volleyball", href: "/vacations/lanzarote", note: "Jan to Feb 2027" },
+      { label: "Mallorca Tennis", href: "/vacations/tennis", note: "April 2027" },
+      { label: "Mallorca Padel", href: "/vacations/padel", note: "5 to 9 April 2027" },
+      { label: "Golf", href: "/contact", note: "2028", search: { interest: "golf" } },
+      { label: "Vacations Player Portal", href: "/portal" },
+    ],
+  },
+  {
+    label: "Community",
+    href: "/community",
+    children: [
+      { label: "Performance Squad", href: "/community/performance" },
+      { label: "Team Hybrid", href: "/community/team" },
+      { label: "Partners", href: "/community/partners" },
+      { label: "Coaches", href: "/coaches" },
+      { label: "Private Coaching", href: "/community/coaching" },
+      { label: "Clinics & Mini-Camps", href: "/coaching" },
+      { label: "Hall of Fame", href: "/community/hall-of-fame" },
+      { label: "Hybrid History", href: "/community/history" },
+      { label: "Story Time", href: "/story-time" },
+    ],
+  },
   { label: "About", href: "/about" },
-  { label: "Story Time", href: "/story-time" },
-  { label: "Contact us", href: "/contact" },
 ] as const;
 
 export const enquireInterests = [
-  { value: "lanzarote", label: "Lanzarote beach volleyball 2027" },
-  { value: "tennis", label: "Mallorca tennis 2027" },
-  { value: "padel", label: "Mallorca padel 2027" },
+  { value: "lanzarote", label: "Lanzarote Beach Volleyball 2027" },
+  { value: "tennis", label: "Mallorca Tennis 2027" },
+  { value: "padel", label: "Mallorca Padel 2027" },
   { value: "golf", label: "Golf 2028" },
-  { value: "coaching", label: "UK coaching" },
-  { value: "travel", label: "Travel / flights / stay" },
-  { value: "other", label: "Something else" },
+  { value: "coaching", label: "Clinics & Mini-Camps" },
+  { value: "performance", label: "Performance Squad 2027" },
+  { value: "travel", label: "Travel / Flights / Stay" },
+  { value: "other", label: "Something Else" },
 ] as const;

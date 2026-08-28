@@ -38,10 +38,11 @@ function AboutPage() {
       <Section>
         <Container className="grid items-center gap-12 lg:grid-cols-2">
           <Photo
-            src="/images/coach-mark-action.jpg"
-            alt="Mark Garcia-Kidd coaching a Hybrid session"
-            className="aspect-4/5 w-full rounded-lg object-left"
-            sizes="(min-width: 1024px) 42vw, 100vw"
+            src="/images/camp-4.jpg"
+            alt="Hybrid players on the sand, sport and travel in the same week"
+            className="aspect-[3/2] w-full rounded-lg object-center"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            priority
           />
           <div>
             <Kicker>The name</Kicker>
@@ -53,7 +54,7 @@ function AboutPage() {
               with people who care about the game.
             </p>
             <p className="mt-4 text-base leading-relaxed text-muted">
-              Beach volleyball is the home sport. Tennis and padel are next. Golf is on the 2028
+              Beach Volleyball is the home sport. Tennis and Padel are next. Golf is on the 2028
               horizon. UK coaching sits underneath all of it, so the community does not only exist
               one week a year.
             </p>

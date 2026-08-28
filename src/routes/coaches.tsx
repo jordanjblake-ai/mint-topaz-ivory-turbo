@@ -60,7 +60,7 @@ function CoachesPage() {
         title="Want a session in the UK?"
         body="Private, clinic, or mini-camp. Contact us and we will shape it."
         to="/coaching"
-        label="UK coaching"
+        label="Clinics & Mini-Camps"
       />
     </main>
   );

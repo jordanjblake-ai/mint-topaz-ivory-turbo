@@ -25,7 +25,9 @@ export const Route = createFileRoute("/coaches-corner")({
 const COACH_DEMOS = [
   { email: "mark@hybridvacations.com", label: "Mark Garcia-Kidd · Head coach, all three weeks" },
   { email: "martha@hybridvacations.com", label: "Martha Bullen · Group A" },
+  { email: "issa@hybridvacations.com", label: "Issa Batrane · Group B" },
   { email: "dave@hybridvacations.com", label: "Dave Panah · Group C, weeks 2–3" },
+  { email: "katya@hybridvacations.com", label: "Katya Kate · Camp coach" },
 ];
 
 function CoachesCornerPage() {
@@ -175,6 +177,22 @@ function CoachesCornerPage() {
                       Open with email
                     </Button>
                   </form>
+                  <div className="border-t border-border pt-6">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Preview</p>
+                    <div className="mt-3 grid gap-2">
+                      {COACH_DEMOS.map((item) => (
+                        <button
+                          key={item.email}
+                          type="button"
+                          onClick={() => enter(item.email)}
+                          className="rounded-sm bg-bg px-3 py-3 text-left text-sm shadow-border hover:shadow-border-hover"
+                        >
+                          <span className="block text-fg">{item.label}</span>
+                          <span className="text-xs text-muted">{item.email}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -193,24 +211,6 @@ function CoachesCornerPage() {
                 </li>
               ))}
             </ul>
-            {ready && !signedInStaff ? (
-              <div className="mt-8">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted">Preview</p>
-                <div className="mt-3 grid gap-2">
-                  {COACH_DEMOS.map((item) => (
-                    <button
-                      key={item.email}
-                      type="button"
-                      onClick={() => enter(item.email)}
-                      className="rounded-sm bg-surface px-3 py-3 text-left text-sm shadow-border hover:shadow-border-hover"
-                    >
-                      <span className="block text-fg">{item.label}</span>
-                      <span className="text-xs text-muted">{item.email}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
           </div>
         </Container>
       </Section>

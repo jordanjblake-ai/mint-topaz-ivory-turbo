@@ -2,7 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/site/section";
 
-type CtaTo = "/contact" | "/vacations/lanzarote" | "/vacations" | "/travel" | "/coaching";
+type CtaTo =
+  | "/contact"
+  | "/vacations/lanzarote"
+  | "/vacations"
+  | "/travel"
+  | "/coaching"
+  | "/community/performance"
+  | "/community/coaching"
+  | "/community/team";
 
 export function CtaBand({
   title,

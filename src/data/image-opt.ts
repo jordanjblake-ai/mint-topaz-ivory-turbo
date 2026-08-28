@@ -205,6 +205,13 @@ export const IMAGE_OPT: Record<string, ImageOpt> = {
     sizes: [480, 800, 1280, 1600],
     lqip: "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQBACdASoYAA4APzGAt1KuqCUisAgB0CYJbACdMoGv/gN6kajmWZtIJEoAAPuAGrhyKW0Y18M2W00bvxW1yblrZQD+97msvbkSX32oc7EHvC/B4KUs+RsnKeMt+RwGMa+T8Uymm+9kBxkyUZYAAA==",
   },
+  "/images/padel-play.jpg": {
+    stem: "padel-play",
+    width: 1080,
+    height: 864,
+    sizes: [480, 800, 1080],
+    lqip: "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAwBACdASoUABAAPzGAt1MuqCUisAgB0CYJYgC/WIjBxeuvaCBQI+mi+oAA/oJP6VTPULaBb5J8ppXuZ28wl4j+TIInfM/Un00QFbJ21lMC9ZKo6eszhUYEHfjOfnKa8xwezcIUI8l1LEgP7AA=",
+  },
   "/images/partner-1.jpg": {
     stem: "partner-1",
     width: 1600,
@@ -282,12 +289,26 @@ export const IMAGE_OPT: Record<string, ImageOpt> = {
     sizes: [480, 800, 1280, 1600],
     lqip: "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAACwAwCdASoYABAAPzGCt1MuqKUisAgB0CYJbACdMoRwADc7fjncAAD+0jKFbTxgD4LD/XZS2O0y1/Celz9cjPHD6hfO8cgEik1gsa7ER07GuXfUgAA=",
   },
+  "/images/tennis-player.jpg": {
+    stem: "tennis-player",
+    width: 1080,
+    height: 620,
+    sizes: [480, 800, 1080],
+    lqip: "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAQBACdASoYAA4APzGAt1MuqCUisAgB0CYJQBXDgs7ACWK2rOKNsa1QIAD9RzBkW8tteJEIzmmCQKNFgwom/nRcFyEUhebbgpQW/f9xaGNSRnWLu4Wx0hyBwvHKRy7tsASbVzB8FQd1OqNH2JBQkwAA",
+  },
   "/images/tennis.jpg": {
     stem: "tennis",
     width: 1600,
     height: 974,
     sizes: [480, 800, 1280, 1600],
     lqip: "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAwBACdASoYAA8APzGCt1KuqKUisAgB0CYJZgCdMoMwtEtpgCN/kB+FogAA/mUbZftbwfwTHu19a4saBntJBuXvKNktx9XT8+SQJU6lppGix1SKufgOR+yAtcC0TWE7sp4AAA==",
+  },
+  "/images/tennis-open.jpg": {
+    stem: "tennis-open",
+    width: 1080,
+    height: 810,
+    sizes: [480, 800, 1080],
+    lqip: "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAACwBACdASoYABIAPymKvFguKSWjqAgBwCUJQBhQAVa0e3OxDQ5A14M3R18B8I0AAP6g3o4OdGlLNPWcZr2+asPIBJRDpZuP7TLr9hG1wZmtyeGc4jXeO1suGZ8mQn1UnSt0OJ4EZW6xV7usOYpk6GbTIEM/Q2SrqUpX10rnverzQsBG8AGEZUzjKr8w+T6RRhP9jrL7IaSgVlstEA6oAA==",
   },
 };
 

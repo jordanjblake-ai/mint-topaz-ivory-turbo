@@ -1,4 +1,4 @@
-import { cacheHeadersFor, STATIC_ROUTE_RULES, normalizePath } from "./cache-headers";
+import { normalizePath } from "./cache-headers";
 
 /** Ad/click ids that must not create extra CDN objects. */
 const TRACKING_PARAM = /^(utm_|hsa_|mc_)/i;
@@ -32,6 +32,7 @@ export const EDGE_HTML_PATHS = [
   "/coaches",
   "/coaching",
   "/about",
+  "/community",
   "/contact",
   "/travel",
   "/terms",
@@ -88,22 +89,18 @@ export function nitroRouteRules() {
     { headers?: Record<string, string>; isr?: number; swr?: number; cache?: false }
   > = {};
 
+  // Private / mutating paths must never be cached. Do not attach `headers` here:
+  // Nitro's Vercel preset emits header-only routes without `continue: true`, which
+  // can swallow the request before it reaches the serverless function.
   for (const path of EDGE_BYPASS_PATHS) {
-    rules[path] = { cache: false, headers: cacheHeadersFor("never") };
+    rules[path] = { cache: false };
   }
 
-  for (const path of EDGE_HTML_PATHS) {
-    const tagPath = path.replace("/**", "");
-    rules[path] = {
-      isr: 300,
-      swr: 300,
-      headers: cacheHeadersFor("html", tagPath || "/"),
-    };
-  }
-
-  for (const [path, headers] of Object.entries(STATIC_ROUTE_RULES)) {
-    rules[path] = { headers: { ...headers } };
-  }
+  // Do NOT set `isr` / `swr` on HTML. Nitro splits those into Vercel prerender
+  // functions (`index-isr`, `vacations/[...]-isr`, …). Combined with streaming
+  // PWA middleware they crash as FUNCTION_INVOCATION_FAILED. HTML cache headers
+  // are applied per-response in server/middleware/cdn-cache.ts instead.
+  // Static asset headers live in vercel.json.
 
   return rules;
 }

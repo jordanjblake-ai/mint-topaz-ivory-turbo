@@ -13,6 +13,11 @@ import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
 import { applyCacheToNodeResponse } from "./src/lib/cache-headers";
 import { edgeCacheKey, nitroRouteRules } from "./src/lib/edge-cache";
+import {
+  clientIp,
+  inspectRequest,
+  presentedBotKey,
+} from "./src/lib/bot-guard";
 
 /** The files `src/lib/db.ts` globs — same directory, same non-recursive scope. */
 function hasGlobbedMigrations(root: string): boolean {
@@ -154,6 +159,46 @@ function authPopupPlugin(): Plugin {
   };
 }
 
+function botGuardDevPlugin(): Plugin {
+  return {
+    name: "hybrid-bot-guard",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const raw = String(req.url ?? "/");
+        const pathOnly = raw.split("?", 1)[0] || "/";
+        const headers = req.headers;
+        const decision = inspectRequest({
+          method: req.method ?? "GET",
+          path: pathOnly,
+          ip: clientIp(headers),
+          userAgent: String(headers["user-agent"] ?? ""),
+          botKey: presentedBotKey(headers),
+          contentLength: Number(headers["content-length"] ?? 0),
+        });
+        if (decision.action === "deny") {
+          res.statusCode = decision.status;
+          res.setHeader("content-type", "text/plain; charset=utf-8");
+          res.setHeader("cache-control", "private, no-store");
+          res.setHeader("x-content-type-options", "nosniff");
+          if (decision.retryAfter) res.setHeader("retry-after", String(decision.retryAfter));
+          const body =
+            decision.status === 429
+              ? "Too Many Requests"
+              : decision.status === 413
+                ? "Payload Too Large"
+                : decision.status === 404
+                  ? "Not Found"
+                  : "Forbidden";
+          res.end(body);
+          return;
+        }
+        next();
+      });
+    },
+  };
+}
+
 function cdnCacheDevPlugin(): Plugin {
   return {
     name: "hybrid-cdn-cache",
@@ -201,6 +246,7 @@ export default defineConfig(({ command, isPreview }) => ({
   },
   resolve: { tsconfigPaths: true },
   plugins: [
+    botGuardDevPlugin(),
     pgliteBootstrapPlugin(),
     cdnCacheDevPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
@@ -220,8 +266,9 @@ export default defineConfig(({ command, isPreview }) => ({
             // false, so removing this silently unwires /?install=1 on deploys.
             serverDir: "./server",
             routeRules: nitroRouteRules(),
-            // Vite 8 + Rolldown can emit an SSR chunk that re-exports an
-            // undeclared `ssr_exports` binding, so every request 500s.
+            // Vite 8.2 + Rolldown re-exports a missing `ssr_exports` binding in
+            // the SSR chunk, so every production request 500s while `vite build`
+            // still exits 0. Inline until the Rolldown fix ships.
             // https://github.com/TanStack/router/issues/8031
             inlineDynamicImports: true,
           }),

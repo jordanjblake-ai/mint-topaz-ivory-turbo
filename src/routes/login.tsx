@@ -3,7 +3,20 @@ import { GROK_PROVIDERS, authEnabled, signIn } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
 import { Container, Display, Kicker } from "@/components/site/section";
 
-const allowedNext = new Set(["/portal", "/coaches-corner", "/camp", "/"]);
+const allowedNext = new Set([
+  "/portal",
+  "/coaches-corner",
+  "/camp",
+  "/",
+  "/community/performance",
+  "/community/coaching",
+  "/community/team",
+  "/contact",
+  "/vacations/lanzarote",
+  "/vacations/tennis",
+  "/vacations/padel",
+  "/travel",
+]);
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({

@@ -297,7 +297,7 @@ function BookPage() {
               </div>
             </dl>
             <p className="mt-6 text-xs leading-relaxed text-muted">
-              Groups of 6 or 8+, email support. Tennis and padel are still pre-register, not checkout.
+              Groups of 6 or 8+, email support. Tennis and Padel are still pre-register, not checkout.
             </p>
           </aside>
         </Container>

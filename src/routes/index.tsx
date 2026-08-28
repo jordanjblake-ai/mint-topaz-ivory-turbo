@@ -31,10 +31,10 @@ function Home() {
     <main>
       <PageHero
         image="/images/hero-home.jpg"
-        alt="Beach volleyball players training at sunset"
+        alt="Beach Volleyball players training at sunset"
         kicker={site.positioning}
         title="Travel through what you love"
-        sub="Train hard. Explore the landscape. Connect with good people. Lanzarote is open for 2027. Tennis and padel follow in Mallorca."
+        sub="Train hard. Explore the landscape. Connect with good people. Lanzarote is open for 2027. Tennis and Padel follow in Mallorca."
         actions={
           <>
             <Button asChild size="lg">
@@ -149,14 +149,14 @@ function Home() {
             sizes="(min-width: 1024px) 42vw, 100vw"
           />
           <div>
-            <Kicker>UK coaching</Kicker>
+            <Kicker>Clinics & Mini-Camps</Kicker>
             <Display className="mt-2 text-5xl sm:text-6xl">Train here. Travel later.</Display>
             <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
-              Private sessions, clinics, and mini-camps around the U.K. A way
-              into Hybrid close to home. Contact us and we will shape the session around you.
+              Clinics and mini-camps around the U.K. A way into Hybrid close to home. Contact us
+              and we will shape the block around you.
             </p>
             <Button asChild className="mt-8">
-              <Link to="/coaching">UK coaching</Link>
+              <Link to="/coaching">Clinics & Mini-Camps</Link>
             </Button>
           </div>
         </Container>
@@ -184,6 +184,21 @@ function Home() {
         to="/vacations/lanzarote"
         label="View the camp"
       />
+
+      <section className="border-t border-border">
+        <Container className="flex flex-col items-start justify-between gap-4 py-10 sm:flex-row sm:items-center">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted">Community</p>
+            <p className="mt-2 font-display text-3xl text-fg">The people that make Hybrid</p>
+          </div>
+          <Link
+            to="/community"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold uppercase tracking-wide text-accent hover:text-accent-hover"
+          >
+            Explore the club <ArrowRight className="size-4" />
+          </Link>
+        </Container>
+      </section>
     </main>
   );
 }

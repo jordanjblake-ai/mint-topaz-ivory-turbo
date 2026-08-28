@@ -247,7 +247,7 @@ export const privacy: LegalSection[] = [
   {
     title: "15. Security",
     body: [
-      "We take reasonable steps to keep information secure. No system is perfect. We will handle a breach as UK law requires.",
+      "We take reasonable steps to keep information secure, including automated checks that block known attack tools, probe paths, and abusive request rates. No system is perfect. We will handle a breach as UK law requires.",
     ],
   },
   {

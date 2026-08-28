@@ -21,8 +21,8 @@ function LanzarotePage() {
     <main>
       <PageHero
         image="/images/hero-lanzarote.jpg"
-        alt="Playa Grande beach volleyball courts, Lanzarote"
-        kicker="Beach volleyball · Lanzarote 2027"
+        alt="Playa Grande Beach Volleyball courts, Lanzarote"
+        kicker="Beach Volleyball · Lanzarote 2027"
         title="Train on Playa Grande"
         sub="Puerto del Carmen. Golden sand. The same dedicated coach all week. Then the island, the group, and winter sun."
         actions={

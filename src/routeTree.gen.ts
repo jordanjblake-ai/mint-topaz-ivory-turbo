@@ -17,17 +17,20 @@ import { Route as CampRouteImport } from './routes/camp'
 import { Route as CoachesRouteImport } from './routes/coaches'
 import { Route as CoachesCornerRouteImport } from './routes/coaches-corner'
 import { Route as CoachingRouteImport } from './routes/coaching'
+import { Route as CommunityRouteImport } from './routes/community'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as EnquireRouteImport } from './routes/enquire'
 import { Route as HealthRouteImport } from './routes/health'
 import { Route as HealthzRouteImport } from './routes/healthz'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as LivezRouteImport } from './routes/livez'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as PortalRouteImport } from './routes/portal'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReadyzRouteImport } from './routes/readyz'
+import { Route as StoryTimeRouteImport } from './routes/story-time'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as BookIndexRouteImport } from './routes/book/index'
@@ -41,6 +44,13 @@ import { Route as CampPrepareRouteImport } from './routes/camp/prepare'
 import { Route as CampScheduleRouteImport } from './routes/camp/schedule'
 import { Route as CampSquadRouteImport } from './routes/camp/squad'
 import { Route as CampTodayRouteImport } from './routes/camp/today'
+import { Route as CommunityIndexRouteImport } from './routes/community/index'
+import { Route as CommunityCoachingRouteImport } from './routes/community/coaching'
+import { Route as CommunityHallOfFameRouteImport } from './routes/community/hall-of-fame'
+import { Route as CommunityHistoryRouteImport } from './routes/community/history'
+import { Route as CommunityPartnersRouteImport } from './routes/community/partners'
+import { Route as CommunityPerformanceRouteImport } from './routes/community/performance'
+import { Route as CommunityTeamRouteImport } from './routes/community/team'
 import { Route as HealthLiveRouteImport } from './routes/health.live'
 import { Route as HealthReadyRouteImport } from './routes/health.ready'
 import { Route as OpsIndexRouteImport } from './routes/ops/index'
@@ -92,6 +102,11 @@ const CoachingRoute = CoachingRouteImport.update({
   path: '/coaching',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -115,6 +130,11 @@ const HealthRoute = HealthRouteImport.update({
 const HealthzRoute = HealthzRouteImport.update({
   id: '/healthz',
   path: '/healthz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LivezRoute = LivezRouteImport.update({
@@ -145,6 +165,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ReadyzRoute = ReadyzRouteImport.update({
   id: '/readyz',
   path: '/readyz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoryTimeRoute = StoryTimeRouteImport.update({
+  id: '/story-time',
+  path: '/story-time',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -212,6 +237,41 @@ const CampTodayRoute = CampTodayRouteImport.update({
   path: '/today',
   getParentRoute: () => CampRoute,
 } as any)
+const CommunityIndexRoute = CommunityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityCoachingRoute = CommunityCoachingRouteImport.update({
+  id: '/coaching',
+  path: '/coaching',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityHallOfFameRoute = CommunityHallOfFameRouteImport.update({
+  id: '/hall-of-fame',
+  path: '/hall-of-fame',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityHistoryRoute = CommunityHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityPartnersRoute = CommunityPartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityPerformanceRoute = CommunityPerformanceRouteImport.update({
+  id: '/performance',
+  path: '/performance',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityTeamRoute = CommunityTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => CommunityRoute,
+} as any)
 const HealthLiveRoute = HealthLiveRouteImport.update({
   id: '/live',
   path: '/live',
@@ -272,17 +332,20 @@ export interface FileRoutesByFullPath {
   '/coaches': typeof CoachesRoute
   '/coaches-corner': typeof CoachesCornerRoute
   '/coaching': typeof CoachingRoute
+  '/community': typeof CommunityRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/enquire': typeof EnquireRoute
   '/health': typeof HealthRouteWithChildren
   '/healthz': typeof HealthzRoute
+  '/history': typeof HistoryRoute
   '/livez': typeof LivezRoute
   '/login': typeof LoginRoute
   '/ops': typeof OpsRouteWithChildren
   '/portal': typeof PortalRoute
   '/privacy': typeof PrivacyRoute
   '/readyz': typeof ReadyzRoute
+  '/story-time': typeof StoryTimeRoute
   '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
   '/book/thanks': typeof BookThanksRoute
@@ -294,6 +357,12 @@ export interface FileRoutesByFullPath {
   '/camp/schedule': typeof CampScheduleRoute
   '/camp/squad': typeof CampSquadRoute
   '/camp/today': typeof CampTodayRoute
+  '/community/coaching': typeof CommunityCoachingRoute
+  '/community/hall-of-fame': typeof CommunityHallOfFameRoute
+  '/community/history': typeof CommunityHistoryRoute
+  '/community/partners': typeof CommunityPartnersRoute
+  '/community/performance': typeof CommunityPerformanceRoute
+  '/community/team': typeof CommunityTeamRoute
   '/health/live': typeof HealthLiveRoute
   '/health/ready': typeof HealthReadyRoute
   '/ops/people': typeof OpsPeopleRoute
@@ -302,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/vacations/tennis': typeof VacationsTennisRoute
   '/book/': typeof BookIndexRoute
   '/camp/': typeof CampIndexRoute
+  '/community/': typeof CommunityIndexRoute
   '/ops/': typeof OpsIndexRoute
   '/vacations/': typeof VacationsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -319,11 +389,13 @@ export interface FileRoutesByTo {
   '/enquire': typeof EnquireRoute
   '/health': typeof HealthRouteWithChildren
   '/healthz': typeof HealthzRoute
+  '/history': typeof HistoryRoute
   '/livez': typeof LivezRoute
   '/login': typeof LoginRoute
   '/portal': typeof PortalRoute
   '/privacy': typeof PrivacyRoute
   '/readyz': typeof ReadyzRoute
+  '/story-time': typeof StoryTimeRoute
   '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
   '/book/thanks': typeof BookThanksRoute
@@ -335,6 +407,12 @@ export interface FileRoutesByTo {
   '/camp/schedule': typeof CampScheduleRoute
   '/camp/squad': typeof CampSquadRoute
   '/camp/today': typeof CampTodayRoute
+  '/community/coaching': typeof CommunityCoachingRoute
+  '/community/hall-of-fame': typeof CommunityHallOfFameRoute
+  '/community/history': typeof CommunityHistoryRoute
+  '/community/partners': typeof CommunityPartnersRoute
+  '/community/performance': typeof CommunityPerformanceRoute
+  '/community/team': typeof CommunityTeamRoute
   '/health/live': typeof HealthLiveRoute
   '/health/ready': typeof HealthReadyRoute
   '/ops/people': typeof OpsPeopleRoute
@@ -343,6 +421,7 @@ export interface FileRoutesByTo {
   '/vacations/tennis': typeof VacationsTennisRoute
   '/book': typeof BookIndexRoute
   '/camp': typeof CampIndexRoute
+  '/community': typeof CommunityIndexRoute
   '/ops': typeof OpsIndexRoute
   '/vacations': typeof VacationsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -358,17 +437,20 @@ export interface FileRoutesById {
   '/coaches': typeof CoachesRoute
   '/coaches-corner': typeof CoachesCornerRoute
   '/coaching': typeof CoachingRoute
+  '/community': typeof CommunityRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/enquire': typeof EnquireRoute
   '/health': typeof HealthRouteWithChildren
   '/healthz': typeof HealthzRoute
+  '/history': typeof HistoryRoute
   '/livez': typeof LivezRoute
   '/login': typeof LoginRoute
   '/ops': typeof OpsRouteWithChildren
   '/portal': typeof PortalRoute
   '/privacy': typeof PrivacyRoute
   '/readyz': typeof ReadyzRoute
+  '/story-time': typeof StoryTimeRoute
   '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
   '/book/thanks': typeof BookThanksRoute
@@ -380,6 +462,12 @@ export interface FileRoutesById {
   '/camp/schedule': typeof CampScheduleRoute
   '/camp/squad': typeof CampSquadRoute
   '/camp/today': typeof CampTodayRoute
+  '/community/coaching': typeof CommunityCoachingRoute
+  '/community/hall-of-fame': typeof CommunityHallOfFameRoute
+  '/community/history': typeof CommunityHistoryRoute
+  '/community/partners': typeof CommunityPartnersRoute
+  '/community/performance': typeof CommunityPerformanceRoute
+  '/community/team': typeof CommunityTeamRoute
   '/health/live': typeof HealthLiveRoute
   '/health/ready': typeof HealthReadyRoute
   '/ops/people': typeof OpsPeopleRoute
@@ -388,6 +476,7 @@ export interface FileRoutesById {
   '/vacations/tennis': typeof VacationsTennisRoute
   '/book/': typeof BookIndexRoute
   '/camp/': typeof CampIndexRoute
+  '/community/': typeof CommunityIndexRoute
   '/ops/': typeof OpsIndexRoute
   '/vacations/': typeof VacationsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -404,17 +493,20 @@ export interface FileRouteTypes {
     | '/coaches'
     | '/coaches-corner'
     | '/coaching'
+    | '/community'
     | '/contact'
     | '/cookies'
     | '/enquire'
     | '/health'
     | '/healthz'
+    | '/history'
     | '/livez'
     | '/login'
     | '/ops'
     | '/portal'
     | '/privacy'
     | '/readyz'
+    | '/story-time'
     | '/terms'
     | '/travel'
     | '/book/thanks'
@@ -426,6 +518,12 @@ export interface FileRouteTypes {
     | '/camp/schedule'
     | '/camp/squad'
     | '/camp/today'
+    | '/community/coaching'
+    | '/community/hall-of-fame'
+    | '/community/history'
+    | '/community/partners'
+    | '/community/performance'
+    | '/community/team'
     | '/health/live'
     | '/health/ready'
     | '/ops/people'
@@ -434,6 +532,7 @@ export interface FileRouteTypes {
     | '/vacations/tennis'
     | '/book/'
     | '/camp/'
+    | '/community/'
     | '/ops/'
     | '/vacations/'
     | '/api/auth/$'
@@ -451,11 +550,13 @@ export interface FileRouteTypes {
     | '/enquire'
     | '/health'
     | '/healthz'
+    | '/history'
     | '/livez'
     | '/login'
     | '/portal'
     | '/privacy'
     | '/readyz'
+    | '/story-time'
     | '/terms'
     | '/travel'
     | '/book/thanks'
@@ -467,6 +568,12 @@ export interface FileRouteTypes {
     | '/camp/schedule'
     | '/camp/squad'
     | '/camp/today'
+    | '/community/coaching'
+    | '/community/hall-of-fame'
+    | '/community/history'
+    | '/community/partners'
+    | '/community/performance'
+    | '/community/team'
     | '/health/live'
     | '/health/ready'
     | '/ops/people'
@@ -475,6 +582,7 @@ export interface FileRouteTypes {
     | '/vacations/tennis'
     | '/book'
     | '/camp'
+    | '/community'
     | '/ops'
     | '/vacations'
     | '/api/auth/$'
@@ -489,17 +597,20 @@ export interface FileRouteTypes {
     | '/coaches'
     | '/coaches-corner'
     | '/coaching'
+    | '/community'
     | '/contact'
     | '/cookies'
     | '/enquire'
     | '/health'
     | '/healthz'
+    | '/history'
     | '/livez'
     | '/login'
     | '/ops'
     | '/portal'
     | '/privacy'
     | '/readyz'
+    | '/story-time'
     | '/terms'
     | '/travel'
     | '/book/thanks'
@@ -511,6 +622,12 @@ export interface FileRouteTypes {
     | '/camp/schedule'
     | '/camp/squad'
     | '/camp/today'
+    | '/community/coaching'
+    | '/community/hall-of-fame'
+    | '/community/history'
+    | '/community/partners'
+    | '/community/performance'
+    | '/community/team'
     | '/health/live'
     | '/health/ready'
     | '/ops/people'
@@ -519,6 +636,7 @@ export interface FileRouteTypes {
     | '/vacations/tennis'
     | '/book/'
     | '/camp/'
+    | '/community/'
     | '/ops/'
     | '/vacations/'
     | '/api/auth/$'
@@ -534,17 +652,20 @@ export interface RootRouteChildren {
   CoachesRoute: typeof CoachesRoute
   CoachesCornerRoute: typeof CoachesCornerRoute
   CoachingRoute: typeof CoachingRoute
+  CommunityRoute: typeof CommunityRouteWithChildren
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   EnquireRoute: typeof EnquireRoute
   HealthRoute: typeof HealthRouteWithChildren
   HealthzRoute: typeof HealthzRoute
+  HistoryRoute: typeof HistoryRoute
   LivezRoute: typeof LivezRoute
   LoginRoute: typeof LoginRoute
   OpsRoute: typeof OpsRouteWithChildren
   PortalRoute: typeof PortalRoute
   PrivacyRoute: typeof PrivacyRoute
   ReadyzRoute: typeof ReadyzRoute
+  StoryTimeRoute: typeof StoryTimeRoute
   TermsRoute: typeof TermsRoute
   TravelRoute: typeof TravelRoute
   VacationsLanzaroteRoute: typeof VacationsLanzaroteRoute
@@ -613,6 +734,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoachingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -646,6 +774,13 @@ declare module '@tanstack/react-router' {
       path: '/healthz'
       fullPath: '/healthz'
       preLoaderRoute: typeof HealthzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/livez': {
@@ -688,6 +823,13 @@ declare module '@tanstack/react-router' {
       path: '/readyz'
       fullPath: '/readyz'
       preLoaderRoute: typeof ReadyzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/story-time': {
+      id: '/story-time'
+      path: '/story-time'
+      fullPath: '/story-time'
+      preLoaderRoute: typeof StoryTimeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -780,6 +922,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/camp/today'
       preLoaderRoute: typeof CampTodayRouteImport
       parentRoute: typeof CampRoute
+    }
+    '/community/': {
+      id: '/community/'
+      path: '/'
+      fullPath: '/community/'
+      preLoaderRoute: typeof CommunityIndexRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/coaching': {
+      id: '/community/coaching'
+      path: '/coaching'
+      fullPath: '/community/coaching'
+      preLoaderRoute: typeof CommunityCoachingRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/hall-of-fame': {
+      id: '/community/hall-of-fame'
+      path: '/hall-of-fame'
+      fullPath: '/community/hall-of-fame'
+      preLoaderRoute: typeof CommunityHallOfFameRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/history': {
+      id: '/community/history'
+      path: '/history'
+      fullPath: '/community/history'
+      preLoaderRoute: typeof CommunityHistoryRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/partners': {
+      id: '/community/partners'
+      path: '/partners'
+      fullPath: '/community/partners'
+      preLoaderRoute: typeof CommunityPartnersRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/performance': {
+      id: '/community/performance'
+      path: '/performance'
+      fullPath: '/community/performance'
+      preLoaderRoute: typeof CommunityPerformanceRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/team': {
+      id: '/community/team'
+      path: '/team'
+      fullPath: '/community/team'
+      preLoaderRoute: typeof CommunityTeamRouteImport
+      parentRoute: typeof CommunityRoute
     }
     '/health/live': {
       id: '/health/live'
@@ -892,6 +1083,30 @@ const CampRouteChildren: CampRouteChildren = {
 
 const CampRouteWithChildren = CampRoute._addFileChildren(CampRouteChildren)
 
+interface CommunityRouteChildren {
+  CommunityCoachingRoute: typeof CommunityCoachingRoute
+  CommunityHallOfFameRoute: typeof CommunityHallOfFameRoute
+  CommunityHistoryRoute: typeof CommunityHistoryRoute
+  CommunityPartnersRoute: typeof CommunityPartnersRoute
+  CommunityPerformanceRoute: typeof CommunityPerformanceRoute
+  CommunityTeamRoute: typeof CommunityTeamRoute
+  CommunityIndexRoute: typeof CommunityIndexRoute
+}
+
+const CommunityRouteChildren: CommunityRouteChildren = {
+  CommunityCoachingRoute: CommunityCoachingRoute,
+  CommunityHallOfFameRoute: CommunityHallOfFameRoute,
+  CommunityHistoryRoute: CommunityHistoryRoute,
+  CommunityPartnersRoute: CommunityPartnersRoute,
+  CommunityPerformanceRoute: CommunityPerformanceRoute,
+  CommunityTeamRoute: CommunityTeamRoute,
+  CommunityIndexRoute: CommunityIndexRoute,
+}
+
+const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
+  CommunityRouteChildren,
+)
+
 interface HealthRouteChildren {
   HealthLiveRoute: typeof HealthLiveRoute
   HealthReadyRoute: typeof HealthReadyRoute
@@ -926,17 +1141,20 @@ const rootRouteChildren: RootRouteChildren = {
   CoachesRoute: CoachesRoute,
   CoachesCornerRoute: CoachesCornerRoute,
   CoachingRoute: CoachingRoute,
+  CommunityRoute: CommunityRouteWithChildren,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   EnquireRoute: EnquireRoute,
   HealthRoute: HealthRouteWithChildren,
   HealthzRoute: HealthzRoute,
+  HistoryRoute: HistoryRoute,
   LivezRoute: LivezRoute,
   LoginRoute: LoginRoute,
   OpsRoute: OpsRouteWithChildren,
   PortalRoute: PortalRoute,
   PrivacyRoute: PrivacyRoute,
   ReadyzRoute: ReadyzRoute,
+  StoryTimeRoute: StoryTimeRoute,
   TermsRoute: TermsRoute,
   TravelRoute: TravelRoute,
   VacationsLanzaroteRoute: VacationsLanzaroteRoute,

@@ -16,7 +16,7 @@ function VacationsPage() {
         alt="Hybrid camp on the sand"
         kicker="Camps"
         title="Sport. Travel. Community."
-        sub="Lanzarote is open. Tennis and padel in Mallorca are open to pre-register. Golf lands in 2028."
+        sub="Lanzarote is open. Tennis and Padel in Mallorca are open to pre-register. Golf lands in 2028."
       />
       <Section>
         <Container>

@@ -21,7 +21,7 @@ export const Route = createRootRoute({
         {
           name: "description",
           content:
-            "Hybrid Vacations. Sport, travel, and community. Beach volleyball camps in Lanzarote, tennis and padel in Mallorca, UK coaching, and trips built around the sports you love.",
+            "Hybrid Vacations. Sport, travel, and community. Beach Volleyball camps in Lanzarote, Tennis and Padel in Mallorca, UK coaching, and trips built around the sports you love.",
         },
         { name: "theme-color", content: "#0D0E10" },
         { property: "og:site_name", content: APP_NAME },

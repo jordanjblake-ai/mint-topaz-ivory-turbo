@@ -57,6 +57,14 @@ export function cacheClassFor(pathname: string, method = "GET", status = 200): C
   return "html";
 }
 
+export const SECURITY_HEADERS = {
+  "x-content-type-options": "nosniff",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+  "x-dns-prefetch-control": "off",
+  "x-permitted-cross-domain-policies": "none",
+} as const;
+
 type HeaderMap = Record<string, string>;
 
 const CORS = {
@@ -166,7 +174,7 @@ export function cacheTagsFor(kind: CacheClass, path = "/"): string[] {
 }
 
 export function cacheHeadersFor(kind: CacheClass, path?: string): HeaderMap {
-  const headers: HeaderMap = { ...POLICIES[kind], "x-hybrid-cache": kind };
+  const headers: HeaderMap = { ...SECURITY_HEADERS, ...POLICIES[kind], "x-hybrid-cache": kind };
   const tags = cacheTagsFor(kind, path);
   if (tags.length) {
     headers["cache-tag"] = tags.join(",");

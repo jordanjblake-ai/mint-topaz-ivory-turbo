@@ -6,6 +6,8 @@ export type EnquiryKind =
   | "coaching"
   | "clinic"
   | "mini-camp"
+  | "group"
+  | "performance"
   | "travel"
   | "other";
 
@@ -34,12 +36,14 @@ export type Enquiry = {
 
 export const KIND_LABEL: Record<EnquiryKind, string> = {
   lanzarote: "Lanzarote",
-  tennis: "Mallorca tennis",
-  padel: "Mallorca padel",
+  tennis: "Mallorca Tennis",
+  padel: "Mallorca Padel",
   golf: "Golf 2028",
-  coaching: "UK coaching",
+  coaching: "UK Coaching",
   clinic: "Clinic",
-  "mini-camp": "Mini-camp",
+  "mini-camp": "Mini-Camp",
+  group: "Group",
+  performance: "Performance Squad",
   travel: "Plan a trip",
   other: "Other",
 };
@@ -75,6 +79,8 @@ export const KIND_ORDER: EnquiryKind[] = [
   "coaching",
   "clinic",
   "mini-camp",
+  "group",
+  "performance",
   "travel",
   "golf",
   "other",
@@ -507,8 +513,9 @@ export function buildTraffic(days: number, end = new Date("2026-08-22T12:00:00Z"
   return rows;
 }
 
-export function kindFromInterest(interest: string, coachingFormat?: string): EnquiryKind {
+export function kindFromInterest(interest: string, coachingFormat?: string, gender?: string): EnquiryKind {
   if (interest === "coaching") {
+    if (gender === "group") return "group";
     if (coachingFormat === "clinic") return "clinic";
     if (coachingFormat === "mini-camp") return "mini-camp";
     return "coaching";

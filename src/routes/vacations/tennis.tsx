@@ -11,8 +11,8 @@ function TennisPage() {
     <main>
       <PageHero
         compact
-        image="/images/padel.jpg"
-        alt="Mallorca courts for the tennis week"
+        image="/images/tennis-open.jpg"
+        alt="Empty clay tennis courts in Mallorca"
         kicker="Tennis · Mallorca 2027"
         title="Coastlines and courtlines"
         sub="Clay in Capdepera, minutes from Font de Sa Cala. A training-focused week with island living around it. Pre-register and we will send the full week when it is ready."
@@ -35,8 +35,8 @@ function TennisPage() {
             </ul>
           </div>
           <Photo
-            src="/images/tennis-court.jpg"
-            alt="Tennis training week in Mallorca"
+            src="/images/tennis-player.jpg"
+            alt="Tennis training on clay"
             className="aspect-4/5 w-full rounded-lg"
           />
         </Container>

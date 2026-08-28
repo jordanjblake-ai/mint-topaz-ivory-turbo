@@ -12,6 +12,13 @@ export const publicPages = [
   { path: "/book", changefreq: "weekly", priority: "0.8" },
   { path: "/about", changefreq: "monthly", priority: "0.5" },
   { path: "/story-time", changefreq: "monthly", priority: "0.6" },
+  { path: "/community", changefreq: "weekly", priority: "0.7" },
+  { path: "/community/performance", changefreq: "monthly", priority: "0.7" },
+  { path: "/community/team", changefreq: "monthly", priority: "0.6" },
+  { path: "/community/partners", changefreq: "monthly", priority: "0.5" },
+  { path: "/community/coaching", changefreq: "monthly", priority: "0.6" },
+  { path: "/community/hall-of-fame", changefreq: "monthly", priority: "0.5" },
+  { path: "/community/history", changefreq: "monthly", priority: "0.5" },
   { path: "/contact", changefreq: "monthly", priority: "0.7" },
   { path: "/terms", changefreq: "yearly", priority: "0.3" },
   { path: "/privacy", changefreq: "yearly", priority: "0.3" },
@@ -80,6 +87,43 @@ Disallow: /livez
 Disallow: /readyz
 Disallow: /login
 Disallow: /api
+
+User-agent: GPTBot
+Disallow: /
+User-agent: ChatGPT-User
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+User-agent: Amazonbot
+Disallow: /
+User-agent: Applebot-Extended
+Disallow: /
+User-agent: cohere-ai
+Disallow: /
+User-agent: PerplexityBot
+Disallow: /
+User-agent: AhrefsBot
+Disallow: /
+User-agent: SemrushBot
+Disallow: /
+User-agent: DotBot
+Disallow: /
+User-agent: MJ12bot
+Disallow: /
+User-agent: PetalBot
+Disallow: /
+User-agent: FacebookBot
+Disallow: /
 
 Sitemap: ${SITE_ORIGIN}/sitemap.xml
 `;

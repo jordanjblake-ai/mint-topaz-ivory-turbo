@@ -14,7 +14,7 @@ export function PortalHub({ variant }: { variant: "player" | "coach" }) {
       </h1>
       <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted">
         {player
-          ? "One door for every Hybrid week you have booked. Lanzarote is live. Tennis, padel, and one-off bookings will sit here when they open."
+          ? "One door for every Hybrid week you have booked. Lanzarote is live. Tennis, Padel, and one-off bookings will sit here when they open."
           : "Groups, duties, and the players in front of you. Lanzarote is live. Other camps will use this same corner when they run."}
       </p>
 

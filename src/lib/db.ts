@@ -10,6 +10,19 @@ const rawDatabaseUrl =
 const databaseUrl =
   rawDatabaseUrl && rawDatabaseUrl.trim() ? rawDatabaseUrl : undefined;
 
+/** Vercel has no workspace FS and cannot boot the PGLite WASM fallback. */
+const onVercel = typeof process !== "undefined" && Boolean(process.env.VERCEL);
+
+/**
+ * PGLite is a live-preview convenience only. Production (Vercel, `vite preview`)
+ * must not load it: the WASM/data files are not in the function bundle, and an
+ * unhandled rejection there crashes the whole serverless process (Vercel
+ * FUNCTION_INVOCATION_FAILED).
+ */
+const allowPglite =
+  !onVercel &&
+  !(typeof process !== "undefined" && process.env.NODE_ENV === "production");
+
 /**
  * Active backend: real **Neon** when `DATABASE_URL` is set (deployed / configured
  * sandbox), otherwise a local embedded **PGLite** (Postgres compiled to WASM) so
@@ -93,7 +106,12 @@ function createNeonSql(): Promise<Sql> {
     types.setTypeParser(OID_INT8, Number);
     types.setTypeParser(OID_DATE, identity);
     types.setTypeParser(OID_INTERVAL, identity);
-    const pool = new Pool({ connectionString: databaseUrl });
+    const pool = new Pool({
+      connectionString: databaseUrl,
+      max: 4,
+      connectionTimeoutMillis: 8_000,
+      idleTimeoutMillis: 10_000,
+    });
     return toSql(async <T>(text: string, params: unknown[]) => {
       const res = await pool.query(text, params);
       return res.rows as T[];
@@ -176,7 +194,13 @@ async function createSql(): Promise<Sql> {
         "or a server route loader, never from client code.",
     );
   }
-  return dbSource === "neon" ? createNeonSql() : createPgliteSql();
+  if (databaseUrl) return createNeonSql();
+  if (!allowPglite) {
+    throw new Error(
+      "DATABASE_URL is not set in production — refusing to boot the preview PGLite database.",
+    );
+  }
+  return createPgliteSql();
 }
 
 /**
@@ -200,6 +224,9 @@ export function getSql(): Promise<Sql> {
  * Kysely dialect). Throws when `DATABASE_URL` is set (that path uses Neon).
  */
 export async function getPglite(): Promise<import("@electric-sql/pglite").PGlite> {
+  if (!allowPglite) {
+    throw new Error("PGLite is preview-only and is not available in production.");
+  }
   if (dbSource !== "pglite") {
     throw new Error("getPglite() is only available on the PGLite fallback (no DATABASE_URL)");
   }
@@ -214,25 +241,29 @@ export async function getPglite(): Promise<import("@electric-sql/pglite").PGlite
  *
  * - **PGLite** (preview / no `DATABASE_URL`): open the in-memory DB and apply
  *   `migrations/*.sql`. Idempotent — concurrent callers share one promise.
- * - **Neon**: no-op (pool is created lazily on first query).
+ * - **Neon / production**: no-op (pool is created lazily on first query).
+ *
+ * Never rejects: `auth/server.ts` fires this with `void ensureDbReady()`, and a
+ * throw there is an unhandled rejection that crashes the serverless process.
  *
  * Vite `configureServer` awaits this at dev startup; production imports of this
  * module kick it off immediately (see bottom of file).
  */
 export function ensureDbReady(): Promise<void> {
-  if (dbSource !== "pglite") return Promise.resolve();
-  return getSql().then(() => undefined);
+  if (dbSource !== "pglite" || !allowPglite) return Promise.resolve();
+  return getSql()
+    .then(() => undefined)
+    .catch((err) => {
+      console.error("[db] PGLite bootstrap failed:", err);
+    });
 }
 
 // Server-only eager start: kick PGLite bootstrap as soon as this module loads in
-// Node. Client bundles never hit this path (`getSql` throws in the browser).
+// Node. Never in production (WASM is not in the function bundle). Client bundles
+// never hit this path (`getSql` throws in the browser).
 const globalBoot = globalThis as typeof globalThis & {
   __pgBootstrapPromise__?: Promise<void>;
 };
-if (typeof window === "undefined" && dbSource === "pglite") {
-  globalBoot.__pgBootstrapPromise__ ??= ensureDbReady().catch((err) => {
-    globalBoot.__pgBootstrapPromise__ = undefined;
-    console.error("[db] PGLite bootstrap failed:", err);
-    throw err;
-  });
+if (typeof window === "undefined" && dbSource === "pglite" && allowPglite) {
+  globalBoot.__pgBootstrapPromise__ ??= ensureDbReady();
 }

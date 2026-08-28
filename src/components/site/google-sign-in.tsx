@@ -7,9 +7,11 @@ const google = GROK_PROVIDERS.find((item) => item.idp === "google");
 export function GoogleSignInButton({
   callbackURL,
   label = "Continue with Google",
+  variant = "primary",
 }: {
   callbackURL: string;
   label?: string;
+  variant?: "primary" | "secondary";
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -23,6 +25,7 @@ export function GoogleSignInButton({
       <Button
         type="button"
         size="lg"
+        variant={variant}
         className="w-full"
         disabled={busy}
         onClick={() => {
