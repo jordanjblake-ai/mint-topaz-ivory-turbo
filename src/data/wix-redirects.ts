@@ -37,6 +37,7 @@ export const WIX_REDIRECTS: Record<string, string> = {
 
   "/about": "/about",
   "/history": "/story-time",
+  "/community/history": "/story-time",
   "/team-4": "/coaches",
 
   "/termsandconditions": "/terms",

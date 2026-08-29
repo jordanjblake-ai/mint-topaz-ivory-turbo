@@ -10,7 +10,7 @@ export type SoundBed =
   | "world"
   | "dawn";
 export type Cam = "in" | "left" | "right" | "up" | "down" | "still";
-export type Weather = "rain" | "mist" | "dust" | "none";
+export type SceneFx = "rain" | "sun" | "stars" | "waves" | "mist" | "dust" | "clouds" | "grass" | "sunrise" | "ink" | "lamp";
 export type Grade = "night" | "island" | "week" | "storm" | "dawn" | "paper" | "dusk";
 export type ChapterId = "name" | "island" | "week" | "gold" | "serve";
 
@@ -28,6 +28,7 @@ export const CHAPTERS: Record<
 export type Scene = {
   id: string;
   art: string;
+  video?: string;
   date: string | null;
   mark: Mark | null;
   sound: SoundBed;
@@ -35,7 +36,9 @@ export type Scene = {
   grade: Grade;
   chapter: ChapterId;
   plate?: boolean;
-  weather?: Weather;
+  fx?: SceneFx[];
+  sun?: { x: string; y: string };
+  wave?: { top: string; height: string; left?: string; width?: string };
   hit?: boolean;
   still?: boolean;
   lines: string[];
@@ -53,6 +56,7 @@ export const scenes: Scene[] = [
     cam: "in",
     grade: "night",
     chapter: "name",
+    fx: ["stars"],
     lines: ["The story isn’t finished."],
     whisper: "A visual history. Scroll when you are ready.",
   },
@@ -67,17 +71,20 @@ export const scenes: Scene[] = [
     chapter: "name",
     plate: true,
     still: true,
+    fx: ["stars"],
     lines: [],
   },
   {
     id: "open",
-    art: "/art/01-empty-court.jpg",
+    art: "/art/01-last-summer.jpg",
     date: "LAST SUMMER",
     mark: null,
     sound: "open",
-    cam: "down",
-    grade: "night",
+    cam: "in",
+    grade: "paper",
     chapter: "name",
+    still: true,
+    fx: [],
     lines: [
       "This kit didn’t exist.",
       "Sixteen months.",
@@ -93,7 +100,7 @@ export const scenes: Scene[] = [
     cam: "in",
     grade: "paper",
     chapter: "name",
-    weather: "dust",
+    fx: ["clouds", "ink"],
     still: true,
     lines: [
       "A coach gets tired of the gap.",
@@ -113,6 +120,8 @@ export const scenes: Scene[] = [
     chapter: "island",
     plate: true,
     still: true,
+    fx: ["sun"],
+    sun: { x: "20%", y: "24%" },
     lines: [],
   },
   {
@@ -124,7 +133,9 @@ export const scenes: Scene[] = [
     cam: "right",
     grade: "island",
     chapter: "island",
-    weather: "mist",
+    fx: ["sun", "waves"],
+    sun: { x: "16%", y: "20%" },
+    wave: { top: "34%", height: "26%", left: "48%", width: "54%" },
     lines: [
       "One month later the island is on the map.",
       "Lanzarote. Released.",
@@ -140,7 +151,9 @@ export const scenes: Scene[] = [
     cam: "left",
     grade: "island",
     chapter: "island",
-    weather: "dust",
+    fx: ["sun", "waves"],
+    sun: { x: "18%", y: "28%" },
+    wave: { top: "26%", height: "30%" },
     lines: [
       "Strangers fly in.",
       "They leave with a week in their legs.",
@@ -157,6 +170,7 @@ export const scenes: Scene[] = [
     cam: "in",
     grade: "island",
     chapter: "island",
+    fx: ["dust"],
     lines: [
       "Some people came for a holiday.",
       "Some people stayed for the extra hour.",
@@ -175,19 +189,21 @@ export const scenes: Scene[] = [
     chapter: "week",
     plate: true,
     still: true,
-    weather: "mist",
+    fx: ["rain"],
     lines: [],
   },
   {
     id: "uk",
     art: "/art/06-uk-tour.jpg",
+    video: "/art/06-uk-tour.mp4",
     date: "2026",
     mark: "badge",
     sound: "uk",
-    cam: "up",
+    cam: "still",
     grade: "week",
     chapter: "week",
-    weather: "mist",
+    still: true,
+    fx: [],
     lines: [
       "Then the kit leaves the island.",
       "Team Hybrid on the UK Beach Tour.",
@@ -203,7 +219,7 @@ export const scenes: Scene[] = [
     cam: "right",
     grade: "week",
     chapter: "week",
-    weather: "rain",
+    fx: [],
     lines: [
       "Summer stops being a trip.",
       "It becomes a week.",
@@ -222,7 +238,7 @@ export const scenes: Scene[] = [
     chapter: "gold",
     plate: true,
     still: true,
-    weather: "rain",
+    fx: ["rain"],
     lines: [],
   },
   {
@@ -234,7 +250,6 @@ export const scenes: Scene[] = [
     cam: "in",
     grade: "storm",
     chapter: "gold",
-    weather: "rain",
     hit: true,
     lines: [
       "Rain. Wind. Golden sets.",
@@ -254,6 +269,7 @@ export const scenes: Scene[] = [
     chapter: "serve",
     plate: true,
     still: true,
+    fx: ["stars"],
     lines: [],
   },
   {
@@ -265,6 +281,9 @@ export const scenes: Scene[] = [
     cam: "left",
     grade: "dusk",
     chapter: "serve",
+    fx: ["sun", "waves"],
+    sun: { x: "17%", y: "25%" },
+    wave: { top: "36%", height: "26%" },
     lines: [
       "The kit learns new airports.",
       "FIVB World Tour.",
@@ -281,6 +300,7 @@ export const scenes: Scene[] = [
     grade: "dawn",
     chapter: "serve",
     still: true,
+    fx: [],
     lines: [
       "More to come.",
       "History to be made.",

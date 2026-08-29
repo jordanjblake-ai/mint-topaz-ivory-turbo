@@ -11,6 +11,7 @@ const allowedNext = new Set([
   "/community/performance",
   "/community/coaching",
   "/community/team",
+  "/story-time",
   "/contact",
   "/vacations/lanzarote",
   "/vacations/tennis",

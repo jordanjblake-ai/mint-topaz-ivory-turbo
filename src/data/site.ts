@@ -343,7 +343,6 @@ export const nav = [
       { label: "Private Coaching", href: "/community/coaching" },
       { label: "Clinics & Mini-Camps", href: "/coaching" },
       { label: "Hall of Fame", href: "/community/hall-of-fame" },
-      { label: "Hybrid History", href: "/community/history" },
       { label: "Story Time", href: "/story-time" },
     ],
   },

@@ -163,13 +163,19 @@ function Home() {
       </Section>
 
       <Section className="bg-surface">
-        <Container className="grid items-center gap-8 lg:grid-cols-[1.2fr_1fr]">
+        <Container className="grid items-center gap-8 lg:grid-cols-2">
+          <Photo
+            src="/art/00-title.jpg"
+            alt="Hybrid Story Time"
+            className="aspect-4/5 w-full rounded-lg object-cover"
+            sizes="(min-width: 1024px) 42vw, 100vw"
+          />
           <div>
             <Kicker>Story Time</Kicker>
             <Display className="mt-2 text-5xl sm:text-6xl">The story isn’t finished.</Display>
             <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
-              Sixteen months from a name to a world-tour court. Scroll the Hybrid history
-              as a graphic novel — still open at 2027.
+              Sixteen months from a name to a world-tour court. Scroll the Hybrid history as a
+              graphic novel, still open at 2027.
             </p>
             <Button asChild className="mt-8">
               <Link to="/story-time">Open Story Time</Link>
