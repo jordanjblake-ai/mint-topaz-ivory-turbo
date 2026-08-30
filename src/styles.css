@@ -31,6 +31,14 @@
   --font-date: "Anton", Impact, "Arial Narrow", sans-serif;
   --font-body: "Newsreader", "Times New Roman", serif;
   --font-whisper: "Caveat", "Segoe Script", cursive;
+  --color-roster-gold: #f5c400;
+  --color-roster-cyan: #2ad6ea;
+  --color-roster-red: #ff3355;
+  --color-roster-lime: #c6f135;
+  --color-roster-silver: #d5d8de;
+  --color-roster-pink: #ff2d8b;
+  --color-roster-purple: #b56bff;
+  --color-roster-rose: #ff7eb6;
 }
 
 @layer base {
@@ -41,6 +49,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 
   h1,
@@ -71,6 +80,10 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -290,5 +303,28 @@ html.community-lock body {
 
   .community-cell {
     width: 44vw;
+  }
+}
+
+.team-chip-row {
+  scrollbar-width: none;
+}
+
+.team-chip-row::-webkit-scrollbar {
+  display: none;
+}
+
+.team-frame {
+  aspect-ratio: 9 / 16;
+  width: min(100%, calc((100dvh - 8.25rem) * 9 / 16));
+  margin-inline: auto;
+  overflow: hidden;
+  background: var(--color-ink);
+}
+
+@media (min-width: 768px) {
+  .team-frame {
+    aspect-ratio: 16 / 9;
+    width: min(100%, calc((100dvh - 8.25rem) * 16 / 9));
   }
 }

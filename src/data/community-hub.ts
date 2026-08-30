@@ -1,3 +1,5 @@
+import { teamHybridKings, teamHybridQueens } from "@/data/team-hybrid";
+
 export const communityNav = [
   { label: "Performance Squad", href: "/community/performance" },
   { label: "Team Hybrid", href: "/community/team" },
@@ -114,19 +116,8 @@ export const squadCoaches = [
 ];
 
 export const teamAthletes = {
-  men: [
-    { name: "Stuart Perry" },
-    { name: "Theo Plaza" },
-    { name: "Lewis Bunton" },
-    { name: "Bailey Harsum" },
-    { name: "Jan-Joost Van Der Bogert" },
-  ],
-  women: [
-    { name: "Ella Watson", image: "/images/portrait-ella.jpg", imageClass: "object-top" },
-    { name: "Martha Bullen", image: "/images/coach-martha.jpg", imageClass: "object-top" },
-    { name: "Francesca Billato" },
-    { name: "Lucy Knott" },
-  ],
+  men: teamHybridKings.map((athlete) => ({ name: athlete.name })),
+  women: teamHybridQueens.map((athlete) => ({ name: athlete.name })),
 };
 
 export const partners = [
