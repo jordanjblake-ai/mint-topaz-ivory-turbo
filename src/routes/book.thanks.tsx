@@ -1,8 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Container, Display, Kicker } from "@/components/site/section";
+import { confirmCampDeposit } from "@/lib/checkout";
+
+type ThanksSearch = { session_id?: string };
 
 export const Route = createFileRoute("/book/thanks")({
+  validateSearch: (search: Record<string, unknown>): ThanksSearch => ({
+    session_id: typeof search.session_id === "string" ? search.session_id : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Place held · Hybrid Vacations" },
@@ -13,6 +20,13 @@ export const Route = createFileRoute("/book/thanks")({
 });
 
 function ThanksPage() {
+  const { session_id: sessionId } = Route.useSearch();
+
+  useEffect(() => {
+    if (!sessionId) return;
+    void confirmCampDeposit({ data: { sessionId } }).catch(() => {});
+  }, [sessionId]);
+
   return (
     <main className="min-h-[70vh]">
       <Container className="flex min-h-[70vh] flex-col justify-center py-24">

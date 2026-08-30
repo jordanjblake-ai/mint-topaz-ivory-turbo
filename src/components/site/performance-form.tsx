@@ -42,6 +42,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { allowAttempt, isEmail } from "@/lib/guard";
+import { submitEnquiry } from "@/lib/enquiry";
 import { useOps } from "@/lib/ops-store";
 import { cn } from "@/lib/utils";
 
@@ -284,7 +285,11 @@ export function PlayerDetailsForm({
 
     try {
       if (user) {
-        await savePerformanceApplication({ data: payload });
+        try {
+          await savePerformanceApplication({ data: payload });
+        } catch {
+          /* still send the enquiry email */
+        }
       }
 
       const interestLabel =
@@ -331,17 +336,28 @@ export function PlayerDetailsForm({
         source: "site",
       });
 
-      const subject = encodeURIComponent(`Hybrid Enquiry: ${interestLabel}`);
-      const body = encodeURIComponent(
-        [
-          `Name: ${payload.firstName} ${payload.lastName}`,
-          `Email: ${payload.email}`,
-          ...extraLines.filter((line) => line && line !== payload.message),
-          "",
-          payload.message || "(no extra message)",
-        ].join("\n"),
-      );
-      window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
+      const subject = `Hybrid Enquiry: ${interestLabel}`;
+      const body = [
+        `Name: ${payload.firstName} ${payload.lastName}`,
+        `Email: ${payload.email}`,
+        ...extraLines.filter((line) => line && line !== payload.message),
+        "",
+        payload.message || "(no extra message)",
+      ].join("\n");
+
+      const mailed = await submitEnquiry({
+        data: {
+          name: `${payload.firstName} ${payload.lastName}`,
+          email: payload.email,
+          subject,
+          body,
+          company,
+        },
+      });
+
+      if (mailed.status !== "sent") {
+        window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      }
       setSent(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "That form did not send.");
@@ -357,7 +373,7 @@ export function PlayerDetailsForm({
         <p className="mt-3 text-sm leading-relaxed text-muted">
           {user
             ? "Saved to your account, so you will not have to fill this in again. We will come back with a clear next step."
-            : `Your email app should open a message to ${site.email}. Sign in with Google next time if you want us to remember the details.`}
+            : `Sent to ${site.email}. We will come back with a clear next step.`}
         </p>
       </div>
     );

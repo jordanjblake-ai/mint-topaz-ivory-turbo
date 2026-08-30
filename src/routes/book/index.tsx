@@ -17,7 +17,7 @@ import {
   type BookWeekId,
 } from "@/data/book";
 import { allowAttempt, isEmail } from "@/lib/guard";
-import { createCampCheckout } from "@/lib/checkout";
+import { createCampCheckout, confirmCampDeposit } from "@/lib/checkout";
 import { useOps } from "@/lib/ops-store";
 
 const StripeEmbedded = lazy(() => import("@/components/site/stripe-embedded"));
@@ -133,8 +133,21 @@ function BookPage() {
     }
   }
 
-  function finishPreview() {
+  async function finishPreview() {
     recordHold();
+    try {
+      await confirmCampDeposit({
+        data: {
+          name: name.trim(),
+          email: email.trim(),
+          packageId,
+          weeks,
+          partySize,
+        },
+      });
+    } catch {
+      /* thanks page still shows */
+    }
     navigate({ to: "/book/thanks" });
   }
 

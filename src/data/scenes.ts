@@ -292,7 +292,8 @@ export const scenes: Scene[] = [
   },
   {
     id: "dawn",
-    art: "/art/10-2027.jpg",
+    art: "/art/10-dawn.jpg",
+    video: "/art/10-dawn.mp4",
     date: "2027",
     mark: "wordmark",
     sound: "dawn",
