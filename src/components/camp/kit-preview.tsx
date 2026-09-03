@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
-import { countryOf, flagUrl, type KitChoice } from "@/data/kit";
+import { countryOf, flagUrl, SHORTS_NONE, isKitSize, type KitChoice } from "@/data/kit";
 import { webpHref } from "@/data/image-opt";
 
 export function KitPreview({ kit, name }: { kit: KitChoice; name: string }) {
   const country = countryOf(kit.country);
   const print = kit.printName || "NAME";
+  const showShorts = isKitSize(kit.shorts);
   return (
     <div>
       <div className="grid gap-6 sm:grid-cols-2">
@@ -13,7 +13,8 @@ export function KitPreview({ kit, name }: { kit: KitChoice; name: string }) {
           vest={webpHref("/images/kit-vest-front.jpg", 480)}
           print={print}
           flag={country ? flagUrl(kit.country, 80) : null}
-          size={`Vest ${kit.top} · Shorts ${kit.shorts}`}
+          size={`Vest ${kit.top} · Shorts ${showShorts ? kit.shorts : SHORTS_NONE}`}
+          showShorts={showShorts}
         />
         <KitFace
           label="Back"
@@ -22,6 +23,7 @@ export function KitPreview({ kit, name }: { kit: KitChoice; name: string }) {
           flag={null}
           back
           size={`${name.split(" ")[0]} · name on the back`}
+          showShorts={showShorts}
         />
       </div>
       <p className="mt-5 text-center text-sm leading-relaxed text-muted">
@@ -39,6 +41,7 @@ function KitFace({
   flag,
   back,
   size,
+  showShorts,
 }: {
   label: string;
   vest: string;
@@ -46,6 +49,7 @@ function KitFace({
   flag: string | null;
   back?: boolean;
   size: string;
+  showShorts: boolean;
 }) {
   return (
     <div className="rounded-md bg-bg p-4">
@@ -81,7 +85,11 @@ function KitFace({
           alt=""
           loading="lazy"
           decoding="async"
-          className="relative z-10 mx-auto -mt-8 block h-28 w-28 object-contain"
+          className={
+            showShorts
+              ? "relative z-10 mx-auto -mt-8 block h-28 w-28 object-contain"
+              : "relative z-10 mx-auto -mt-8 block h-28 w-28 object-contain opacity-25"
+          }
         />
       </div>
       <p className="mt-3 text-center text-xs uppercase tracking-[0.16em] text-muted">{size}</p>

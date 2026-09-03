@@ -1,16 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import type { Experience } from "@/data/site";
+import { assertSportImage, sportImageAlt } from "@/data/sport-images";
 import { Button } from "@/components/ui/button";
 import { Photo } from "@/components/site/photo";
 import { StatusBadge } from "@/components/site/status-badge";
 
 export function ExperienceCard({ experience }: { experience: Experience }) {
+  assertSportImage(experience.image, experience.sport);
+  const alt = sportImageAlt(experience.image, experience.title);
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-lg bg-surface shadow-border transition-shadow duration-150 hover:shadow-border-hover">
       <CardLink experience={experience} className="relative block aspect-4/3 overflow-hidden">
         <Photo
           src={experience.image}
-          alt={experience.title}
+          alt={alt}
           className="size-full transition-transform duration-500 ease-out group-hover:scale-105"
           sizes="(min-width: 768px) 50vw, 100vw"
         />

@@ -1,4 +1,5 @@
 import { IcalButton } from "@/components/camp/ical-button";
+import { TournamentRsvpButtons } from "@/components/camp/tournament-rsvp";
 import { KIND_LABEL, type CampEvent } from "@/data/camp";
 import { googleUrl, isLunchBreak } from "@/lib/camp-ics";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,8 @@ export function EventCard({
   highlight?: boolean;
   coachView?: boolean;
 }) {
+  const showRsvp = event.kind === "tournament" && !coachView;
+
   return (
     <article className={cn("rounded-md p-5 shadow-border", highlight ? "bg-surface" : "bg-surface/80")}>
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -34,16 +37,19 @@ export function EventCard({
         </p>
       ) : null}
       {isLunchBreak(event) ? null : (
-        <div className="mt-4 flex flex-wrap gap-2">
-          <IcalButton event={event} coachView={coachView} />
-          <a
-            href={googleUrl(event, coachView)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-11 items-center rounded-sm px-4 text-xs font-semibold uppercase tracking-wide text-muted hover:text-fg"
-          >
-            Google Calendar
-          </a>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap gap-2">
+            <IcalButton event={event} coachView={coachView} />
+            <a
+              href={googleUrl(event, coachView)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-11 items-center rounded-sm px-4 text-xs font-semibold uppercase tracking-wide text-muted hover:text-fg"
+            >
+              Google Calendar
+            </a>
+          </div>
+          {showRsvp ? <TournamentRsvpButtons eventId={event.id} /> : null}
         </div>
       )}
     </article>

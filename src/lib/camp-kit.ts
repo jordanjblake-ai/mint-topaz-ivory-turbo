@@ -1,26 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { personByEmail, personById } from "@/data/camp";
-import { KIT_COUNTRIES, KIT_SIZES, printNameOf, type KitChoice, type KitSize } from "@/data/kit";
+import { personById } from "@/data/camp";
+import { KIT_COUNTRIES, KIT_SIZES, SHORTS_NONE, isKitSize, printNameOf, type KitChoice, type KitSize } from "@/data/kit";
 
 const Size = z.enum(KIT_SIZES);
+const Shorts = z.enum([SHORTS_NONE, ...KIT_SIZES]);
 const Country = z.enum(KIT_COUNTRIES.map((item) => item.code) as [string, ...string[]]);
 
 const KitInput = z.object({
   fromEmail: z.string().trim().min(3).max(120),
   top: Size,
-  shorts: Size,
+  shorts: Shorts,
   printName: z.string().trim().min(1).max(14),
   country: Country,
 });
 
 async function rosterPerson(fromEmail: string) {
-  const { getSessionUser } = await import("@/lib/auth/verify.server");
-  const session = await getSessionUser();
-  const fromSession = session?.email ? personByEmail(session.email) : null;
-  const person = fromSession ?? personByEmail(fromEmail);
-  if (!person) throw new Error("That email is not on this camp.");
-  return person;
+  const { requireRosterActor } = await import("@/lib/zero-trust.server");
+  return requireRosterActor({ claimedEmail: fromEmail });
 }
 
 function rowToKit(row: {
@@ -33,8 +30,8 @@ function rowToKit(row: {
 }): KitChoice {
   return {
     personId: row.person_id,
-    top: row.top_size as KitSize,
-    shorts: row.shorts_size as KitSize,
+    top: isKitSize(row.top_size) ? row.top_size : "M",
+    shorts: isKitSize(row.shorts_size) ? row.shorts_size : SHORTS_NONE,
     printName: row.print_name,
     country: row.country,
     updatedAt: row.updated_at,
@@ -59,6 +56,8 @@ export const saveCampKit = createServerFn({ method: "POST" })
         country = excluded.country,
         updated_at = now()
     `;
+    const { auditEvent } = await import("@/lib/zero-trust.server");
+    await auditEvent({ action: "camp.kit.save", actor: person, outcome: "allow" });
     return {
       personId: person.id,
       top: data.top,
@@ -70,6 +69,9 @@ export const saveCampKit = createServerFn({ method: "POST" })
   });
 
 export const listCampKits = createServerFn({ method: "GET" }).handler(async () => {
+  const { requireStaffActor, auditEvent } = await import("@/lib/zero-trust.server");
+  const staff = await requireStaffActor();
+  await auditEvent({ action: "camp.kit.list", actor: staff, outcome: "allow" });
   const { getSql } = await import("@/lib/db");
   const sql = await getSql();
   const rows = await sql<{

@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hybrid Vacations//Lanzarote Camp//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Optional excursion
+BEGIN:VEVENT
+UID:ev-20270203T153000Z-optional-excursion@hybridvacations.com
+DTSTAMP:20260822T110903Z
+DTSTART:20270203T153000Z
+DTEND:20270203T180000Z
+SUMMARY:Optional excursion
+LOCATION:Lanzarote
+DESCRIPTION:Volcano or coast if it is on. Mark is the point of contact. Other coaches are off.
+END:VEVENT
+END:VCALENDAR

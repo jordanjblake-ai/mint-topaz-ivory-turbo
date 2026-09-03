@@ -48,6 +48,8 @@ export type BookPackageId = (typeof BOOK_PACKAGES)[number]["id"];
 
 export const DEPOSIT_PENCE = 10_000;
 
+export type BookPayment = "deposit" | "paid_in_full";
+
 export function pounds(pence: number) {
   return `£${(pence / 100).toLocaleString("en-GB")}`;
 }
@@ -67,4 +69,15 @@ export function campTotal(packageId: string, people: number, weeks: string[]) {
   const n = Math.min(8, Math.max(1, people));
   const w = Math.max(1, weeks.length);
   return pack.priceEach * n * w;
+}
+
+export function chargeTotal(
+  packageId: string,
+  people: number,
+  weeks: string[],
+  payment: BookPayment,
+) {
+  return payment === "paid_in_full"
+    ? campTotal(packageId, people, weeks)
+    : depositTotal(people, weeks);
 }

@@ -1,0 +1,1 @@
+import"./rolldown-runtime-hePW80VL.js";import{t as e}from"./react-CwJFpaho.js";import{t}from"./jsx-runtime-NZYk81nU.js";import{dt as n}from"./index-jljuvnaE.js";e();var r=t();function i({className:e,...t}){return(0,r.jsx)(`label`,{className:n(`mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted`,e),...t})}export{i as t};

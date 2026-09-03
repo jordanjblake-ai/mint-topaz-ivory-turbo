@@ -1,5 +1,16 @@
 export const KIT_SIZES = ["XS", "S", "M", "L", "XL", "XXL"] as const;
 export type KitSize = (typeof KIT_SIZES)[number];
+export const SHORTS_NONE = "-" as const;
+export type KitShortsSize = KitSize | typeof SHORTS_NONE;
+export const SHORTS_EXTRA_PENCE = 5000;
+
+export function poundsKit(pence: number) {
+  return `£${(pence / 100).toLocaleString("en-GB")}`;
+}
+
+export function isKitSize(value: string): value is KitSize {
+  return (KIT_SIZES as readonly string[]).includes(value);
+}
 
 export type KitCountry = { code: string; name: string };
 
@@ -36,7 +47,7 @@ export const KIT_COUNTRIES: KitCountry[] = [
 export type KitChoice = {
   personId: string;
   top: KitSize;
-  shorts: KitSize;
+  shorts: KitShortsSize;
   printName: string;
   country: string;
   updatedAt: string;

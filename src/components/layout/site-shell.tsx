@@ -27,11 +27,16 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   }, [pathname, isPrivate, trackView, ready]);
 
   if (isPrivate) {
-    return <div className="min-h-dvh bg-bg text-fg">{children}</div>;
+    return (
+      <div className="min-h-dvh bg-bg text-fg">
+        {children}
+        {pathname.startsWith("/story-time") || pathname === "/history" ? <CookieBanner /> : null}
+      </div>
+    );
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bg text-fg">
+    <div className="flex min-h-dvh flex-col bg-bg text-fg pb-[var(--cookie-banner,0px)]">
       <SiteHeader />
       <div className="flex-1">{children}</div>
       <SiteFooter />

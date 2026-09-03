@@ -15,7 +15,7 @@ const deployRaw =
   "";
 export const DEPLOY_ID = deployRaw.slice(0, 24);
 
-const CDN_PATHS = ["/images/", "/assets/", "/art/", "/logos/", "/calendar/", "/og.jpg", "/x-banner.jpg", "/favicon.svg"];
+const CDN_PATHS = ["/images/", "/assets/", "/art/", "/logos/", "/calendar/", "/og.jpg", "/og-story.jpg", "/x-banner.jpg", "/favicon.svg", "/favicon.ico", "/favicon-16.png", "/favicon-32.png", "/apple-touch-icon.png"];
 
 export function isCdnPath(path: string) {
   return CDN_PATHS.some((prefix) => (prefix.endsWith("/") ? path.startsWith(prefix) : path === prefix));
@@ -65,4 +65,4 @@ export function cdnPreconnectLinks(): {
 }
 
 export const FONT_STYLESHEET =
-  "https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caveat:wght@500;600&family=Great+Vibes&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap";
+  "https://fonts.googleapis.com/css2?family=Allura&family=Anton&family=Bebas+Neue&family=Caveat:wght@500;600&family=Great+Vibes&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Yellowtail&display=swap";

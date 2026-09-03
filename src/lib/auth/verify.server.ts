@@ -1,5 +1,5 @@
 import { getRequest } from "@tanstack/react-start/server";
-import { auth, authConfigured } from "./server";
+import { auth, authConfigured, readSessionToken } from "./server";
 
 /**
  * Server-side session resolution (server-only).
@@ -66,6 +66,20 @@ export async function getSessionUser(
   }
   const session = await auth.api.getSession({ headers });
   if (!session?.user) return null;
+  const presented =
+    bearerToken?.trim() ||
+    headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+    readSessionToken() ||
+    "";
+  if (presented) {
+    const { isTokenBlacklisted } = await import("@/lib/token-blacklist");
+    if (await isTokenBlacklisted(presented)) return null;
+  }
+  const jti = session.session?.id;
+  if (jti) {
+    const { isJtiRevoked } = await import("@/lib/token-revocation-list");
+    if (await isJtiRevoked(jti)) return null;
+  }
   return { id: session.user.id, email: session.user.email ?? null };
 }
 

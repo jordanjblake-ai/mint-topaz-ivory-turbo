@@ -21,8 +21,8 @@ export function WeekBoard({ weekId, groupName }: { weekId: number; groupName?: s
 
   return (
     <div className="[content-visibility:auto] [contain-intrinsic-size:auto_28rem]">
-      <div className="-mx-4 overflow-x-auto px-4 sm:-mx-0 sm:px-0">
-        <div className="flex gap-2">
+      <div className="-mx-4 overflow-x-auto px-4 landscape:mx-0 landscape:overflow-visible landscape:px-0 lg:mx-0 lg:overflow-visible lg:px-0">
+        <div className="flex min-w-max gap-2 landscape:grid landscape:min-w-0 landscape:grid-cols-7 lg:grid lg:min-w-0 lg:grid-cols-7">
           {board.map((day) => {
             const meta = DAYS.find((item) => item.date === day.date);
             const isToday = isCalendarToday(day.date);
@@ -30,7 +30,7 @@ export function WeekBoard({ weekId, groupName }: { weekId: number; groupName?: s
               <div
                 key={day.date}
                 className={cn(
-                  "flex w-40 shrink-0 flex-col gap-2 rounded-md p-2",
+                  "flex w-40 shrink-0 flex-col gap-2 rounded-md p-2 landscape:w-auto landscape:min-w-0 lg:w-auto lg:min-w-0",
                   isToday ? "bg-surface shadow-border-hover" : "bg-bg",
                 )}
               >
@@ -38,7 +38,9 @@ export function WeekBoard({ weekId, groupName }: { weekId: number; groupName?: s
                   <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-accent">
                     {meta?.dow}
                   </p>
-                  <p className="font-display text-2xl leading-none text-fg">{meta?.label.replace(/^\w+ /, "")}</p>
+                  <p className="font-display text-2xl leading-none text-fg landscape:text-xl lg:text-2xl">
+                    {meta?.label.replace(/^\w+ /, "")}
+                  </p>
                   <p className="mt-1 text-[0.65rem] uppercase tracking-wide text-muted">{meta?.tag}</p>
                 </div>
                 {day.slots.map((slot) => (
@@ -53,7 +55,9 @@ export function WeekBoard({ weekId, groupName }: { weekId: number; groupName?: s
                         {slot.start} – {slot.end}
                       </p>
                     )}
-                    <p className="mt-1 font-display text-xl leading-tight">{slotTitle(slot, groupName)}</p>
+                    <p className="mt-1 font-display text-xl leading-tight landscape:text-lg lg:text-xl">
+                      {slotTitle(slot, groupName)}
+                    </p>
                     {slot.note ? <p className="mt-1 text-[0.7rem] leading-snug opacity-80">{slot.note}</p> : null}
                   </div>
                 ))}

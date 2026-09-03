@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-NZYk81nU.js";import{it as t,rt as n}from"./index-jljuvnaE.js";import{t as r}from"./legal-doc-zHUScZGb.js";var i=e();function a(){return(0,i.jsx)(r,{kicker:`Legal`,title:`Cookie Policy`,intro:`How ${n.name} uses cookies on this site. Essential cookies run the site. Analytics and marketing only if you say yes.`,sections:t})}export{a as component};

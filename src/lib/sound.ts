@@ -69,17 +69,18 @@ export class HybridSound {
     this.notify();
   }
 
-  async start() {
-    this.unlock();
-    if (this.ctx?.state === "suspended") {
-      try {
-        await this.ctx.resume();
-        this.kick();
-        this.afterRunning();
-        this.notify();
-      } catch {
-        /* autoplay */
-      }
+  async tryStart(): Promise<boolean> {
+    try {
+      this.unlock();
+      const ctx = this.ctx;
+      if (!ctx) return false;
+      if (ctx.state === "suspended") await ctx.resume();
+      this.kick();
+      this.afterRunning();
+      this.notify();
+      return ctx.state === "running";
+    } catch {
+      return false;
     }
   }
 

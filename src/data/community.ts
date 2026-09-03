@@ -31,6 +31,19 @@ export function muralRowCount(imageCount = communityImages.length) {
   return Math.max(1, Math.min(COMMUNITY_MAX_ROWS, Math.floor(imageCount / COMMUNITY_COLS)));
 }
 
+export function muralStem(src: string) {
+  return src.replace(/^\/images\//, "").replace(/\.[a-z0-9]+$/i, "").replaceAll("/", "-");
+}
+
+export function muralSrc(src: string) {
+  return `/images/opt/${muralStem(src)}-480.webp`;
+}
+
+export function muralSrcSet(src: string) {
+  const stem = muralStem(src);
+  return `/images/opt/${stem}-480.webp 480w, /images/opt/${stem}-800.webp 800w`;
+}
+
 export function pickCommunitySlots() {
   const pool = [...communityImages];
   for (let i = pool.length - 1; i > 0; i -= 1) {

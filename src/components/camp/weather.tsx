@@ -1,4 +1,4 @@
-import { CAMP_WEEKS, weatherForWeeks, weekIdOnDate, weeksPhrase } from "@/data/camp";
+import { CAMP_WEEKS, weatherDatesForWeek, weatherForWeeks, weeksPhrase } from "@/data/camp";
 
 export function WeatherOutlook({ weeks }: { weeks: number[] }) {
   const days = weatherForWeeks(weeks);
@@ -16,29 +16,28 @@ export function WeatherOutlook({ weeks }: { weeks: number[] }) {
       </p>
       <div className="mt-6 space-y-8">
         {present.map((week) => {
-          const slice = days.filter((day) => weekIdOnDate(day.date, weeks) === week.id);
+          const allow = new Set(weatherDatesForWeek(week.id));
+          const slice = days.filter((day) => allow.has(day.date));
           if (slice.length === 0) return null;
           return (
             <div key={week.id}>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
                 {week.label} · {week.range}
               </p>
-              <div className="-mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-                <div className="flex gap-2">
-                  {slice.map((day) => (
-                    <div key={day.date} className="w-28 shrink-0 rounded-md bg-surface p-4 shadow-border">
-                      <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-accent">
-                        {day.date.slice(8, 10)} {day.date.startsWith("2027-01") ? "Jan" : "Feb"}
-                      </p>
-                      <p className="mt-3 font-display text-4xl leading-none text-fg">{day.high}°</p>
-                      <p className="mt-1 text-sm text-muted">{day.low}° night</p>
-                      <p className="mt-3 text-xs text-fg">{day.sky}</p>
-                      <p className="mt-1 text-xs text-muted">
-                        Wind {day.wind} km/h · UV {day.uv}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+              <div className="mt-3 grid grid-cols-4 gap-2 landscape:grid-cols-8 lg:grid-cols-8">
+                {slice.map((day) => (
+                  <div key={day.date} className="min-w-0 rounded-md bg-surface p-2.5 shadow-border sm:p-3">
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-accent">
+                      {day.date.slice(8, 10)} {day.date.startsWith("2027-01") ? "Jan" : "Feb"}
+                    </p>
+                    <p className="mt-2 font-display text-2xl leading-none text-fg sm:text-3xl lg:text-4xl">{day.high}°</p>
+                    <p className="mt-1 text-xs text-muted sm:text-sm">{day.low}° night</p>
+                    <p className="mt-2 text-[0.7rem] text-fg sm:text-xs">{day.sky}</p>
+                    <p className="mt-1 text-[0.65rem] text-muted sm:text-xs">
+                      Wind {day.wind} · UV {day.uv}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           );

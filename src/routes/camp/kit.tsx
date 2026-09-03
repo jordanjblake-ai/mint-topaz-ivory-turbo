@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { KitPreview } from "@/components/camp/kit-preview";
+import { SizeGuideButton } from "@/components/site/size-guide";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,11 +9,16 @@ import { GROUPS, PEOPLE, currentWeekId, groupOf, personNow } from "@/data/camp";
 import {
   KIT_COUNTRIES,
   KIT_SIZES,
+  SHORTS_NONE,
+  SHORTS_EXTRA_PENCE,
   countryOf,
   defaultPrintName,
   flagUrl,
+  isKitSize,
+  poundsKit,
   printNameOf,
   type KitChoice,
+  type KitShortsSize,
   type KitSize,
 } from "@/data/kit";
 import { useCamp } from "@/lib/camp-store";
@@ -30,7 +36,8 @@ function KitPage() {
   const weekGroups = useCamp((s) => s.weekGroups);
   const existing = me ? kits[me.id] : undefined;
   const [top, setTop] = useState<KitSize>(existing?.top ?? "M");
-  const [shorts, setShorts] = useState<KitSize>(existing?.shorts ?? "M");
+  const [shorts, setShorts] = useState<KitShortsSize>(existing?.shorts ?? SHORTS_NONE);
+  const [wantShorts, setWantShorts] = useState(isKitSize(existing?.shorts ?? SHORTS_NONE));
   const [printName, setPrintName] = useState(existing?.printName ?? (me ? defaultPrintName(me.name) : ""));
   const [country, setCountry] = useState(existing?.country ?? "gb");
   const [query, setQuery] = useState("");
@@ -41,7 +48,7 @@ function KitPage() {
   const preview: KitChoice = {
     personId: me?.id ?? "you",
     top,
-    shorts,
+    shorts: wantShorts && isKitSize(shorts) ? shorts : SHORTS_NONE,
     printName: printNameOf(printName) || "NAME",
     country,
     updatedAt: existing?.updatedAt ?? "",
@@ -73,8 +80,9 @@ function KitPage() {
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Camp kit</p>
       <h1 className="mt-2 font-display text-5xl text-fg sm:text-6xl">Your vest and shorts</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-        Sizes, the name on the back, and a flag on the chest. The 2027 design is not confirmed
-        yet — this is only to show the cut and the kind of print.
+        Sizes, the name on the back, and a flag on the chest. The vest is in the camp. Playing shorts
+        are extra: {poundsKit(SHORTS_EXTRA_PENCE)}. You cannot pick a shorts size until you confirm
+        that extra.
       </p>
 
       <div className="mt-8 rounded-md bg-surface p-5 shadow-border sm:p-6">
@@ -89,7 +97,10 @@ function KitPage() {
           setError("");
           setSaved(false);
           try {
-            await saveKit({ top, shorts, printName, country });
+            if (wantShorts && !isKitSize(shorts)) {
+              throw new Error("Pick a shorts size, or leave shorts as — if you do not want the extra.");
+            }
+            await saveKit({ top, shorts: wantShorts ? shorts : SHORTS_NONE, printName, country });
             setSaved(true);
           } catch (err) {
             setError(err instanceof Error ? err.message : "That kit did not save.");
@@ -99,7 +110,10 @@ function KitPage() {
         }}
       >
         <fieldset>
-          <legend className="text-sm font-medium text-fg">Vest</legend>
+          <legend className="flex w-full flex-wrap items-center justify-between gap-x-4 text-sm font-medium text-fg">
+            <span>Vest</span>
+            <SizeGuideButton className="min-h-0 py-1" />
+          </legend>
           <div className="mt-3 flex flex-wrap gap-2">
             {KIT_SIZES.map((size) => (
               <SizeChip key={size} label={size} active={top === size} onClick={() => setTop(size)} />
@@ -107,12 +121,50 @@ function KitPage() {
           </div>
         </fieldset>
         <fieldset>
-          <legend className="text-sm font-medium text-fg">Shorts</legend>
+          <legend className="flex w-full flex-wrap items-center justify-between gap-x-4 text-sm font-medium text-fg">
+            <span>Shorts</span>
+            <SizeGuideButton className="min-h-0 py-1" />
+          </legend>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            Playing shorts are not in the camp kit. {poundsKit(SHORTS_EXTRA_PENCE)} extra if you want
+            a pair with the vest.
+          </p>
+          <label className="mt-4 flex min-h-11 cursor-pointer items-start gap-3 text-sm text-fg">
+            <input
+              type="checkbox"
+              className="mt-1 size-4 accent-current"
+              checked={wantShorts}
+              onChange={(event) => {
+                const next = event.target.checked;
+                setWantShorts(next);
+                setShorts(next ? (isKitSize(shorts) ? shorts : SHORTS_NONE) : SHORTS_NONE);
+              }}
+            />
+            <span>I want playing shorts and will pay the extra {poundsKit(SHORTS_EXTRA_PENCE)}.</span>
+          </label>
           <div className="mt-3 flex flex-wrap gap-2">
+            <SizeChip
+              label={SHORTS_NONE}
+              active={!wantShorts || shorts === SHORTS_NONE}
+              disabled={wantShorts}
+              onClick={() => {
+                setWantShorts(false);
+                setShorts(SHORTS_NONE);
+              }}
+            />
             {KIT_SIZES.map((size) => (
-              <SizeChip key={size} label={size} active={shorts === size} onClick={() => setShorts(size)} />
+              <SizeChip
+                key={size}
+                label={size}
+                active={wantShorts && shorts === size}
+                disabled={!wantShorts}
+                onClick={() => setShorts(size)}
+              />
             ))}
           </div>
+          {wantShorts && shorts === SHORTS_NONE ? (
+            <p className="mt-2 text-xs text-muted">Pick a size now you have confirmed the extra.</p>
+          ) : null}
         </fieldset>
         <div>
           <Label htmlFor="print-name">Name on the back</Label>
@@ -193,14 +245,26 @@ function KitPage() {
   );
 }
 
-function SizeChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function SizeChip({
+  label,
+  active,
+  onClick,
+  disabled,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         "inline-flex h-11 min-w-11 items-center justify-center rounded-sm px-3 text-sm font-semibold",
         active ? "bg-accent text-accent-fg" : "bg-surface text-muted shadow-border hover:text-fg",
+        disabled && "opacity-40",
       )}
     >
       {label}

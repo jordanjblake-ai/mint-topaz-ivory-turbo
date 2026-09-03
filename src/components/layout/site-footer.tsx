@@ -57,7 +57,7 @@ export function SiteFooter() {
             ))}
             {extra.map((item) => (
               <li key={item.href}>
-                <Link to={item.href} className="inline-flex min-h-11 items-center text-sm text-fg hover:text-accent">
+                <Link to={item.href as "/"} className="inline-flex min-h-11 items-center text-sm text-fg hover:text-accent">
                   {item.label}
                 </Link>
               </li>
@@ -107,6 +107,16 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link to="/security" className="inline-flex min-h-11 items-center text-sm text-fg hover:text-accent">
+                Security
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy/request" className="inline-flex min-h-11 items-center text-sm text-fg hover:text-accent">
+                Your data rights
+              </Link>
+            </li>
+            <li>
               <CookieSettingsButton className="inline-flex min-h-11 items-center text-sm text-fg hover:text-accent" />
             </li>
           </ul>
@@ -114,14 +124,6 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-border/80 py-4 text-center text-xs text-muted">
         © {new Date().getFullYear()} {company.name}. {site.positioning}.
-        <span className="mx-2 text-border">·</span>
-        <Link to="/ops" className="hover:text-fg">
-          Staff
-        </Link>
-        <span className="mx-2 text-border">·</span>
-        <Link to="/coaches-corner" className="hover:text-fg">
-          Coaches Corner
-        </Link>
       </div>
     </footer>
   );

@@ -12,8 +12,10 @@ const NEVER_PREFIXES = [
   "/ops",
   "/camp",
   "/portal",
+  "/account",
   "/coaches-corner",
   "/book",
+  "/privacy/request",
   "/auth",
   "/__grok",
   "/__app-env",
@@ -47,20 +49,24 @@ export function cacheClassFor(pathname: string, method = "GET", status = 200): C
 
   if (HASHED_ASSET.test(path) || FONT_EXT.test(path)) return "asset";
   if (path.startsWith("/images/opt/") || /^\/images\/logo-\d+\.webp$/.test(path)) return "derived";
-  if (path.startsWith("/images/") || path === "/og.jpg" || path === "/x-banner.jpg" || path === "/favicon.svg" || IMAGE_EXT.test(path)) {
+  if (path.startsWith("/images/") || path === "/og.jpg" || path === "/x-banner.jpg" || path === "/favicon.svg" || path === "/favicon.ico" || path.startsWith("/favicon-") || path === "/apple-touch-icon.png" || IMAGE_EXT.test(path)) {
     return "image";
   }
   if (path.startsWith("/calendar/") || path.endsWith(".ics")) return "ics";
-  if (path === "/sitemap.xml" || path === "/robots.txt") return "meta";
+  if (path === "/sitemap.xml" || path === "/robots.txt" || /^\/[0-9a-f]{32}\.txt$/.test(path)) return "meta";
 
   if (status >= 400) return "error";
   return "html";
 }
 
 export const SECURITY_HEADERS = {
+  "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+  "content-security-policy":
+    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self' https://grok.com https://*.grok.com https://*.grok-sandbox.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://grok.com https://*.grok.com; connect-src 'self' https: wss: ws:; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://grok.com https://*.grok.com; form-action 'self' https://checkout.stripe.com https://js.stripe.com; ",
+  "cross-origin-opener-policy": "same-origin-allow-popups",
   "x-content-type-options": "nosniff",
   "referrer-policy": "strict-origin-when-cross-origin",
-  "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+  "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(self \"https://js.stripe.com\" \"https://checkout.stripe.com\"), usb=()",
   "x-dns-prefetch-control": "off",
   "x-permitted-cross-domain-policies": "none",
 } as const;
@@ -260,6 +266,11 @@ export const STATIC_ROUTE_RULES = {
   "/og.jpg": cacheHeadersFor("image"),
   "/x-banner.jpg": cacheHeadersFor("image"),
   "/favicon.svg": cacheHeadersFor("image"),
+  "/favicon.ico": cacheHeadersFor("image"),
+  "/favicon-16.png": cacheHeadersFor("image"),
+  "/favicon-32.png": cacheHeadersFor("image"),
+  "/apple-touch-icon.png": cacheHeadersFor("image"),
   "/sitemap.xml": cacheHeadersFor("meta"),
   "/robots.txt": cacheHeadersFor("meta"),
+  "/8f2c4e91b6a04d7f9c1e5b83a0d2467e.txt": cacheHeadersFor("meta"),
 } as const;

@@ -119,6 +119,7 @@ export const PEOPLE: CampPerson[] = [
   { id: "isabel", name: "Isabel Cruz", email: "isabel.cruz@gmail.com", role: "player", groupId: "b", weeks: [1], level: "Intermediate", solo: true, stay: "camp-stay" },
   { id: "nate", name: "Nate Young", email: "nate.young@gmail.com", role: "player", groupId: "b", weeks: [1], level: "Intermediate", solo: false, stay: "camp" },
   { id: "gwen", name: "Gwen Park", email: "gwen.park@icloud.com", role: "player", groupId: "b", weeks: [1], level: "Intermediate", solo: true, stay: "camp" },
+  { id: "jordan", name: "Jordan Blake", email: "jordanjblake@gmail.com", role: "player", groupId: "b", weeks: [1], level: "Intermediate", solo: true, stay: "camp" },
   { id: "tom", name: "Tom Ridley", email: "tom.ridley@icloud.com", role: "player", groupId: "b", weeks: [2, 3], level: "UKBT intermediate", solo: true, stay: "camp" },
   { id: "megan", name: "Megan Shaw", email: "meg.shaw@gmail.com", role: "player", groupId: "b", weeks: [2], level: "Intermediate", solo: true, stay: "camp" },
   { id: "luke", name: "Luke Martin", email: "luke.m.volleyball@gmail.com", role: "player", groupId: "b", weeks: [2, 3], level: "Intermediate", solo: false, stay: "camp-stay" },
@@ -466,7 +467,7 @@ function eventsForWeek(weekId: number): CampEvent[] {
       kind: "tournament",
       groups: "all",
       coaches: ["issa", "katya", "mark"].filter((id) => staff.includes(id)),
-      detail: "Mixed, social, still a game.",
+      detail: "Random pairs. Fun and connection. Mixed or single gender, game to game.",
       staffNote: "Issa runs the scramble. Katya on support.",
       duty: "Scramble tournament",
       week: weekId,
@@ -806,6 +807,20 @@ export function datesForWeeks(weeks: number[]) {
     }
   }
   return [...allow].sort();
+}
+
+export function weatherDatesForWeek(weekId: number) {
+  const week = CAMP_WEEKS.find((item) => item.id === weekId);
+  if (!week) return [] as string[];
+  const start = week.sunday;
+  const end = addDays(week.sunday, 7);
+  const dates: string[] = [];
+  let cursor = start;
+  while (cursor <= end) {
+    dates.push(cursor);
+    cursor = addDays(cursor, 1);
+  }
+  return dates;
 }
 
 export function weatherForWeeks(weeks: number[]) {

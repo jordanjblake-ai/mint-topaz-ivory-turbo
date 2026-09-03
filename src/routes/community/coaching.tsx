@@ -5,18 +5,10 @@ import { PageHero } from "@/components/site/page-hero";
 import { Photo } from "@/components/site/photo";
 import { Button } from "@/components/ui/button";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
+import { headFor } from "@/data/seo";
 
 export const Route = createFileRoute("/community/coaching")({
-  head: () => ({
-    meta: [
-      { title: "Private Coaching · Hybrid Vacations" },
-      {
-        name: "description",
-        content:
-          "Beach Volleyball private coaching with Hybrid. 1-to-1 through to a group of 8. Technical work, match prep, or a reset.",
-      },
-    ],
-  }),
+  head: () => headFor("/community/coaching"),
   component: PrivateCoachingPage,
 });
 
@@ -133,7 +125,7 @@ function PrivateCoachingPage() {
               availability and a clear next step.
             </p>
           </div>
-          <EnquireForm defaultInterest="coaching" />
+          <EnquireForm defaultInterest="coaching" variant="coaching" />
         </Container>
       </Section>
     </main>

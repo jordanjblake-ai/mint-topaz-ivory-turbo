@@ -4,12 +4,9 @@ import { portalCamps } from "@/data/portals";
 import { personByEmail } from "@/data/camp";
 import { useCamp } from "@/lib/camp-store";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Photo } from "@/components/site/photo";
-import { GoogleSignInButton } from "@/components/site/google-sign-in";
+import { NoCampYet, PortalSignIn } from "@/components/site/portal-sign-in";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
-import { allowAttempt, isEmail } from "@/lib/guard";
 import { authEnabled, signOut } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 
@@ -23,21 +20,15 @@ export const Route = createFileRoute("/portal")({
   component: PlayerPortalPage,
 });
 
-const PLAYER_DEMOS = [
-  { email: "tom.ridley@icloud.com", label: "Tom Ridley · Lanzarote W2–3" },
-  { email: "clara.meier@bluewin.ch", label: "Clara Meier · Lanzarote, all three weeks" },
-];
-
 function PlayerPortalPage() {
-  const navigate = useNavigate();
   const ready = useCamp((s) => s.ready);
   const me = useCamp((s) => s.me);
   const hydrate = useCamp((s) => s.hydrate);
   const login = useCamp((s) => s.login);
   const logout = useCamp((s) => s.logout);
   const { user, isPending } = useCurrentUserState();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const [noCamp, setNoCamp] = useState(false);
 
   useEffect(() => {
     hydrate();
@@ -46,30 +37,11 @@ function PlayerPortalPage() {
   useEffect(() => {
     if (isPending || !user?.primaryEmail) return;
     const person = personByEmail(user.primaryEmail);
-    if (person?.role === "player") login(person.email);
-  }, [user, isPending, login]);
-
-  function enter(address: string) {
-    if (!allowAttempt("portal", 8, 60_000)) {
-      setError("Too many tries. Wait a minute and try again.");
-      return;
-    }
-    if (!isEmail(address)) {
-      setError("That email does not look right.");
-      return;
-    }
-    const person = personByEmail(address);
-    if (!person) {
-      setError("We do not have that email on a booking. Check the address you used, or contact us if you have not booked yet.");
-      return;
-    }
-    if (person.role !== "player") {
-      setError("That email is staff. Use Coaches Corner.");
-      return;
-    }
-    login(person.email);
-    navigate({ to: "/camp" });
-  }
+    if (person?.role === "player") {
+      login(person.email);
+      navigate({ to: "/camp" });
+    } else if (!person) setNoCamp(true);
+  }, [user?.id, user?.primaryEmail, isPending, login, navigate]);
 
   const googlePerson = user?.primaryEmail ? personByEmail(user.primaryEmail) : null;
   const googleStaff = Boolean(googlePerson && googlePerson.role !== "player");
@@ -92,9 +64,9 @@ function PlayerPortalPage() {
             Have you booked with us?
           </Display>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-fg/90">
-            Sign in with Google using the email you booked with. Your schedule, group, prepare
-            notes, and messages sit behind this door. Lanzarote is live. Other camps will appear
-            here when they open.
+            Sign in with Google or Microsoft using the email you booked with. Your schedule, group,
+            prepare notes, and messages sit behind this door. Lanzarote is live. Other camps will
+            appear here when they open.
           </p>
         </Container>
       </section>
@@ -138,20 +110,21 @@ function PlayerPortalPage() {
                 <div>
                   <h2 className="font-display text-4xl text-fg">Get in</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted">
-                    Use the Google account that matches the email on your booking.
+                    Use the Google or Microsoft account that matches the email on your booking.
                   </p>
                 </div>
-                <GoogleSignInButton callbackURL="/portal" label="Sign in with Google" />
-                {user && !googlePerson ? (
-                  <p className="text-sm text-accent">
-                    That Google account is not on a booking. Use the email from your confirmation,
-                    or{" "}
-                    <Link to="/contact" className="text-fg underline-offset-2 hover:underline">
-                      contact us
-                    </Link>
-                    .
-                  </p>
-                ) : null}
+                <PortalSignIn
+                  callbackURL="/portal"
+                  onVerified={(address, hasBooking) => {
+                    if (!hasBooking) {
+                      setNoCamp(true);
+                      return;
+                    }
+                    setNoCamp(false);
+                    login(address);
+                  }}
+                />
+                {noCamp || (user && !googlePerson) ? <NoCampYet /> : null}
                 {googleStaff ? (
                   <p className="text-sm text-accent">
                     That account is staff.{" "}
@@ -161,69 +134,6 @@ function PlayerPortalPage() {
                     .
                   </p>
                 ) : null}
-                <div className="border-t border-border pt-6">
-                  <form
-                    className="grid gap-4"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      setError("");
-                      if (!email.trim()) {
-                        setError("Enter the email you booked with.");
-                        return;
-                      }
-                      enter(email);
-                    }}
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                      Or use your booking email
-                    </p>
-                    <div>
-                      <Label htmlFor="portal-email">Booking email</Label>
-                      <Input
-                        id="portal-email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          setError("");
-                        }}
-                        autoComplete="email"
-                        autoCapitalize="none"
-                        spellCheck={false}
-                        required
-                        aria-describedby={error ? "portal-error" : "portal-hint"}
-                      />
-                      <p id="portal-hint" className="mt-2 text-xs text-muted">
-                        If you booked with an address that is not Google.
-                      </p>
-                    </div>
-                    {error ? (
-                      <p id="portal-error" role="alert" className="text-sm text-accent">
-                        {error}{" "}
-                        {error.includes("staff") ? (
-                          <Link to="/coaches-corner" className="text-fg underline-offset-2 hover:underline">
-                            Open Coaches Corner
-                          </Link>
-                        ) : null}
-                        {error.includes("contact us") ? (
-                          <Link to="/contact" className="text-fg underline-offset-2 hover:underline">
-                            Contact us
-                          </Link>
-                        ) : null}
-                      </p>
-                    ) : null}
-                    <Button type="submit" variant="secondary" size="lg">
-                      Open with email
-                    </Button>
-                  </form>
-                </div>
-                <p className="text-sm text-muted">
-                  Not booked yet?{" "}
-                  <Link to="/book" className="text-fg hover:text-accent">
-                    Hold a place
-                  </Link>
-                  .
-                </p>
               </div>
             )}
           </div>
@@ -248,24 +158,6 @@ function PlayerPortalPage() {
                 </li>
               ))}
             </ul>
-            {ready && !signedInPlayer ? (
-              <div className="mt-8">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted">Preview</p>
-                <div className="mt-3 grid gap-2">
-                  {PLAYER_DEMOS.map((item) => (
-                    <button
-                      key={item.email}
-                      type="button"
-                      onClick={() => enter(item.email)}
-                      className="rounded-sm bg-surface px-3 py-3 text-left text-sm shadow-border hover:shadow-border-hover"
-                    >
-                      <span className="block text-fg">{item.label}</span>
-                      <span className="text-xs text-muted">{item.email}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
           </div>
         </Container>
       </Section>

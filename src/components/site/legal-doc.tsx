@@ -1,16 +1,19 @@
 import { company, type LegalSection } from "@/data/legal";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
+import type { ReactNode } from "react";
 
 export function LegalDoc({
   kicker,
   title,
   intro,
   sections,
+  children,
 }: {
   kicker: string;
   title: string;
   intro: string;
   sections: LegalSection[];
+  children?: ReactNode;
 }) {
   return (
     <main>
@@ -36,6 +39,7 @@ export function LegalDoc({
               </section>
             ))}
           </div>
+          {children}
         </Container>
       </Section>
     </main>

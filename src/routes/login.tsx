@@ -5,23 +5,26 @@ import { Container, Display, Kicker } from "@/components/site/section";
 
 const allowedNext = new Set([
   "/portal",
+  "/account",
   "/coaches-corner",
   "/camp",
+  "/camp/map",
   "/",
-  "/community/performance",
+  "/community/club/performance",
   "/community/coaching",
-  "/community/team",
+  "/community/club/team",
   "/story-time",
   "/contact",
   "/vacations/lanzarote",
   "/vacations/tennis",
   "/vacations/padel",
+  "/vacations/golf",
   "/travel",
 ]);
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    next: typeof search.next === "string" && allowedNext.has(search.next) ? search.next : "/portal",
+    next: typeof search.next === "string" && allowedNext.has(search.next) ? search.next : "/account",
   }),
   head: () => ({
     meta: [
@@ -43,12 +46,12 @@ function LoginPage() {
           Sign in
         </Display>
         <p className="mt-4 text-sm leading-relaxed text-muted">
-          Player Portal and Coaches Corner use the Google account that matches the email we have
-          on your booking.
+          Player Portal, Coaches Corner, and your Member Dashboard use the Google account that
+          matches the email we have on your booking.
         </p>
         <div className="mt-8 grid gap-3">
           {authEnabled ? (
-            GROK_PROVIDERS.filter((item) => item.idp === "google").map((item) => (
+            GROK_PROVIDERS.filter((item) => item.idp === "google" || item.idp === "microsoft").map((item) => (
               <Button
                 key={item.providerId}
                 type="button"
@@ -57,7 +60,7 @@ function LoginPage() {
                   void signIn(item.providerId, { callbackURL: next, errorCallbackURL: "/login" })
                 }
               >
-                Continue with {item.label}
+                Sign in with {item.label}
               </Button>
             ))
           ) : (

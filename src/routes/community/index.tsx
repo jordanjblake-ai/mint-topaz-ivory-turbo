@@ -1,17 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CommunityIntro } from "@/components/site/community-intro";
+import { headFor } from "@/data/seo";
 
 export const Route = createFileRoute("/community/")({
-  head: () => ({
-    meta: [
-      { title: "Community · Hybrid Vacations" },
-      {
-        name: "description",
-        content:
-          "The people that make Hybrid. Come for the sport. Stay for the people. Leave with memories.",
-      },
-    ],
-  }),
+  head: () => headFor("/community"),
   component: CommunityPage,
 });
 

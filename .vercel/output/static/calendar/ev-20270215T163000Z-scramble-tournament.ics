@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hybrid Vacations//Lanzarote Camp//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Scramble tournament
+BEGIN:VEVENT
+UID:ev-20270215T163000Z-scramble-tournament@hybridvacations.com
+DTSTAMP:20260822T110903Z
+DTSTART:20270215T163000Z
+DTEND:20270215T180000Z
+SUMMARY:Scramble tournament
+LOCATION:Playa Grande
+DESCRIPTION:Mixed\, social\, still a game. Issa runs it. Katya on support.
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:Scramble tournament starts in 30 minutes
+END:VALARM
+END:VEVENT
+END:VCALENDAR

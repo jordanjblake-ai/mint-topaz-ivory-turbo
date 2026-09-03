@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { allowAttempt, isEmail } from "@/lib/guard";
-import { BOOK_WEEKS, depositTotal, packageById, pounds } from "@/data/book";
+import { BOOK_WEEKS, campTotal, chargeTotal, packageById, pounds, type BookPayment } from "@/data/book";
+
+const Payment = z.enum(["deposit", "paid_in_full"]);
 
 const Input = z.object({
   name: z.string().trim().min(2).max(80),
@@ -9,6 +11,7 @@ const Input = z.object({
   packageId: z.enum(["camp", "stay-2bed-4", "stay-2bed-3", "stay-1bed-2", "stay-1bed-1"]),
   weeks: z.array(z.enum(["week-1", "week-2", "week-3"])).min(1).max(3),
   partySize: z.number().int().min(1).max(8),
+  payment: Payment,
   origin: z.string().min(8).max(200),
 });
 
@@ -19,6 +22,8 @@ const PaidInput = z.object({
   packageId: z.enum(["camp", "stay-2bed-4", "stay-2bed-3", "stay-1bed-2", "stay-1bed-1"]).optional(),
   weeks: z.array(z.enum(["week-1", "week-2", "week-3"])).max(3).optional(),
   partySize: z.number().int().min(1).max(8).optional(),
+  payment: Payment.optional(),
+  amountCharged: z.number().int().min(0).optional(),
 });
 
 export type CheckoutInput = z.infer<typeof Input>;
@@ -43,18 +48,27 @@ function bookingText(opts: {
   weeks: string[];
   partySize: number;
   amount: number;
+  payment: BookPayment;
 }) {
   const pack = packageById(opts.packageId);
+  const full = opts.payment === "paid_in_full";
+  const paidLine = full
+    ? "Lanzarote paid in full. Nothing further due for this week. Do not send January balance chasers."
+    : "Lanzarote deposit paid.";
+  const startedLine = full
+    ? "Lanzarote booking form completed. Full payment checkout opened."
+    : "Lanzarote booking form completed. Deposit checkout opened.";
   return [
-    opts.stage === "paid" ? "Lanzarote deposit paid." : "Lanzarote booking form completed. Checkout opened.",
+    opts.stage === "paid" ? paidLine : startedLine,
     "",
     `Name: ${opts.name}`,
     `Email: ${opts.email}`,
     `Package: ${pack.name}`,
+    `Payment: ${full ? "paid_in_full" : "deposit"}`,
     `Weeks: ${weeksLabel(opts.weeks)}`,
     `People: ${opts.partySize}`,
-    `Deposit: ${pounds(opts.amount)}`,
-    `Camp total: ${pounds(pack.priceEach * opts.partySize * opts.weeks.length)}`,
+    `Amount charged: ${pounds(opts.amount)}`,
+    full ? "Balance: none." : `Camp total: ${pounds(campTotal(opts.packageId, opts.partySize, opts.weeks))}`,
     "",
     "Reply to this email to reach the guest.",
   ].join("\n");
@@ -74,14 +88,84 @@ async function emailHybrid(subject: string, text: string, replyTo: string) {
   }
 }
 
+export async function fulfillPaidDeposit(opts: {
+  sessionId?: string;
+  name: string;
+  email: string;
+  packageId: string;
+  weeks: string[];
+  partySize: number;
+  payment?: BookPayment;
+  amountCharged?: number;
+}): Promise<"sent" | "skipped"> {
+  const name = opts.name.trim();
+  const email = opts.email.trim();
+  const weeks = opts.weeks.length ? opts.weeks : ["week-1"];
+  const partySize = opts.partySize || 1;
+  const packageId = opts.packageId || "camp";
+  const payment: BookPayment = opts.payment === "paid_in_full" ? "paid_in_full" : "deposit";
+  const amount = opts.amountCharged && opts.amountCharged > 0
+    ? opts.amountCharged
+    : chargeTotal(packageId, partySize, weeks, payment);
+  const key = opts.sessionId
+    ? `booking-paid:${opts.sessionId}`
+    : `booking-paid:${email.toLowerCase()}`;
+  const windowMs = opts.sessionId ? 24 * 60 * 60 * 1000 : 10 * 60 * 1000;
+  if (!allowAttempt(key, 1, windowMs)) return "skipped";
+  if (!name || !isEmail(email)) return "skipped";
+
+  try {
+    const { recordPaidBooking } = await import("@/lib/member-profile");
+    const { getSessionUser } = await import("@/lib/auth/verify.server");
+    const session = await getSessionUser().catch(() => null);
+    const pack = packageById(packageId);
+    await recordPaidBooking({
+      id: opts.sessionId || `lanzarote-${email.toLowerCase()}-${packageId}-${weeks.join("-")}`,
+      userId: session?.id ?? null,
+      email,
+      kind: "camp",
+      product: "lanzarote",
+      packageId,
+      weeks,
+      partySize,
+      payment,
+      amountCharged: amount,
+      title: "Lanzarote Beach Volleyball 2027",
+      detail: `${pack.name} · ${payment === "paid_in_full" ? "paid in full" : "deposit"} · ${pounds(amount)} · ${weeksLabel(weeks)} · ${partySize} ${partySize === 1 ? "person" : "people"}`,
+    });
+  } catch {
+    /* dashboard list can catch up later */
+  }
+  await emailHybrid(
+    payment === "paid_in_full" ? `Hybrid Booking paid in full: ${name}` : `Hybrid Booking deposit paid: ${name}`,
+    bookingText({
+      stage: "paid",
+      name,
+      email,
+      packageId,
+      weeks,
+      partySize,
+      amount,
+      payment,
+    }),
+    email,
+  );
+  return "sent";
+}
+
 export const createCampCheckout = createServerFn({ method: "POST" })
   .validator(Input)
   .handler(async ({ data }) => {
+    const { assertZeroTrustRequest, auditEvent } = await import("@/lib/zero-trust.server");
+    await assertZeroTrustRequest();
+    await auditEvent({ action: "booking.start", outcome: "allow", detail: data.packageId });
     const pack = packageById(data.packageId);
-    const amount = depositTotal(data.partySize, data.weeks);
+    const payment: BookPayment = data.payment === "paid_in_full" ? "paid_in_full" : "deposit";
+    const amount = chargeTotal(data.packageId, data.partySize, data.weeks, payment);
     const label = weeksLabel(data.weeks);
     const summary = {
       amount,
+      payment,
       packageName: pack.name,
       weeksLabel: label,
       partySize: data.partySize,
@@ -97,26 +181,31 @@ export const createCampCheckout = createServerFn({ method: "POST" })
         weeks: data.weeks,
         partySize: data.partySize,
         amount,
+        payment,
       }),
       data.email,
     );
 
-    const secret = process.env.STRIPE_SECRET_KEY;
-    if (!secret) {
+    const { getStripe, stripeConfigured, stripePublishableKey } = await import("@/lib/stripe.server");
+    const stripe = getStripe();
+    if (!stripe || !stripeConfigured()) {
       return { mode: "preview" as const, clientSecret: null, publishableKey: null, ...summary };
     }
 
-    const Stripe = (await import("stripe")).default;
-    const stripe = new Stripe(secret);
     const returnUrl = `${data.origin.replace(/\/$/, "")}/book/thanks?session_id={CHECKOUT_SESSION_ID}`;
+    const full = payment === "paid_in_full";
     const line_items = [
       {
         price_data: {
           currency: "gbp",
           unit_amount: amount,
           product_data: {
-            name: `Lanzarote 2027 deposit · ${pack.name}`,
-            description: `${label} · ${data.partySize} ${data.partySize === 1 ? "person" : "people"}. Holds the place. Balance later.`,
+            name: full
+              ? `Lanzarote 2027 · ${pack.name}`
+              : `Lanzarote 2027 deposit · ${pack.name}`,
+            description: full
+              ? `${label} · ${data.partySize} ${data.partySize === 1 ? "person" : "people"}. Paid in full. Nothing further due for this week.`
+              : `${label} · ${data.partySize} ${data.partySize === 1 ? "person" : "people"}. Holds the place. Camp balance 15 January. Stay balance 1 January if you took an apartment.`,
           },
         },
         quantity: 1,
@@ -128,6 +217,8 @@ export const createCampCheckout = createServerFn({ method: "POST" })
       packageId: data.packageId,
       weeks: data.weeks.join(","),
       partySize: String(data.partySize),
+      payment,
+      amountCharged: String(amount),
     };
 
     const base = {
@@ -135,6 +226,14 @@ export const createCampCheckout = createServerFn({ method: "POST" })
       customer_email: data.email,
       line_items,
       metadata,
+      locale: "en-GB" as const,
+      billing_address_collection: "auto" as const,
+      payment_intent_data: {
+        description: full
+          ? `Hybrid Lanzarote 2027 paid in full · ${data.name}`
+          : `Hybrid Lanzarote 2027 deposit · ${data.name}`,
+        statement_descriptor_suffix: "LANZAROTE",
+      },
       return_url: returnUrl,
     };
 
@@ -146,7 +245,7 @@ export const createCampCheckout = createServerFn({ method: "POST" })
       return {
         mode: "stripe" as const,
         clientSecret: session.client_secret,
-        publishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY ?? process.env.STRIPE_PUBLISHABLE_KEY ?? null,
+        publishableKey: stripePublishableKey() || null,
         ...summary,
       };
     } catch {
@@ -157,7 +256,7 @@ export const createCampCheckout = createServerFn({ method: "POST" })
       return {
         mode: "stripe" as const,
         clientSecret: session.client_secret,
-        publishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY ?? process.env.STRIPE_PUBLISHABLE_KEY ?? null,
+        publishableKey: stripePublishableKey() || null,
         ...summary,
       };
     }
@@ -165,49 +264,50 @@ export const createCampCheckout = createServerFn({ method: "POST" })
 
 export const confirmCampDeposit = createServerFn({ method: "POST" })
   .validator(PaidInput)
-  .handler(async ({ data }): Promise<{ status: "sent" | "logged" | "skipped" }> => {
+  .handler(async ({ data }): Promise<{
+    status: "sent" | "logged" | "skipped";
+    payment: BookPayment;
+    amountCharged: number;
+  }> => {
+    const { assertZeroTrustRequest, auditEvent } = await import("@/lib/zero-trust.server");
+    await assertZeroTrustRequest();
+    await auditEvent({ action: "booking.confirm", outcome: "allow" });
     let name = data.name?.trim() ?? "";
     let email = data.email?.trim() ?? "";
     let packageId = data.packageId ?? "camp";
     let weeks = data.weeks ?? ["week-1"];
     let partySize = data.partySize ?? 1;
+    let payment: BookPayment = data.payment === "paid_in_full" ? "paid_in_full" : "deposit";
+    let amountCharged = data.amountCharged ?? 0;
 
     if (data.sessionId) {
-      const secret = process.env.STRIPE_SECRET_KEY;
-      if (!secret) return { status: "skipped" };
-      const Stripe = (await import("stripe")).default;
-      const stripe = new Stripe(secret);
+      const { getStripe, parseCheckoutMetadata } = await import("@/lib/stripe.server");
+      const stripe = getStripe();
+      if (!stripe) return { status: "skipped", payment, amountCharged };
       const session = await stripe.checkout.sessions.retrieve(data.sessionId);
       const paid = session.payment_status === "paid" || session.status === "complete";
-      if (!paid) return { status: "skipped" };
-      const meta = session.metadata ?? {};
-      name = meta.name || session.customer_details?.name || name;
-      email = meta.email || session.customer_email || session.customer_details?.email || email;
-      packageId = (meta.packageId as typeof packageId) || packageId;
-      weeks = (meta.weeks ? meta.weeks.split(",") : weeks) as typeof weeks;
-      partySize = Number(meta.partySize || partySize) || partySize;
-      if (!allowAttempt(`booking-paid:${data.sessionId}`, 1, 24 * 60 * 60 * 1000)) {
-        return { status: "skipped" };
-      }
-    } else if (!allowAttempt(`booking-paid:${email.toLowerCase()}`, 1, 10 * 60 * 1000)) {
-      return { status: "skipped" };
+      if (!paid) return { status: "skipped", payment, amountCharged };
+      const parsed = parseCheckoutMetadata(session);
+      name = parsed.name || name;
+      email = parsed.email || email;
+      packageId = (parsed.packageId as typeof packageId) || packageId;
+      weeks = (parsed.weeks.length ? parsed.weeks : weeks) as typeof weeks;
+      partySize = parsed.partySize || partySize;
+      payment = parsed.payment === "paid_in_full" ? "paid_in_full" : "deposit";
+      amountCharged = parsed.amountCharged || amountCharged;
     }
 
-    if (!name || !isEmail(email)) return { status: "skipped" };
+    if (!amountCharged) amountCharged = chargeTotal(packageId, partySize, weeks, payment);
 
-    const amount = depositTotal(partySize, weeks);
-    await emailHybrid(
-      `Hybrid Booking deposit paid: ${name}`,
-      bookingText({
-        stage: "paid",
-        name,
-        email,
-        packageId,
-        weeks,
-        partySize,
-        amount,
-      }),
+    const status = await fulfillPaidDeposit({
+      sessionId: data.sessionId,
+      name,
       email,
-    );
-    return { status: "sent" };
+      packageId,
+      weeks,
+      partySize,
+      payment,
+      amountCharged,
+    });
+    return { status, payment, amountCharged };
   });

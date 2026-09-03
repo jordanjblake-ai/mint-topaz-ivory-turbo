@@ -4,8 +4,12 @@ import { PageHero } from "@/components/site/page-hero";
 import { Photo } from "@/components/site/photo";
 import { Button } from "@/components/ui/button";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
+import { headFor } from "@/data/seo";
 
-export const Route = createFileRoute("/travel")({ component: TravelPage });
+export const Route = createFileRoute("/travel")({
+  head: () => headFor("/travel"),
+  component: TravelPage,
+});
 
 const pieces = [
   {

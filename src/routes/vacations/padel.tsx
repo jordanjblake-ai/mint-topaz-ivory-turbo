@@ -3,16 +3,22 @@ import { EnquireForm } from "@/components/site/enquire-form";
 import { PageHero } from "@/components/site/page-hero";
 import { Photo } from "@/components/site/photo";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
+import { headFor } from "@/data/seo";
+import { sportHero, sportImageAlt } from "@/data/sport-images";
 
-export const Route = createFileRoute("/vacations/padel")({ component: PadelPage });
+export const Route = createFileRoute("/vacations/padel")({
+  head: () => headFor("/vacations/padel"),
+  component: PadelPage,
+});
 
 function PadelPage() {
+  const image = sportHero("Padel");
   return (
     <main>
       <PageHero
         compact
-        image="/images/tennis-clay.jpg"
-        alt="Padel court in Mallorca"
+        image={image}
+        alt={sportImageAlt(image, "Padel at the net on a glass court")}
         kicker="Padel · Mallorca 2027"
         title="Mallorca. 5 to 9 April."
         sub="A spring Padel week in Capdepera. Coaching, match play, and the island around it. Pre-register and we will send the details."
@@ -36,7 +42,7 @@ function PadelPage() {
         </Container>
       </Section>
       <Section className="bg-surface">
-        <Container className="grid items-start gap-12 lg:grid-cols-2">
+        <Container className="max-w-3xl space-y-10">
           <div>
             <Kicker>Pre-register</Kicker>
             <Display className="mt-2 text-5xl">Tell us you want in</Display>
@@ -44,7 +50,7 @@ function PadelPage() {
               Drop your name and we will follow up when the package is ready. No payment now.
             </p>
           </div>
-          <EnquireForm defaultInterest="padel" />
+          <EnquireForm defaultInterest="padel" variant="preregister" />
         </Container>
       </Section>
     </main>

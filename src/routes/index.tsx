@@ -1,15 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { coaches, experiences, site, testimonials } from "@/data/site";
+import { headFor } from "@/data/seo";
 import { Button } from "@/components/ui/button";
-import { CtaBand } from "@/components/site/cta-band";
 import { ExperienceCard } from "@/components/site/experience-card";
 import { PageHero } from "@/components/site/page-hero";
 import { Photo } from "@/components/site/photo";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  head: () => headFor("/"),
+  component: Home,
+});
 
 const pillars = [
   {
@@ -149,47 +152,23 @@ function Home() {
             sizes="(min-width: 1024px) 42vw, 100vw"
           />
           <div>
-            <Kicker>Clinics & Mini-Camps</Kicker>
+            <Kicker>UK Coaching</Kicker>
             <Display className="mt-2 text-5xl sm:text-6xl">Train here. Travel later.</Display>
             <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
-              Clinics and mini-camps around the U.K. A way into Hybrid close to home. Contact us
-              and we will shape the block around you.
+              Private sessions, clinics, and mini-camps around the U.K. Work 1-to-1, or join a
+              group close to home.
             </p>
-            <Button asChild className="mt-8">
-              <Link to="/coaching">Clinics & Mini-Camps</Link>
-            </Button>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild>
+                <Link to="/community/coaching">Private Coaching</Link>
+              </Button>
+              <Button asChild variant="secondary">
+                <Link to="/coaching">Clinics & Mini-Camps</Link>
+              </Button>
+            </div>
           </div>
         </Container>
       </Section>
-
-      <Section className="bg-surface">
-        <Container className="grid items-center gap-8 lg:grid-cols-2">
-          <Photo
-            src="/art/00-title.jpg"
-            alt="Hybrid Story Time"
-            className="aspect-4/5 w-full rounded-lg object-cover"
-            sizes="(min-width: 1024px) 42vw, 100vw"
-          />
-          <div>
-            <Kicker>Story Time</Kicker>
-            <Display className="mt-2 text-5xl sm:text-6xl">The story isn’t finished.</Display>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
-              Sixteen months from a name to a world-tour court. Scroll the Hybrid history as a
-              graphic novel, still open at 2027.
-            </p>
-            <Button asChild className="mt-8">
-              <Link to="/story-time">Open Story Time</Link>
-            </Button>
-          </div>
-        </Container>
-      </Section>
-
-      <CtaBand
-        title="Ready for Lanzarote?"
-        body="Three weeks in Jan and Feb 2027. Camp from £425. Deposit £100 to hold your place."
-        to="/vacations/lanzarote"
-        label="View the camp"
-      />
 
       <section className="border-t border-border">
         <Container className="flex flex-col items-start justify-between gap-4 py-10 sm:flex-row sm:items-center">

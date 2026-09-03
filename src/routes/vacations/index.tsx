@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { experiences } from "@/data/site";
+import { headFor } from "@/data/seo";
 import { CtaBand } from "@/components/site/cta-band";
 import { ExperienceCard } from "@/components/site/experience-card";
 import { PageHero } from "@/components/site/page-hero";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
 
-export const Route = createFileRoute("/vacations/")({ component: VacationsPage });
+export const Route = createFileRoute("/vacations/")({
+  head: () => headFor("/vacations"),
+  component: VacationsPage,
+});
 
 function VacationsPage() {
   return (

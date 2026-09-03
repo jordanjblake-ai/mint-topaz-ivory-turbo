@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/community/partners",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Partners · Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 2748,
+      "bodyTextHash": "361d1049539f8c36137c41ce3007bd56f9dbc499731dab0bc5ddf5d8aeb1b2ef",
+      "bodyTextPrefix": "HYBRID Vacations Community About BOOK A CAMP COMMUNITY · PARTNER",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/qa-partners.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Partners · Hybrid Vacations",
+      "hasCanvas": false,
+      "bodyTextLen": 2893,
+      "bodyTextHash": "af840e8dd72a9ac32b4a3a8dcf63c6390122d094c321edecebfda77778347a9c",
+      "bodyTextPrefix": "HYBRID COMMUNITY · PARTNERS More than partners The clubs, camps,",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/qa-partners-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/qa-partners.json"
+}

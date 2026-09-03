@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalDoc } from "@/components/site/legal-doc";
 import { company, cookies } from "@/data/legal";
+import { headFor } from "@/data/seo";
 
 export const Route = createFileRoute("/cookies")({
-  head: () => ({
-    meta: [{ title: "Cookie Policy · Hybrid Vacations" }],
-  }),
+  head: () => headFor("/cookies"),
   component: CookiesPage,
 });
 

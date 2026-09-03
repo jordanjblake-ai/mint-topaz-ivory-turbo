@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { SITE_ORIGIN } from "@/data/seo";
+import { submitIndexNow } from "@/lib/indexnow";
 
 export const PURGE_SCOPES = ["html", "images", "calendar", "meta", "all"] as const;
 export type PurgeScope = (typeof PURGE_SCOPES)[number];
@@ -85,6 +86,24 @@ export async function purgeByScope(scope: PurgeScope): Promise<{
   const tags = SCOPE_TAGS[scope];
   const everything = scope === "all";
   const providers = await Promise.all([purgeCloudflare(tags, everything), purgeVercel(tags)]);
+  if (scope === "meta" || scope === "all") {
+    try {
+      const indexed = await submitIndexNow();
+      providers.push({
+        provider: "indexnow",
+        ok: indexed.ok,
+        mode: indexed.ok ? "purged" : "skipped",
+        detail: indexed.ok ? `${indexed.submitted} URLs` : indexed.detail,
+      });
+    } catch (error) {
+      providers.push({
+        provider: "indexnow",
+        ok: true,
+        mode: "skipped",
+        detail: error instanceof Error ? error.message : "IndexNow did not run.",
+      });
+    }
+  }
   const hard = providers.some((item) => item.mode === "purged");
   return {
     ok: providers.every((item) => item.ok),
@@ -140,6 +159,9 @@ export async function handlePurgeRequest(request: Request) {
 export const purgeHybridCache = createServerFn({ method: "POST" })
   .validator(z.object({ scope: z.enum(PURGE_SCOPES) }))
   .handler(async ({ data }) => {
+    const { requireStaffActor, auditEvent } = await import("@/lib/zero-trust.server");
+    const staff = await requireStaffActor();
     if (limited("desk")) throw new Error("Too many purges this hour.");
+    await auditEvent({ action: "cache.purge", actor: staff, outcome: "allow", detail: data.scope });
     return purgeByScope(data.scope);
   });

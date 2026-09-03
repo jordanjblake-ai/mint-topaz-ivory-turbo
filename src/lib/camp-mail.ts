@@ -5,7 +5,6 @@ import {
   coachForGroup,
   currentWeekId,
   groupOf,
-  personByEmail,
   personById,
   type CampPerson,
 } from "@/data/camp";
@@ -49,13 +48,9 @@ function tagLabel(tag: "injury" | "illness" | "other") {
   return "Private note";
 }
 
-async function rosterPerson(fromEmail: string) {
-  const { getSessionUser } = await import("@/lib/auth/verify.server");
-  const session = await getSessionUser();
-  const fromSession = session?.email ? personByEmail(session.email) : null;
-  const person = fromSession ?? personByEmail(fromEmail);
-  if (!person) throw new Error("That email is not on this camp.");
-  return person;
+async function rosterPerson(fromEmail: string, roles?: CampPerson["role"][]) {
+  const { requireRosterActor } = await import("@/lib/zero-trust.server");
+  return requireRosterActor({ claimedEmail: fromEmail, roles });
 }
 
 function dedicatedCoach(player: CampPerson, week: number, groupId: string | null) {
@@ -79,7 +74,7 @@ function uniquePeople(list: (CampPerson | null | undefined)[]) {
 export const postCampNote = createServerFn({ method: "POST" })
   .validator(NoteInput)
   .handler(async ({ data }): Promise<CampMailReceipt> => {
-    const sender = await rosterPerson(data.fromEmail);
+    const sender = await rosterPerson(data.fromEmail, ["player"]);
     if (sender.role !== "player") throw new Error("Players send notes from here.");
     const body = clip(data.body, 1000);
     if (!body) throw new Error("Write a few words first.");
@@ -151,7 +146,7 @@ export const postCampNote = createServerFn({ method: "POST" })
 export const replyCampNote = createServerFn({ method: "POST" })
   .validator(ReplyInput)
   .handler(async ({ data }): Promise<CampMailReceipt> => {
-    const staff = await rosterPerson(data.fromEmail);
+    const staff = await rosterPerson(data.fromEmail, ["coach", "head"]);
     if (staff.role === "player") throw new Error("Players cannot reply here.");
     const reply = clip(data.reply, 1000);
     if (!reply) throw new Error("Write a reply first.");
@@ -250,6 +245,9 @@ export const replyCampNote = createServerFn({ method: "POST" })
   });
 
 export const listCampMail = createServerFn({ method: "GET" }).handler(async () => {
+  const { requireStaffActor, auditEvent } = await import("@/lib/zero-trust.server");
+  const staff = await requireStaffActor();
+  await auditEvent({ action: "camp.mail.list", actor: staff, outcome: "allow" });
   const { getSql } = await import("@/lib/db");
   const sql = await getSql();
   return sql<{

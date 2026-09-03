@@ -27,6 +27,7 @@ import {
   splitDisplayName,
   sportFromInterest,
   topsForSport,
+  usesPlayingKit,
   type FormSport,
   type PerformanceApplication,
   type PerformanceGender,
@@ -37,6 +38,7 @@ import {
 import { enquireInterests, site } from "@/data/site";
 import { kindFromInterest } from "@/data/ops";
 import { GoogleSignInButton } from "@/components/site/google-sign-in";
+import { SizeGuideButton } from "@/components/site/size-guide";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,6 +47,17 @@ import { allowAttempt, isEmail } from "@/lib/guard";
 import { submitEnquiry } from "@/lib/enquiry";
 import { useOps } from "@/lib/ops-store";
 import { cn } from "@/lib/utils";
+
+export type EnquireVariant = "contact" | "lanzarote" | "coaching" | "preregister";
+
+export function variantFromPath(pathname: string, explicit?: EnquireVariant): EnquireVariant | undefined {
+  if (explicit) return explicit;
+  if (pathname === "/contact") return "contact";
+  if (pathname === "/coaching" || pathname.includes("/community/coaching")) return "coaching";
+  if (pathname.includes("/vacations/tennis") || pathname.includes("/vacations/padel")) return "preregister";
+  if (pathname.includes("/vacations/lanzarote")) return "lanzarote";
+  return undefined;
+}
 
 const selectClass =
   "h-11 w-full rounded-sm border border-border bg-surface px-3 text-sm text-fg outline-none focus-visible:ring-2 focus-visible:ring-accent";
@@ -110,9 +123,11 @@ function emptyForm(seed?: Partial<PerformanceApplication>, interest = "performan
 export function PlayerDetailsForm({
   interest,
   submitLabel,
+  variant,
 }: {
   interest: string;
   submitLabel: string;
+  variant?: EnquireVariant;
 }) {
   const addEnquiry = useOps((s) => s.addEnquiry);
   const hydrate = useOps((s) => s.hydrate);
@@ -121,6 +136,8 @@ export function PlayerDetailsForm({
   const [form, setForm] = useState<PerformanceApplication>(() => emptyForm(undefined, interest));
   const [week, setWeek] = useState("");
   const [format, setFormat] = useState("private");
+  const [groupSize, setGroupSize] = useState("1");
+  const [preferredWhen, setPreferredWhen] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [company, setCompany] = useState("");
   const [error, setError] = useState("");
@@ -128,18 +145,35 @@ export function PlayerDetailsForm({
   const [sent, setSent] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const loadedAt = useRef(Date.now());
-  const minimal = interest === "other" || interest === "travel";
-  const showSport = !minimal && interest !== "performance";
+  const scope = variantFromPath(pathname, variant);
+  const isContact = scope === "contact";
+  const isCoaching = scope === "coaching";
+  const isPreregister = scope === "preregister";
+  const isLanzarote = scope === "lanzarote";
+  const minimal = isContact || (!scope && (interest === "other" || interest === "travel"));
+  const showSport = isCoaching || (!scope && !minimal && interest !== "performance");
   const impliedSport = forcedSportFromInterest(interest);
-  const showSessionType = interest === "coaching";
+  const showSessionType = isCoaching;
   const groupKit = form.gender === "group";
-  const showPlayerKit = !minimal && !groupKit;
-  const showProfile = !minimal;
+  const showPlayerKit = isLanzarote
+    ? !groupKit
+    : !scope && !minimal && !groupKit && usesPlayingKit(impliedSport ?? form.sport);
+  const showPartner = isLanzarote || isPreregister;
+  const showEmergency = isLanzarote;
+  const showGender = isLanzarote || (!scope && !minimal);
+  const showLevel = isLanzarote || isPreregister || isCoaching || (!scope && !minimal);
+  const showWeek = isLanzarote;
+  const showGroupSize = isCoaching;
+  const showPreferredWhen = isCoaching;
+  const showAccount = !isContact && !isCoaching && !isPreregister;
+  const messageLabel = isContact || isCoaching ? "Message" : "Anything We Should Know";
 
   useEffect(() => {
     setForm((current) => emptyForm(current, interest));
     setWeek("");
     setFormat("private");
+    setGroupSize("1");
+    setPreferredWhen("");
   }, [interest]);
 
   useEffect(() => {
@@ -195,7 +229,7 @@ export function PlayerDetailsForm({
         );
       })
       .finally(() => setLoaded(true));
-  }, [user, isPending, interest]);
+  }, [user?.id, user?.primaryEmail, isPending, interest]);
 
   function patch<K extends keyof PerformanceApplication>(key: K, value: PerformanceApplication[K]) {
     setForm((current) => {
@@ -234,11 +268,13 @@ export function PlayerDetailsForm({
       setError("Use an international contact number, e.g. UK +44 or SUI +41.");
       return;
     }
-    if (!minimal && !groupKit) {
+    if (showPartner) {
       if (form.hasPartner && (!form.partnerFirstName.trim() || !form.partnerLastName.trim())) {
         setError(`Add ${partnerFirstNameLabel(form.sport)} and Last Name, or choose No.`);
         return;
       }
+    }
+    if (showEmergency) {
       if (!form.emergencyFirstName.trim() || !form.emergencyLastName.trim()) {
         setError("Emergency contact First Name and Last Name are required.");
         return;
@@ -306,20 +342,22 @@ export function PlayerDetailsForm({
           ]
         : [
             interestLabel,
-            `Sport: ${sportLabel}`,
-            `Gender: ${labelOf(PERFORMANCE_GENDERS, payload.gender)}`,
-            `Level: ${labelOf(levelsForSport(payload.sport), payload.level)}`,
+            showSport || impliedSport ? `Sport: ${sportLabel}` : "",
+            showGender ? `Gender: ${labelOf(PERFORMANCE_GENDERS, payload.gender)}` : "",
+            showLevel ? `Level: ${labelOf(levelsForSport(payload.sport), payload.level)}` : "",
             payload.contactPhone ? `Contact Number: ${payload.contactPhone}` : "",
             showPlayerKit
               ? `Playing Top: ${labelOf(topsForSport(payload.sport), payload.topStyle)} / ${labelOf(PERFORMANCE_SIZES, payload.topSize)}`
               : "",
-            showPlayerKit
+            showPartner
               ? `${partnerLegend(payload.sport)}: ${payload.hasPartner ? partnerFullName(payload.partnerFirstName, payload.partnerLastName) : "No"}`
               : "",
-            showPlayerKit
+            showEmergency
               ? `Emergency: ${payload.emergencyFirstName} ${payload.emergencyLastName} ${payload.emergencyPhone}`
               : "",
             showSessionType && formatLabel ? `Session Type: ${formatLabel}` : "",
+            showGroupSize ? `Group size: ${groupSize}` : "",
+            showPreferredWhen && preferredWhen.trim() ? `Preferred location or date: ${preferredWhen.trim()}` : "",
             weekLabel ? `Week: ${weekLabel}` : "",
             payload.message,
           ];
@@ -329,8 +367,8 @@ export function PlayerDetailsForm({
         email: payload.email,
         kind,
         week: (week || "") as "" | "week-1" | "week-2" | "week-3",
-        partySize: payload.hasPartner && showPlayerKit ? 2 : 1,
-        solo: !(payload.hasPartner && showPlayerKit),
+        partySize: payload.hasPartner && showPartner ? 2 : showGroupSize ? Math.max(1, Number(groupSize) || 1) : 1,
+        solo: !(payload.hasPartner && showPartner),
         stay: "",
         message: extraLines.filter(Boolean).join("\n"),
         source: "site",
@@ -381,12 +419,13 @@ export function PlayerDetailsForm({
 
   const callbackURL = `${pathname}?interest=${encodeURIComponent(interest)}`;
   const topLocked = form.gender === "male";
-  const levelOptions = levelsForSport(form.sport);
-  const partnerTitle = partnerLegend(form.sport);
-  const topOptions = topsForSport(form.sport);
+  const levelOptions = levelsForSport(impliedSport ?? form.sport);
+  const partnerTitle = partnerLegend(impliedSport ?? form.sport);
+  const topOptions = topsForSport(impliedSport ?? form.sport);
 
   return (
     <form onSubmit={onSubmit} className="grid gap-5">
+      {showAccount ? (
       <div className="rounded-md bg-surface p-4 shadow-border">
         {isPending ? (
           <div className="h-11 w-full animate-pulse rounded-sm bg-bg" />
@@ -410,6 +449,7 @@ export function PlayerDetailsForm({
           </div>
         )}
       </div>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -463,6 +503,24 @@ export function PlayerDetailsForm({
         </p>
       </div>
 
+      {showSessionType ? (
+        <div>
+          <Label htmlFor="pc-format">Session Type *</Label>
+          <select
+            id="pc-format"
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+            className={selectClass}
+          >
+            {COACHING_FORMATS.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+
       {showSport ? (
         <fieldset>
           <legend className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted">
@@ -482,7 +540,7 @@ export function PlayerDetailsForm({
         </fieldset>
       ) : null}
 
-      {showProfile ? (
+      {showGender ? (
         <fieldset>
           <legend className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted">
             Male, Female Or Group *
@@ -501,7 +559,7 @@ export function PlayerDetailsForm({
         </fieldset>
       ) : null}
 
-      {showProfile ? (
+      {showLevel ? (
         <div>
           <Label htmlFor="pc-level">Level *</Label>
           <select
@@ -517,28 +575,16 @@ export function PlayerDetailsForm({
               </option>
             ))}
           </select>
+          <p className="mt-2 text-xs text-muted">
+            Unsure?{" "}
+            <Link to="/playing-levels" className="text-fg hover:text-accent">
+              Playing levels guide
+            </Link>
+          </p>
         </div>
       ) : null}
 
-      {showSessionType ? (
-        <div>
-          <Label htmlFor="pc-format">Session Type *</Label>
-          <select
-            id="pc-format"
-            value={format}
-            onChange={(e) => setFormat(e.target.value)}
-            className={selectClass}
-          >
-            {COACHING_FORMATS.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : null}
-
-      {interest === "lanzarote" ? (
+      {showWeek ? (
         <div>
           <Label htmlFor="pc-week">Preferred Week</Label>
           <select
@@ -553,6 +599,32 @@ export function PlayerDetailsForm({
               </option>
             ))}
           </select>
+        </div>
+      ) : null}
+
+      {showGroupSize ? (
+        <div>
+          <Label htmlFor="pc-group">Group Size</Label>
+          <Input
+            id="pc-group"
+            type="number"
+            min={1}
+            max={20}
+            value={groupSize}
+            onChange={(e) => setGroupSize(e.target.value)}
+          />
+        </div>
+      ) : null}
+
+      {showPreferredWhen ? (
+        <div>
+          <Label htmlFor="pc-when">Preferred Location Or Date</Label>
+          <Input
+            id="pc-when"
+            value={preferredWhen}
+            onChange={(e) => setPreferredWhen(e.target.value)}
+            placeholder="Where, or roughly when"
+          />
         </div>
       ) : null}
 
@@ -577,8 +649,9 @@ export function PlayerDetailsForm({
           </fieldset>
 
           <fieldset>
-            <legend className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted">
-              Size *
+            <legend className="mb-1.5 flex w-full flex-wrap items-center justify-between gap-x-4 text-xs font-medium uppercase tracking-wider text-muted">
+              <span>Size *</span>
+              <SizeGuideButton className="min-h-0 py-1 normal-case tracking-wide" />
             </legend>
             <div className="flex flex-wrap gap-2">
               {PERFORMANCE_SIZES.map((item) => (
@@ -592,7 +665,11 @@ export function PlayerDetailsForm({
               ))}
             </div>
           </fieldset>
+        </>
+      ) : null}
 
+      {showPartner ? (
+        <>
           <fieldset>
             <legend className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted">
               {partnerTitle} *
@@ -629,7 +706,11 @@ export function PlayerDetailsForm({
               </div>
             </div>
           ) : null}
+        </>
+      ) : null}
 
+      {showEmergency ? (
+        <>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="pc-em-first">Emergency Contact's First Name *</Label>
@@ -673,7 +754,7 @@ export function PlayerDetailsForm({
       ) : null}
 
       <div>
-        <Label htmlFor="pc-message">Anything We Should Know</Label>
+        <Label htmlFor="pc-message">{messageLabel}</Label>
         <Textarea
           id="pc-message"
           value={form.message}

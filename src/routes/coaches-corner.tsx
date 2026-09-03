@@ -49,7 +49,7 @@ function CoachesCornerPage() {
     if (isPending || !user?.primaryEmail) return;
     const person = personByEmail(user.primaryEmail);
     if (person && person.role !== "player") login(person.email);
-  }, [user, isPending, login]);
+  }, [user?.id, user?.primaryEmail, isPending, login]);
 
   function enter(address: string) {
     if (!allowAttempt("coaches-corner", 8, 60_000)) {

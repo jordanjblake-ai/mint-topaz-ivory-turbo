@@ -76,3 +76,4 @@ export function resetConsent() {
 export const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID ?? "";
 export const META_PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID ?? "";
 export const GOOGLE_SITE_VERIFICATION = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION ?? "";
+export const BING_SITE_VERIFICATION = import.meta.env.VITE_BING_SITE_VERIFICATION ?? "";

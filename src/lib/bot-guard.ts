@@ -20,8 +20,9 @@ const PROBE_PATH =
 const PROBE_FILE = /(?:\/(?:\.env|\.git|\.svn|\.htaccess|\.aws|id_rsa)(?:\/|$))|\.(?:php|asp|aspx|jsp|cgi)(?:$|\?)/i;
 
 const HEALTH_PATH = /^\/(?:health(?:z|\/live|\/ready)?|livez|readyz)$/;
+const WEBHOOK_PATH = /^\/api\/stripe\/webhook$/;
 const STATIC_PATH =
-  /^\/(?:assets|images|calendar|__grok|favicon\.svg|og\.jpg|og\.png|x-banner\.jpg|robots\.txt|sitemap\.xml)(?:\/|$)/;
+  /^\/(?:assets|images|calendar|__grok|favicon(?:\.svg|\.ico|-16\.png|-32\.png)|apple-touch-icon\.png|og\.jpg|og\.png|x-banner\.jpg|robots\.txt|sitemap(?:-images)?\.xml|[0-9a-f]{32}\.txt)(?:\/|$)/;
 
 const hits = new Map<string, number[]>();
 
@@ -119,7 +120,7 @@ export function inspectRequest(input: {
     return { action: "allow", reason: "bot-key" };
   }
 
-  if (HEALTH_PATH.test(path) || STATIC_PATH.test(path)) {
+  if (HEALTH_PATH.test(path) || STATIC_PATH.test(path) || WEBHOOK_PATH.test(path)) {
     return { action: "allow", reason: "public-asset" };
   }
 

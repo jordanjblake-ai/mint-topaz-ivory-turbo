@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { coaches, site, testimonials } from "@/data/site";
+import { headFor } from "@/data/seo";
 import { Button } from "@/components/ui/button";
 import { CtaBand } from "@/components/site/cta-band";
 import { PageHero } from "@/components/site/page-hero";
@@ -7,7 +8,10 @@ import { Photo } from "@/components/site/photo";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 
-export const Route = createFileRoute("/about")({ component: AboutPage });
+export const Route = createFileRoute("/about")({
+  head: () => headFor("/about"),
+  component: AboutPage,
+});
 
 const ideas = [
   {
@@ -58,9 +62,76 @@ function AboutPage() {
               horizon. UK coaching sits underneath all of it, so the community does not only exist
               one week a year.
             </p>
+            <p className="mt-4 text-sm leading-relaxed text-muted">
+              <Link to="/story-time" className="text-fg underline decoration-accent/60 underline-offset-4 hover:text-accent">
+                Story Time — how Hybrid got from a name to a world-tour court.
+              </Link>
+            </p>
           </div>
         </Container>
       </Section>
+
+      <Section className="bg-surface">
+        <Container className="grid items-start gap-12 lg:grid-cols-2">
+          <div>
+            <Kicker>Why Hybrid</Kicker>
+            <Display className="mt-2 text-5xl">Sport brings us together</Display>
+            <p className="mt-5 text-base leading-relaxed text-muted">
+              Hybrid is built around a simple belief. Sport has the power to bring people together.
+              We make camps and weeks that combine proper coaching, a place worth flying to, and a
+              group of people who care about the game.
+            </p>
+            <p className="mt-4 text-base leading-relaxed text-muted">
+              A Hybrid week is the session, the meal, the tournament, the adventure, and the
+              people you keep. Come for the sport. Stay for the people. Leave with memories.
+            </p>
+          </div>
+          <div>
+            <Kicker>The community</Kicker>
+            <Display className="mt-2 text-5xl">Bigger than one person</Display>
+            <p className="mt-5 text-base leading-relaxed text-muted">
+              Hybrid started with Mark Garcia-Kidd after years competing for England and organising
+              the trips he wanted to take. It has never been only his. The coaches, the players who
+              come back, and the people who join for the first time all make the week.
+            </p>
+            <p className="mt-4 text-base leading-relaxed text-muted">
+              The community is the brand. As Hybrid grows, that does not change. We want a place
+              you can come back to, at home and abroad, whether you travel alone or with friends.
+            </p>
+          </div>
+        </Container>
+      </Section>
+
+      <Section>
+        <Container className="grid items-start gap-12 lg:grid-cols-2">
+          <Photo
+            src="/images/coach-mark-hero.jpg"
+            alt="Mark Garcia-Kidd"
+            className="aspect-[3/2] w-full rounded-lg object-top"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+          />
+          <div>
+            <Kicker>Where we are going</Kicker>
+            <Display className="mt-2 text-5xl">A place you keep coming back to</Display>
+            <p className="mt-5 text-base leading-relaxed text-muted">
+              Camps abroad across more sports. A domestic community through Team Hybrid, UK
+              sessions, and the Performance Squad. Growth is not the point on its own. We want
+              something that lasts.
+            </p>
+            <p className="mt-4 text-base leading-relaxed text-muted">
+              Questions go to{" "}
+              <a className="text-fg hover:text-accent" href={`mailto:${site.email}`}>
+                {site.email}
+              </a>
+              . That is the public Hybrid address. Use the form if you would rather not open mail.
+            </p>
+            <Button asChild className="mt-8">
+              <Link to="/contact">Enquire</Link>
+            </Button>
+          </div>
+        </Container>
+      </Section>
+
       <Section className="bg-surface">
         <Container>
           <Kicker>What we mean</Kicker>

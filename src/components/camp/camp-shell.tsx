@@ -25,6 +25,8 @@ export function CampShell({ children }: { children: React.ReactNode }) {
   const login = useCamp((s) => s.login);
   const logout = useCamp((s) => s.logout);
   const { user, isPending } = useCurrentUserState();
+  const googlePerson = user?.primaryEmail ? personByEmail(user.primaryEmail) : null;
+  const person = me ?? googlePerson;
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
@@ -35,15 +37,15 @@ export function CampShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isPending || !user?.primaryEmail) return;
     login(user.primaryEmail);
-  }, [user, isPending, login]);
+  }, [user?.id, user?.primaryEmail, isPending, login]);
 
   if (!ready || isPending) return <div className="min-h-dvh bg-bg" />;
 
-  if (!me) {
+  if (!person) {
     const params = new URLSearchParams(searchStr.startsWith("?") ? searchStr : `?${searchStr}`);
     const gate = params.get("gate") === "coach" ? "coach" : params.get("gate") === "player" ? "player" : null;
-    const callback = gate === "coach" ? "/coaches-corner" : gate === "player" ? "/portal" : "/camp";
-    const googlePerson = user?.primaryEmail ? personByEmail(user.primaryEmail) : null;
+    const callback = gate === "coach" ? "/coaches-corner" : "/camp";
+    const googleOnFile = user?.primaryEmail ? personByEmail(user.primaryEmail) : null;
 
     return (
       <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-16">
@@ -60,7 +62,7 @@ export function CampShell({ children }: { children: React.ReactNode }) {
         <div className="mt-8">
           <GoogleSignInButton callbackURL={callback} label="Sign in with Google" />
         </div>
-        {user && !googlePerson ? (
+        {user && !googleOnFile ? (
           <p className="mt-4 text-sm text-accent">That Google account is not on this camp.</p>
         ) : null}
         <form
@@ -106,21 +108,21 @@ export function CampShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const isCoach = me.role === "coach" || me.role === "head";
+  const isCoach = person.role === "coach" || person.role === "head";
   const unread = messages.filter((item) => {
-    if (me.role === "player") return Boolean(item.reply) && item.fromId === me.id && !item.seenBy.includes(me.id);
+    if (person.role === "player") return Boolean(item.reply) && item.fromId === person.id && !item.seenBy.includes(person.id);
     const from = PEOPLE.find((p) => p.id === item.fromId);
     if (!from || from.role !== "player") return false;
-    const myGroup = me.leadsGroup ?? me.groupId;
+    const myGroup = person.leadsGroup ?? person.groupId;
     const allowed =
-      me.role === "head" ||
+      person.role === "head" ||
       Boolean(
         myGroup &&
           from.weeks.some(
-            (week) => me.weeks.includes(week) && groupOf(from, week, groups, weekGroups) === myGroup,
+            (week) => person.weeks.includes(week) && groupOf(from, week, groups, weekGroups) === myGroup,
           ),
       );
-    return Boolean(allowed) && !item.seenBy.includes(me.id);
+    return Boolean(allowed) && !item.seenBy.includes(person.id);
   }).length;
 
   const links = [
@@ -129,12 +131,16 @@ export function CampShell({ children }: { children: React.ReactNode }) {
     { href: "/camp/schedule", label: "Schedule", match: (p: string) => p.startsWith("/camp/schedule") },
     { href: "/camp/prepare", label: "Prepare", match: (p: string) => p.startsWith("/camp/prepare") },
     { href: "/camp/kit", label: "Kit", match: (p: string) => p.startsWith("/camp/kit") },
+    ...(isCoach
+      ? []
+      : [{ href: "/camp/map", label: "The Map", match: (p: string) => p.startsWith("/camp/map") }]),
+    { href: "/camp/tournaments", label: "Tournaments", match: (p: string) => p.startsWith("/camp/tournaments") },
     { href: "/camp/fuel", label: "Fuel", match: (p: string) => p.startsWith("/camp/fuel") },
     { href: "/camp/messages", label: unread ? `Messages (${unread})` : "Messages", match: (p: string) => p.startsWith("/camp/messages") },
     ...(isCoach
       ? [{ href: "/camp/squad", label: "Squad", match: (p: string) => p.startsWith("/camp/squad") }]
       : []),
-    ...(me.role === "head"
+    ...(person.role === "head"
       ? [{ href: "/camp/groups", label: "Groups", match: (p: string) => p.startsWith("/camp/groups") }]
       : []),
   ];
@@ -155,7 +161,7 @@ export function CampShell({ children }: { children: React.ReactNode }) {
               {user?.profileImageUrl ? (
                 <img src={user.profileImageUrl} alt="" className="h-8 w-8 rounded-full object-cover" />
               ) : null}
-              <p className="hidden text-sm text-muted sm:block">{me.name}</p>
+              <p className="hidden text-sm text-muted sm:block">{person.name}</p>
               <button
                 type="button"
                 onClick={() => {

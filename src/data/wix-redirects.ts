@@ -15,7 +15,7 @@ export const WIX_REDIRECTS: Record<string, string> = {
   "/half-term-beach-volleyball-lanzarote": "/vacations/lanzarote",
   "/beach-volleyball-lanzarote-performance-camp": "/vacations/lanzarote",
   "/hybrid-beach-performance": "/vacations/lanzarote",
-  "/bv-playinglevels": "/vacations/lanzarote",
+  "/bv-playinglevels": "/playing-levels",
   "/lanzarote-booking-page": "/book",
   "/hybrid-beach-registration": "/book",
   "/lanzarote-booking-confirmation": "/book/thanks",
@@ -38,6 +38,9 @@ export const WIX_REDIRECTS: Record<string, string> = {
   "/about": "/about",
   "/history": "/story-time",
   "/community/history": "/story-time",
+  "/community/performance": "/community/club/performance",
+  "/community/team": "/community/club/team",
+  "/community/hall-of-fame": "/community/club/hall-of-fame",
   "/team-4": "/coaches",
 
   "/termsandconditions": "/terms",

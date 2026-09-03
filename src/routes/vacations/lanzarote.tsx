@@ -1,14 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { coaches, lanzarote, testimonials } from "@/data/site";
+import { BOOK_PACKAGES, pounds } from "@/data/book";
+import { headFor } from "@/data/seo";
 import { Button } from "@/components/ui/button";
 import { CtaBand } from "@/components/site/cta-band";
 import { EnquireForm } from "@/components/site/enquire-form";
 import { PageHero } from "@/components/site/page-hero";
 import { Photo } from "@/components/site/photo";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
+import { WeekBoard } from "@/components/camp/week-board";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 
-export const Route = createFileRoute("/vacations/lanzarote")({ component: LanzarotePage });
+export const Route = createFileRoute("/vacations/lanzarote")({
+  head: () => headFor("/vacations/lanzarote"),
+  component: LanzarotePage,
+});
 
 const weeks = [
   { label: "Week 1", dates: "30/31 Jan to 6/7 Feb" },
@@ -28,7 +34,7 @@ function LanzarotePage() {
         actions={
           <>
             <Button asChild size="lg">
-              <a href="#hold">Hold a place</a>
+              <a href="#packages">Book now</a>
             </Button>
             <Button asChild size="lg" variant="secondary">
               <Link to="/portal">Already booked?</Link>
@@ -48,8 +54,7 @@ function LanzarotePage() {
             ))}
           </div>
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted">
-            Camp only from £425 per person. Early bird closed 1 August. £100 non-refundable deposit
-            holds your place.
+            Camp only from £425 per person. £100 non-refundable deposit holds your place.
           </p>
         </Container>
       </Section>
@@ -75,6 +80,17 @@ function LanzarotePage() {
             className="aspect-4/5 w-full rounded-lg"
           />
         </Container>
+        <Container className="mt-14">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">The schedule</p>
+          <h3 className="mt-2 font-display text-3xl text-fg sm:text-4xl">Same shape each week</h3>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+            Nine sessions, a scramble, a rest Wednesday, a camp tournament, then a free Saturday.
+            Dates below are Week 1. Weeks 2 and 3 follow the same schedule.
+          </p>
+          <div className="mt-8">
+            <WeekBoard weekId={1} />
+          </div>
+        </Container>
       </Section>
 
       <Section id="packages">
@@ -86,11 +102,13 @@ function LanzarotePage() {
             someone you choose. Every person has their own bed. Twin rooms, not a double.
           </p>
           <div className="mt-10 grid gap-4 md:grid-cols-2">
-            {lanzarote.packages.map((item) => (
-              <div key={item.name} className="rounded-md bg-surface p-5 shadow-border">
+            {BOOK_PACKAGES.map((item) => (
+              <div key={item.id} className="rounded-md bg-surface p-5 shadow-border">
                 <div className="flex items-start justify-between gap-4">
                   <p className="font-semibold text-fg">{item.name}</p>
-                  <p className="shrink-0 text-right text-sm font-semibold text-fg">{item.price}</p>
+                  <p className="shrink-0 text-right text-sm font-semibold text-fg">
+                    {pounds(item.priceEach)} per person
+                  </p>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{item.note}</p>
                 <Link
@@ -98,11 +116,12 @@ function LanzarotePage() {
                   search={{ package: item.id }}
                   className="mt-4 inline-flex h-11 items-center text-xs font-semibold uppercase tracking-wide text-accent hover:text-accent-hover"
                 >
-                  Hold with a deposit
+                  Book now
                 </Link>
               </div>
             ))}
           </div>
+          <p className="mt-6 text-sm text-muted">Or pay in full on checkout.</p>
           <ul className="mt-8 space-y-2 text-sm text-muted">
             {lanzarote.payment.map((line) => (
               <li key={line}>{line}</li>
@@ -218,7 +237,18 @@ function LanzarotePage() {
                     <span className="text-accent group-open:rotate-45">+</span>
                   </span>
                 </summary>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">{item.a}</p>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+                  {item.a}
+                  {"href" in item && item.href ? (
+                    <>
+                      {" "}
+                      <Link to={item.href} className="text-fg hover:text-accent">
+                        {item.link}
+                      </Link>
+                      .
+                    </>
+                  ) : null}
+                </p>
               </details>
             ))}
           </div>
@@ -228,7 +258,7 @@ function LanzarotePage() {
       <Section id="hold" className="bg-surface">
         <Container className="grid items-start gap-12 lg:grid-cols-2">
           <div>
-            <Kicker>Hold a place</Kicker>
+            <Kicker>Book now</Kicker>
             <Display className="mt-2 text-5xl">£100 deposit. We take it from there.</Display>
             <p className="mt-4 text-sm leading-relaxed text-muted">
               Pay the £100 deposit here to hold the week. We will email confirmation, then the
@@ -241,7 +271,7 @@ function LanzarotePage() {
               <Link to="/book">Pay the deposit</Link>
             </Button>
           </div>
-          <EnquireForm defaultInterest="lanzarote" />
+          <EnquireForm defaultInterest="lanzarote" variant="lanzarote" />
         </Container>
       </Section>
 

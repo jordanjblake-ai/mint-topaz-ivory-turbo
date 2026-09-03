@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as CampRouteImport } from './routes/camp'
 import { Route as CoachesRouteImport } from './routes/coaches'
@@ -27,9 +28,11 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as LivezRouteImport } from './routes/livez'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OpsRouteImport } from './routes/ops'
+import { Route as PlayingLevelsRouteImport } from './routes/playing-levels'
 import { Route as PortalRouteImport } from './routes/portal'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReadyzRouteImport } from './routes/readyz'
+import { Route as SecurityRouteImport } from './routes/security'
 import { Route as StoryTimeRouteImport } from './routes/story-time'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TravelRouteImport } from './routes/travel'
@@ -39,12 +42,15 @@ import { Route as CampIndexRouteImport } from './routes/camp/index'
 import { Route as CampFuelRouteImport } from './routes/camp/fuel'
 import { Route as CampGroupsRouteImport } from './routes/camp/groups'
 import { Route as CampKitRouteImport } from './routes/camp/kit'
+import { Route as CampMapRouteImport } from './routes/camp/map'
 import { Route as CampMessagesRouteImport } from './routes/camp/messages'
 import { Route as CampPrepareRouteImport } from './routes/camp/prepare'
 import { Route as CampScheduleRouteImport } from './routes/camp/schedule'
 import { Route as CampSquadRouteImport } from './routes/camp/squad'
 import { Route as CampTodayRouteImport } from './routes/camp/today'
+import { Route as CampTournamentsRouteImport } from './routes/camp/tournaments'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
+import { Route as CommunityClubRouteImport } from './routes/community/club'
 import { Route as CommunityCoachingRouteImport } from './routes/community/coaching'
 import { Route as CommunityHallOfFameRouteImport } from './routes/community/hall-of-fame'
 import { Route as CommunityHistoryRouteImport } from './routes/community/history'
@@ -53,14 +59,28 @@ import { Route as CommunityPerformanceRouteImport } from './routes/community/per
 import { Route as CommunityTeamRouteImport } from './routes/community/team'
 import { Route as HealthLiveRouteImport } from './routes/health.live'
 import { Route as HealthReadyRouteImport } from './routes/health.ready'
+import { Route as KitSizesRouteImport } from './routes/kit/sizes'
 import { Route as OpsIndexRouteImport } from './routes/ops/index'
 import { Route as OpsPeopleRouteImport } from './routes/ops/people'
+import { Route as PrivacyRequestRouteImport } from './routes/privacy.request'
 import { Route as VacationsIndexRouteImport } from './routes/vacations/index'
+import { Route as VacationsGolfRouteImport } from './routes/vacations/golf'
 import { Route as VacationsLanzaroteRouteImport } from './routes/vacations/lanzarote'
 import { Route as VacationsPadelRouteImport } from './routes/vacations/padel'
 import { Route as VacationsTennisRouteImport } from './routes/vacations/tennis'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiCachePurgeRouteImport } from './routes/api/cache.purge'
+import { Route as ApiOauthAuthorizeRouteImport } from './routes/api/oauth/authorize'
+import { Route as ApiOauthIntrospectRouteImport } from './routes/api/oauth/introspect'
+import { Route as ApiOauthRevocationListRouteImport } from './routes/api/oauth/revocation-list'
+import { Route as ApiOauthRevokeRouteImport } from './routes/api/oauth/revoke'
+import { Route as ApiOauthTokenRouteImport } from './routes/api/oauth/token'
+import { Route as ApiOauthUserinfoRouteImport } from './routes/api/oauth/userinfo'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe.webhook'
+import { Route as CommunityClubIndexRouteImport } from './routes/community/club/index'
+import { Route as CommunityClubHallOfFameRouteImport } from './routes/community/club/hall-of-fame'
+import { Route as CommunityClubPerformanceRouteImport } from './routes/community/club/performance'
+import { Route as CommunityClubTeamRouteImport } from './routes/community/club/team'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -75,6 +95,11 @@ const SplatRoute = SplatRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookRoute = BookRouteImport.update({
@@ -152,6 +177,11 @@ const OpsRoute = OpsRouteImport.update({
   path: '/ops',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayingLevelsRoute = PlayingLevelsRouteImport.update({
+  id: '/playing-levels',
+  path: '/playing-levels',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortalRoute = PortalRouteImport.update({
   id: '/portal',
   path: '/portal',
@@ -165,6 +195,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ReadyzRoute = ReadyzRouteImport.update({
   id: '/readyz',
   path: '/readyz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StoryTimeRoute = StoryTimeRouteImport.update({
@@ -212,6 +247,11 @@ const CampKitRoute = CampKitRouteImport.update({
   path: '/kit',
   getParentRoute: () => CampRoute,
 } as any)
+const CampMapRoute = CampMapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => CampRoute,
+} as any)
 const CampMessagesRoute = CampMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
@@ -237,9 +277,19 @@ const CampTodayRoute = CampTodayRouteImport.update({
   path: '/today',
   getParentRoute: () => CampRoute,
 } as any)
+const CampTournamentsRoute = CampTournamentsRouteImport.update({
+  id: '/tournaments',
+  path: '/tournaments',
+  getParentRoute: () => CampRoute,
+} as any)
 const CommunityIndexRoute = CommunityIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => CommunityRoute,
+} as any)
+const CommunityClubRoute = CommunityClubRouteImport.update({
+  id: '/club',
+  path: '/club',
   getParentRoute: () => CommunityRoute,
 } as any)
 const CommunityCoachingRoute = CommunityCoachingRouteImport.update({
@@ -282,6 +332,11 @@ const HealthReadyRoute = HealthReadyRouteImport.update({
   path: '/ready',
   getParentRoute: () => HealthRoute,
 } as any)
+const KitSizesRoute = KitSizesRouteImport.update({
+  id: '/kit/sizes',
+  path: '/kit/sizes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OpsIndexRoute = OpsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -292,9 +347,19 @@ const OpsPeopleRoute = OpsPeopleRouteImport.update({
   path: '/people',
   getParentRoute: () => OpsRoute,
 } as any)
+const PrivacyRequestRoute = PrivacyRequestRouteImport.update({
+  id: '/request',
+  path: '/request',
+  getParentRoute: () => PrivacyRoute,
+} as any)
 const VacationsIndexRoute = VacationsIndexRouteImport.update({
   id: '/vacations/',
   path: '/vacations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VacationsGolfRoute = VacationsGolfRouteImport.update({
+  id: '/vacations/golf',
+  path: '/vacations/golf',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VacationsLanzaroteRoute = VacationsLanzaroteRouteImport.update({
@@ -322,11 +387,68 @@ const ApiCachePurgeRoute = ApiCachePurgeRouteImport.update({
   path: '/api/cache/purge',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOauthAuthorizeRoute = ApiOauthAuthorizeRouteImport.update({
+  id: '/api/oauth/authorize',
+  path: '/api/oauth/authorize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthIntrospectRoute = ApiOauthIntrospectRouteImport.update({
+  id: '/api/oauth/introspect',
+  path: '/api/oauth/introspect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthRevocationListRoute = ApiOauthRevocationListRouteImport.update({
+  id: '/api/oauth/revocation-list',
+  path: '/api/oauth/revocation-list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthRevokeRoute = ApiOauthRevokeRouteImport.update({
+  id: '/api/oauth/revoke',
+  path: '/api/oauth/revoke',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthTokenRoute = ApiOauthTokenRouteImport.update({
+  id: '/api/oauth/token',
+  path: '/api/oauth/token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOauthUserinfoRoute = ApiOauthUserinfoRouteImport.update({
+  id: '/api/oauth/userinfo',
+  path: '/api/oauth/userinfo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe/webhook',
+  path: '/api/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityClubIndexRoute = CommunityClubIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CommunityClubRoute,
+} as any)
+const CommunityClubHallOfFameRoute = CommunityClubHallOfFameRouteImport.update({
+  id: '/hall-of-fame',
+  path: '/hall-of-fame',
+  getParentRoute: () => CommunityClubRoute,
+} as any)
+const CommunityClubPerformanceRoute =
+  CommunityClubPerformanceRouteImport.update({
+    id: '/performance',
+    path: '/performance',
+    getParentRoute: () => CommunityClubRoute,
+  } as any)
+const CommunityClubTeamRoute = CommunityClubTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => CommunityClubRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/book': typeof BookRouteWithChildren
   '/camp': typeof CampRouteWithChildren
   '/coaches': typeof CoachesRoute
@@ -342,9 +464,11 @@ export interface FileRoutesByFullPath {
   '/livez': typeof LivezRoute
   '/login': typeof LoginRoute
   '/ops': typeof OpsRouteWithChildren
+  '/playing-levels': typeof PlayingLevelsRoute
   '/portal': typeof PortalRoute
-  '/privacy': typeof PrivacyRoute
+  '/privacy': typeof PrivacyRouteWithChildren
   '/readyz': typeof ReadyzRoute
+  '/security': typeof SecurityRoute
   '/story-time': typeof StoryTimeRoute
   '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
@@ -352,11 +476,14 @@ export interface FileRoutesByFullPath {
   '/camp/fuel': typeof CampFuelRoute
   '/camp/groups': typeof CampGroupsRoute
   '/camp/kit': typeof CampKitRoute
+  '/camp/map': typeof CampMapRoute
   '/camp/messages': typeof CampMessagesRoute
   '/camp/prepare': typeof CampPrepareRoute
   '/camp/schedule': typeof CampScheduleRoute
   '/camp/squad': typeof CampSquadRoute
   '/camp/today': typeof CampTodayRoute
+  '/camp/tournaments': typeof CampTournamentsRoute
+  '/community/club': typeof CommunityClubRouteWithChildren
   '/community/coaching': typeof CommunityCoachingRoute
   '/community/hall-of-fame': typeof CommunityHallOfFameRoute
   '/community/history': typeof CommunityHistoryRoute
@@ -365,7 +492,10 @@ export interface FileRoutesByFullPath {
   '/community/team': typeof CommunityTeamRoute
   '/health/live': typeof HealthLiveRoute
   '/health/ready': typeof HealthReadyRoute
+  '/kit/sizes': typeof KitSizesRoute
   '/ops/people': typeof OpsPeopleRoute
+  '/privacy/request': typeof PrivacyRequestRoute
+  '/vacations/golf': typeof VacationsGolfRoute
   '/vacations/lanzarote': typeof VacationsLanzaroteRoute
   '/vacations/padel': typeof VacationsPadelRoute
   '/vacations/tennis': typeof VacationsTennisRoute
@@ -376,11 +506,23 @@ export interface FileRoutesByFullPath {
   '/vacations/': typeof VacationsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cache/purge': typeof ApiCachePurgeRoute
+  '/api/oauth/authorize': typeof ApiOauthAuthorizeRoute
+  '/api/oauth/introspect': typeof ApiOauthIntrospectRoute
+  '/api/oauth/revocation-list': typeof ApiOauthRevocationListRoute
+  '/api/oauth/revoke': typeof ApiOauthRevokeRoute
+  '/api/oauth/token': typeof ApiOauthTokenRoute
+  '/api/oauth/userinfo': typeof ApiOauthUserinfoRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
+  '/community/club/hall-of-fame': typeof CommunityClubHallOfFameRoute
+  '/community/club/performance': typeof CommunityClubPerformanceRoute
+  '/community/club/team': typeof CommunityClubTeamRoute
+  '/community/club/': typeof CommunityClubIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/coaches': typeof CoachesRoute
   '/coaches-corner': typeof CoachesCornerRoute
   '/coaching': typeof CoachingRoute
@@ -392,9 +534,11 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryRoute
   '/livez': typeof LivezRoute
   '/login': typeof LoginRoute
+  '/playing-levels': typeof PlayingLevelsRoute
   '/portal': typeof PortalRoute
-  '/privacy': typeof PrivacyRoute
+  '/privacy': typeof PrivacyRouteWithChildren
   '/readyz': typeof ReadyzRoute
+  '/security': typeof SecurityRoute
   '/story-time': typeof StoryTimeRoute
   '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
@@ -402,11 +546,13 @@ export interface FileRoutesByTo {
   '/camp/fuel': typeof CampFuelRoute
   '/camp/groups': typeof CampGroupsRoute
   '/camp/kit': typeof CampKitRoute
+  '/camp/map': typeof CampMapRoute
   '/camp/messages': typeof CampMessagesRoute
   '/camp/prepare': typeof CampPrepareRoute
   '/camp/schedule': typeof CampScheduleRoute
   '/camp/squad': typeof CampSquadRoute
   '/camp/today': typeof CampTodayRoute
+  '/camp/tournaments': typeof CampTournamentsRoute
   '/community/coaching': typeof CommunityCoachingRoute
   '/community/hall-of-fame': typeof CommunityHallOfFameRoute
   '/community/history': typeof CommunityHistoryRoute
@@ -415,7 +561,10 @@ export interface FileRoutesByTo {
   '/community/team': typeof CommunityTeamRoute
   '/health/live': typeof HealthLiveRoute
   '/health/ready': typeof HealthReadyRoute
+  '/kit/sizes': typeof KitSizesRoute
   '/ops/people': typeof OpsPeopleRoute
+  '/privacy/request': typeof PrivacyRequestRoute
+  '/vacations/golf': typeof VacationsGolfRoute
   '/vacations/lanzarote': typeof VacationsLanzaroteRoute
   '/vacations/padel': typeof VacationsPadelRoute
   '/vacations/tennis': typeof VacationsTennisRoute
@@ -426,12 +575,24 @@ export interface FileRoutesByTo {
   '/vacations': typeof VacationsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cache/purge': typeof ApiCachePurgeRoute
+  '/api/oauth/authorize': typeof ApiOauthAuthorizeRoute
+  '/api/oauth/introspect': typeof ApiOauthIntrospectRoute
+  '/api/oauth/revocation-list': typeof ApiOauthRevocationListRoute
+  '/api/oauth/revoke': typeof ApiOauthRevokeRoute
+  '/api/oauth/token': typeof ApiOauthTokenRoute
+  '/api/oauth/userinfo': typeof ApiOauthUserinfoRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
+  '/community/club/hall-of-fame': typeof CommunityClubHallOfFameRoute
+  '/community/club/performance': typeof CommunityClubPerformanceRoute
+  '/community/club/team': typeof CommunityClubTeamRoute
+  '/community/club': typeof CommunityClubIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/book': typeof BookRouteWithChildren
   '/camp': typeof CampRouteWithChildren
   '/coaches': typeof CoachesRoute
@@ -447,9 +608,11 @@ export interface FileRoutesById {
   '/livez': typeof LivezRoute
   '/login': typeof LoginRoute
   '/ops': typeof OpsRouteWithChildren
+  '/playing-levels': typeof PlayingLevelsRoute
   '/portal': typeof PortalRoute
-  '/privacy': typeof PrivacyRoute
+  '/privacy': typeof PrivacyRouteWithChildren
   '/readyz': typeof ReadyzRoute
+  '/security': typeof SecurityRoute
   '/story-time': typeof StoryTimeRoute
   '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
@@ -457,11 +620,14 @@ export interface FileRoutesById {
   '/camp/fuel': typeof CampFuelRoute
   '/camp/groups': typeof CampGroupsRoute
   '/camp/kit': typeof CampKitRoute
+  '/camp/map': typeof CampMapRoute
   '/camp/messages': typeof CampMessagesRoute
   '/camp/prepare': typeof CampPrepareRoute
   '/camp/schedule': typeof CampScheduleRoute
   '/camp/squad': typeof CampSquadRoute
   '/camp/today': typeof CampTodayRoute
+  '/camp/tournaments': typeof CampTournamentsRoute
+  '/community/club': typeof CommunityClubRouteWithChildren
   '/community/coaching': typeof CommunityCoachingRoute
   '/community/hall-of-fame': typeof CommunityHallOfFameRoute
   '/community/history': typeof CommunityHistoryRoute
@@ -470,7 +636,10 @@ export interface FileRoutesById {
   '/community/team': typeof CommunityTeamRoute
   '/health/live': typeof HealthLiveRoute
   '/health/ready': typeof HealthReadyRoute
+  '/kit/sizes': typeof KitSizesRoute
   '/ops/people': typeof OpsPeopleRoute
+  '/privacy/request': typeof PrivacyRequestRoute
+  '/vacations/golf': typeof VacationsGolfRoute
   '/vacations/lanzarote': typeof VacationsLanzaroteRoute
   '/vacations/padel': typeof VacationsPadelRoute
   '/vacations/tennis': typeof VacationsTennisRoute
@@ -481,6 +650,17 @@ export interface FileRoutesById {
   '/vacations/': typeof VacationsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cache/purge': typeof ApiCachePurgeRoute
+  '/api/oauth/authorize': typeof ApiOauthAuthorizeRoute
+  '/api/oauth/introspect': typeof ApiOauthIntrospectRoute
+  '/api/oauth/revocation-list': typeof ApiOauthRevocationListRoute
+  '/api/oauth/revoke': typeof ApiOauthRevokeRoute
+  '/api/oauth/token': typeof ApiOauthTokenRoute
+  '/api/oauth/userinfo': typeof ApiOauthUserinfoRoute
+  '/api/stripe/webhook': typeof ApiStripeWebhookRoute
+  '/community/club/hall-of-fame': typeof CommunityClubHallOfFameRoute
+  '/community/club/performance': typeof CommunityClubPerformanceRoute
+  '/community/club/team': typeof CommunityClubTeamRoute
+  '/community/club/': typeof CommunityClubIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -488,6 +668,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/about'
+    | '/account'
     | '/book'
     | '/camp'
     | '/coaches'
@@ -503,9 +684,11 @@ export interface FileRouteTypes {
     | '/livez'
     | '/login'
     | '/ops'
+    | '/playing-levels'
     | '/portal'
     | '/privacy'
     | '/readyz'
+    | '/security'
     | '/story-time'
     | '/terms'
     | '/travel'
@@ -513,11 +696,14 @@ export interface FileRouteTypes {
     | '/camp/fuel'
     | '/camp/groups'
     | '/camp/kit'
+    | '/camp/map'
     | '/camp/messages'
     | '/camp/prepare'
     | '/camp/schedule'
     | '/camp/squad'
     | '/camp/today'
+    | '/camp/tournaments'
+    | '/community/club'
     | '/community/coaching'
     | '/community/hall-of-fame'
     | '/community/history'
@@ -526,7 +712,10 @@ export interface FileRouteTypes {
     | '/community/team'
     | '/health/live'
     | '/health/ready'
+    | '/kit/sizes'
     | '/ops/people'
+    | '/privacy/request'
+    | '/vacations/golf'
     | '/vacations/lanzarote'
     | '/vacations/padel'
     | '/vacations/tennis'
@@ -537,11 +726,23 @@ export interface FileRouteTypes {
     | '/vacations/'
     | '/api/auth/$'
     | '/api/cache/purge'
+    | '/api/oauth/authorize'
+    | '/api/oauth/introspect'
+    | '/api/oauth/revocation-list'
+    | '/api/oauth/revoke'
+    | '/api/oauth/token'
+    | '/api/oauth/userinfo'
+    | '/api/stripe/webhook'
+    | '/community/club/hall-of-fame'
+    | '/community/club/performance'
+    | '/community/club/team'
+    | '/community/club/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$'
     | '/about'
+    | '/account'
     | '/coaches'
     | '/coaches-corner'
     | '/coaching'
@@ -553,9 +754,11 @@ export interface FileRouteTypes {
     | '/history'
     | '/livez'
     | '/login'
+    | '/playing-levels'
     | '/portal'
     | '/privacy'
     | '/readyz'
+    | '/security'
     | '/story-time'
     | '/terms'
     | '/travel'
@@ -563,11 +766,13 @@ export interface FileRouteTypes {
     | '/camp/fuel'
     | '/camp/groups'
     | '/camp/kit'
+    | '/camp/map'
     | '/camp/messages'
     | '/camp/prepare'
     | '/camp/schedule'
     | '/camp/squad'
     | '/camp/today'
+    | '/camp/tournaments'
     | '/community/coaching'
     | '/community/hall-of-fame'
     | '/community/history'
@@ -576,7 +781,10 @@ export interface FileRouteTypes {
     | '/community/team'
     | '/health/live'
     | '/health/ready'
+    | '/kit/sizes'
     | '/ops/people'
+    | '/privacy/request'
+    | '/vacations/golf'
     | '/vacations/lanzarote'
     | '/vacations/padel'
     | '/vacations/tennis'
@@ -587,11 +795,23 @@ export interface FileRouteTypes {
     | '/vacations'
     | '/api/auth/$'
     | '/api/cache/purge'
+    | '/api/oauth/authorize'
+    | '/api/oauth/introspect'
+    | '/api/oauth/revocation-list'
+    | '/api/oauth/revoke'
+    | '/api/oauth/token'
+    | '/api/oauth/userinfo'
+    | '/api/stripe/webhook'
+    | '/community/club/hall-of-fame'
+    | '/community/club/performance'
+    | '/community/club/team'
+    | '/community/club'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/about'
+    | '/account'
     | '/book'
     | '/camp'
     | '/coaches'
@@ -607,9 +827,11 @@ export interface FileRouteTypes {
     | '/livez'
     | '/login'
     | '/ops'
+    | '/playing-levels'
     | '/portal'
     | '/privacy'
     | '/readyz'
+    | '/security'
     | '/story-time'
     | '/terms'
     | '/travel'
@@ -617,11 +839,14 @@ export interface FileRouteTypes {
     | '/camp/fuel'
     | '/camp/groups'
     | '/camp/kit'
+    | '/camp/map'
     | '/camp/messages'
     | '/camp/prepare'
     | '/camp/schedule'
     | '/camp/squad'
     | '/camp/today'
+    | '/camp/tournaments'
+    | '/community/club'
     | '/community/coaching'
     | '/community/hall-of-fame'
     | '/community/history'
@@ -630,7 +855,10 @@ export interface FileRouteTypes {
     | '/community/team'
     | '/health/live'
     | '/health/ready'
+    | '/kit/sizes'
     | '/ops/people'
+    | '/privacy/request'
+    | '/vacations/golf'
     | '/vacations/lanzarote'
     | '/vacations/padel'
     | '/vacations/tennis'
@@ -641,12 +869,24 @@ export interface FileRouteTypes {
     | '/vacations/'
     | '/api/auth/$'
     | '/api/cache/purge'
+    | '/api/oauth/authorize'
+    | '/api/oauth/introspect'
+    | '/api/oauth/revocation-list'
+    | '/api/oauth/revoke'
+    | '/api/oauth/token'
+    | '/api/oauth/userinfo'
+    | '/api/stripe/webhook'
+    | '/community/club/hall-of-fame'
+    | '/community/club/performance'
+    | '/community/club/team'
+    | '/community/club/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
+  AccountRoute: typeof AccountRoute
   BookRoute: typeof BookRouteWithChildren
   CampRoute: typeof CampRouteWithChildren
   CoachesRoute: typeof CoachesRoute
@@ -662,18 +902,29 @@ export interface RootRouteChildren {
   LivezRoute: typeof LivezRoute
   LoginRoute: typeof LoginRoute
   OpsRoute: typeof OpsRouteWithChildren
+  PlayingLevelsRoute: typeof PlayingLevelsRoute
   PortalRoute: typeof PortalRoute
-  PrivacyRoute: typeof PrivacyRoute
+  PrivacyRoute: typeof PrivacyRouteWithChildren
   ReadyzRoute: typeof ReadyzRoute
+  SecurityRoute: typeof SecurityRoute
   StoryTimeRoute: typeof StoryTimeRoute
   TermsRoute: typeof TermsRoute
   TravelRoute: typeof TravelRoute
+  KitSizesRoute: typeof KitSizesRoute
+  VacationsGolfRoute: typeof VacationsGolfRoute
   VacationsLanzaroteRoute: typeof VacationsLanzaroteRoute
   VacationsPadelRoute: typeof VacationsPadelRoute
   VacationsTennisRoute: typeof VacationsTennisRoute
   VacationsIndexRoute: typeof VacationsIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCachePurgeRoute: typeof ApiCachePurgeRoute
+  ApiOauthAuthorizeRoute: typeof ApiOauthAuthorizeRoute
+  ApiOauthIntrospectRoute: typeof ApiOauthIntrospectRoute
+  ApiOauthRevocationListRoute: typeof ApiOauthRevocationListRoute
+  ApiOauthRevokeRoute: typeof ApiOauthRevokeRoute
+  ApiOauthTokenRoute: typeof ApiOauthTokenRoute
+  ApiOauthUserinfoRoute: typeof ApiOauthUserinfoRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -697,6 +948,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/book': {
@@ -804,6 +1062,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OpsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/playing-levels': {
+      id: '/playing-levels'
+      path: '/playing-levels'
+      fullPath: '/playing-levels'
+      preLoaderRoute: typeof PlayingLevelsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portal': {
       id: '/portal'
       path: '/portal'
@@ -823,6 +1088,13 @@ declare module '@tanstack/react-router' {
       path: '/readyz'
       fullPath: '/readyz'
       preLoaderRoute: typeof ReadyzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/story-time': {
@@ -888,6 +1160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CampKitRouteImport
       parentRoute: typeof CampRoute
     }
+    '/camp/map': {
+      id: '/camp/map'
+      path: '/map'
+      fullPath: '/camp/map'
+      preLoaderRoute: typeof CampMapRouteImport
+      parentRoute: typeof CampRoute
+    }
     '/camp/messages': {
       id: '/camp/messages'
       path: '/messages'
@@ -923,11 +1202,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CampTodayRouteImport
       parentRoute: typeof CampRoute
     }
+    '/camp/tournaments': {
+      id: '/camp/tournaments'
+      path: '/tournaments'
+      fullPath: '/camp/tournaments'
+      preLoaderRoute: typeof CampTournamentsRouteImport
+      parentRoute: typeof CampRoute
+    }
     '/community/': {
       id: '/community/'
       path: '/'
       fullPath: '/community/'
       preLoaderRoute: typeof CommunityIndexRouteImport
+      parentRoute: typeof CommunityRoute
+    }
+    '/community/club': {
+      id: '/community/club'
+      path: '/club'
+      fullPath: '/community/club'
+      preLoaderRoute: typeof CommunityClubRouteImport
       parentRoute: typeof CommunityRoute
     }
     '/community/coaching': {
@@ -986,6 +1279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HealthReadyRouteImport
       parentRoute: typeof HealthRoute
     }
+    '/kit/sizes': {
+      id: '/kit/sizes'
+      path: '/kit/sizes'
+      fullPath: '/kit/sizes'
+      preLoaderRoute: typeof KitSizesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ops/': {
       id: '/ops/'
       path: '/'
@@ -1000,11 +1300,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OpsPeopleRouteImport
       parentRoute: typeof OpsRoute
     }
+    '/privacy/request': {
+      id: '/privacy/request'
+      path: '/request'
+      fullPath: '/privacy/request'
+      preLoaderRoute: typeof PrivacyRequestRouteImport
+      parentRoute: typeof PrivacyRoute
+    }
     '/vacations/': {
       id: '/vacations/'
       path: '/vacations'
       fullPath: '/vacations/'
       preLoaderRoute: typeof VacationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vacations/golf': {
+      id: '/vacations/golf'
+      path: '/vacations/golf'
+      fullPath: '/vacations/golf'
+      preLoaderRoute: typeof VacationsGolfRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vacations/lanzarote': {
@@ -1042,6 +1356,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCachePurgeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/oauth/authorize': {
+      id: '/api/oauth/authorize'
+      path: '/api/oauth/authorize'
+      fullPath: '/api/oauth/authorize'
+      preLoaderRoute: typeof ApiOauthAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/introspect': {
+      id: '/api/oauth/introspect'
+      path: '/api/oauth/introspect'
+      fullPath: '/api/oauth/introspect'
+      preLoaderRoute: typeof ApiOauthIntrospectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/revocation-list': {
+      id: '/api/oauth/revocation-list'
+      path: '/api/oauth/revocation-list'
+      fullPath: '/api/oauth/revocation-list'
+      preLoaderRoute: typeof ApiOauthRevocationListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/revoke': {
+      id: '/api/oauth/revoke'
+      path: '/api/oauth/revoke'
+      fullPath: '/api/oauth/revoke'
+      preLoaderRoute: typeof ApiOauthRevokeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/token': {
+      id: '/api/oauth/token'
+      path: '/api/oauth/token'
+      fullPath: '/api/oauth/token'
+      preLoaderRoute: typeof ApiOauthTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oauth/userinfo': {
+      id: '/api/oauth/userinfo'
+      path: '/api/oauth/userinfo'
+      fullPath: '/api/oauth/userinfo'
+      preLoaderRoute: typeof ApiOauthUserinfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/stripe/webhook': {
+      id: '/api/stripe/webhook'
+      path: '/api/stripe/webhook'
+      fullPath: '/api/stripe/webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community/club/': {
+      id: '/community/club/'
+      path: '/'
+      fullPath: '/community/club/'
+      preLoaderRoute: typeof CommunityClubIndexRouteImport
+      parentRoute: typeof CommunityClubRoute
+    }
+    '/community/club/hall-of-fame': {
+      id: '/community/club/hall-of-fame'
+      path: '/hall-of-fame'
+      fullPath: '/community/club/hall-of-fame'
+      preLoaderRoute: typeof CommunityClubHallOfFameRouteImport
+      parentRoute: typeof CommunityClubRoute
+    }
+    '/community/club/performance': {
+      id: '/community/club/performance'
+      path: '/performance'
+      fullPath: '/community/club/performance'
+      preLoaderRoute: typeof CommunityClubPerformanceRouteImport
+      parentRoute: typeof CommunityClubRoute
+    }
+    '/community/club/team': {
+      id: '/community/club/team'
+      path: '/team'
+      fullPath: '/community/club/team'
+      preLoaderRoute: typeof CommunityClubTeamRouteImport
+      parentRoute: typeof CommunityClubRoute
+    }
   }
 }
 
@@ -1061,11 +1452,13 @@ interface CampRouteChildren {
   CampFuelRoute: typeof CampFuelRoute
   CampGroupsRoute: typeof CampGroupsRoute
   CampKitRoute: typeof CampKitRoute
+  CampMapRoute: typeof CampMapRoute
   CampMessagesRoute: typeof CampMessagesRoute
   CampPrepareRoute: typeof CampPrepareRoute
   CampScheduleRoute: typeof CampScheduleRoute
   CampSquadRoute: typeof CampSquadRoute
   CampTodayRoute: typeof CampTodayRoute
+  CampTournamentsRoute: typeof CampTournamentsRoute
   CampIndexRoute: typeof CampIndexRoute
 }
 
@@ -1073,17 +1466,38 @@ const CampRouteChildren: CampRouteChildren = {
   CampFuelRoute: CampFuelRoute,
   CampGroupsRoute: CampGroupsRoute,
   CampKitRoute: CampKitRoute,
+  CampMapRoute: CampMapRoute,
   CampMessagesRoute: CampMessagesRoute,
   CampPrepareRoute: CampPrepareRoute,
   CampScheduleRoute: CampScheduleRoute,
   CampSquadRoute: CampSquadRoute,
   CampTodayRoute: CampTodayRoute,
+  CampTournamentsRoute: CampTournamentsRoute,
   CampIndexRoute: CampIndexRoute,
 }
 
 const CampRouteWithChildren = CampRoute._addFileChildren(CampRouteChildren)
 
+interface CommunityClubRouteChildren {
+  CommunityClubHallOfFameRoute: typeof CommunityClubHallOfFameRoute
+  CommunityClubPerformanceRoute: typeof CommunityClubPerformanceRoute
+  CommunityClubTeamRoute: typeof CommunityClubTeamRoute
+  CommunityClubIndexRoute: typeof CommunityClubIndexRoute
+}
+
+const CommunityClubRouteChildren: CommunityClubRouteChildren = {
+  CommunityClubHallOfFameRoute: CommunityClubHallOfFameRoute,
+  CommunityClubPerformanceRoute: CommunityClubPerformanceRoute,
+  CommunityClubTeamRoute: CommunityClubTeamRoute,
+  CommunityClubIndexRoute: CommunityClubIndexRoute,
+}
+
+const CommunityClubRouteWithChildren = CommunityClubRoute._addFileChildren(
+  CommunityClubRouteChildren,
+)
+
 interface CommunityRouteChildren {
+  CommunityClubRoute: typeof CommunityClubRouteWithChildren
   CommunityCoachingRoute: typeof CommunityCoachingRoute
   CommunityHallOfFameRoute: typeof CommunityHallOfFameRoute
   CommunityHistoryRoute: typeof CommunityHistoryRoute
@@ -1094,6 +1508,7 @@ interface CommunityRouteChildren {
 }
 
 const CommunityRouteChildren: CommunityRouteChildren = {
+  CommunityClubRoute: CommunityClubRouteWithChildren,
   CommunityCoachingRoute: CommunityCoachingRoute,
   CommunityHallOfFameRoute: CommunityHallOfFameRoute,
   CommunityHistoryRoute: CommunityHistoryRoute,
@@ -1132,10 +1547,22 @@ const OpsRouteChildren: OpsRouteChildren = {
 
 const OpsRouteWithChildren = OpsRoute._addFileChildren(OpsRouteChildren)
 
+interface PrivacyRouteChildren {
+  PrivacyRequestRoute: typeof PrivacyRequestRoute
+}
+
+const PrivacyRouteChildren: PrivacyRouteChildren = {
+  PrivacyRequestRoute: PrivacyRequestRoute,
+}
+
+const PrivacyRouteWithChildren =
+  PrivacyRoute._addFileChildren(PrivacyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
+  AccountRoute: AccountRoute,
   BookRoute: BookRouteWithChildren,
   CampRoute: CampRouteWithChildren,
   CoachesRoute: CoachesRoute,
@@ -1151,18 +1578,29 @@ const rootRouteChildren: RootRouteChildren = {
   LivezRoute: LivezRoute,
   LoginRoute: LoginRoute,
   OpsRoute: OpsRouteWithChildren,
+  PlayingLevelsRoute: PlayingLevelsRoute,
   PortalRoute: PortalRoute,
-  PrivacyRoute: PrivacyRoute,
+  PrivacyRoute: PrivacyRouteWithChildren,
   ReadyzRoute: ReadyzRoute,
+  SecurityRoute: SecurityRoute,
   StoryTimeRoute: StoryTimeRoute,
   TermsRoute: TermsRoute,
   TravelRoute: TravelRoute,
+  KitSizesRoute: KitSizesRoute,
+  VacationsGolfRoute: VacationsGolfRoute,
   VacationsLanzaroteRoute: VacationsLanzaroteRoute,
   VacationsPadelRoute: VacationsPadelRoute,
   VacationsTennisRoute: VacationsTennisRoute,
   VacationsIndexRoute: VacationsIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCachePurgeRoute: ApiCachePurgeRoute,
+  ApiOauthAuthorizeRoute: ApiOauthAuthorizeRoute,
+  ApiOauthIntrospectRoute: ApiOauthIntrospectRoute,
+  ApiOauthRevocationListRoute: ApiOauthRevocationListRoute,
+  ApiOauthRevokeRoute: ApiOauthRevokeRoute,
+  ApiOauthTokenRoute: ApiOauthTokenRoute,
+  ApiOauthUserinfoRoute: ApiOauthUserinfoRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

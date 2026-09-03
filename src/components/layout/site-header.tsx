@@ -1,7 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { nav } from "@/data/site";
+import { nav, primaryCta } from "@/data/site";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/site/logo";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,13 @@ function HeaderLink({
   if (href === "/portal") {
     return (
       <Link to="/portal" className={className} onClick={onClick}>
+        {children}
+      </Link>
+    );
+  }
+  if (href === "/account") {
+    return (
+      <Link to="/account" className={className} onClick={onClick}>
         {children}
       </Link>
     );
@@ -97,7 +104,7 @@ function DesktopMenu({ item }: { item: NavItem }) {
             <HeaderLink
               key={child.href + child.label}
               href={child.href}
-              search={"search" in child ? child.search : undefined}
+              search={"search" in child ? (child.search as { interest: string } | undefined) : undefined}
               className="block rounded-sm px-3 py-2.5 hover:bg-surface"
             >
               <span className="block text-sm text-fg">{child.label}</span>
@@ -109,6 +116,23 @@ function DesktopMenu({ item }: { item: NavItem }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function PrimaryCta({ onClick, className }: { onClick?: () => void; className?: string }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (pathname.startsWith("/community/club")) return null;
+  const cta = primaryCta(pathname);
+  return (
+    <Button asChild className={className}>
+      <HeaderLink
+        href={cta.href}
+        search={"search" in cta ? cta.search : undefined}
+        onClick={onClick}
+      >
+        {cta.label}
+      </HeaderLink>
+    </Button>
   );
 }
 
@@ -131,9 +155,10 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-5 lg:flex">
-          <Button asChild>
-            <Link to="/book">Book a camp</Link>
-          </Button>
+          <Link to="/account" className="text-sm text-muted transition-colors hover:text-fg">
+            Account
+          </Link>
+          <PrimaryCta />
         </div>
 
         <button
@@ -187,7 +212,7 @@ export function SiteHeader() {
                         <HeaderLink
                           key={child.href + child.label}
                           href={child.href}
-                          search={"search" in child ? child.search : undefined}
+                          search={"search" in child ? (child.search as { interest: string } | undefined) : undefined}
                           className="block rounded-sm py-3 pr-3 pl-6 text-sm text-muted hover:bg-surface hover:text-fg"
                           onClick={() => setOpen(false)}
                         >
@@ -198,11 +223,14 @@ export function SiteHeader() {
                 </div>
               );
             })}
-            <Button asChild className="mt-3 w-full">
-              <Link to="/book" onClick={() => setOpen(false)}>
-                Book a camp
-              </Link>
-            </Button>
+            <Link
+              to="/account"
+              className="rounded-sm px-3 py-3 text-fg hover:bg-surface"
+              onClick={() => setOpen(false)}
+            >
+              Account
+            </Link>
+            <PrimaryCta className="mt-3 w-full" onClick={() => setOpen(false)} />
           </nav>
         </div>
       ) : null}

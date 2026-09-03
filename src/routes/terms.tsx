@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalDoc } from "@/components/site/legal-doc";
 import { company, terms } from "@/data/legal";
+import { headFor } from "@/data/seo";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [{ title: "Terms & Conditions · Hybrid Vacations" }],
-  }),
+  head: () => headFor("/terms"),
   component: TermsPage,
 });
 

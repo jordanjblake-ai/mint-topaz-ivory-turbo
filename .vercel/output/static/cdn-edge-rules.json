@@ -1,0 +1,42 @@
+{
+  "name": "Hybrid Vacations edge cache",
+  "notes": "Import as Cloudflare Cache Rules. Vercel ISR (300s) is set in Nitro routeRules. Ignore ad query strings so Instagram/Google clicks share one object.",
+  "rules": [
+    {
+      "description": "Bypass private Hybrid surfaces",
+      "action": "bypass_cache",
+      "expression": "http.request.uri.path matches \"^/(api|health|healthz|livez|readyz|login|ops|camp|portal|coaches-corner|book|auth|__grok|__app-env)\""
+    },
+    {
+      "description": "HTML at the edge, ignore ad query strings",
+      "action": "set_cache_settings",
+      "edge_ttl_seconds": 300,
+      "stale_while_revalidate": 86400,
+      "stale_if_error": 86400,
+      "cache_key": { "ignore_query_strings_except": ["interest"] },
+      "expression": "not http.request.uri.path matches \"^/(images|assets|calendar|api|camp|ops|book|login|portal)/\""
+    },
+    {
+      "description": "Resized photos",
+      "action": "set_cache_settings",
+      "edge_ttl_seconds": 2592000,
+      "stale_while_revalidate": 7776000,
+      "stale_if_error": 7776000,
+      "cache_key": { "ignore_query_strings_except": ["v"] },
+      "expression": "http.request.uri.path matches \"^/images/opt/\""
+    },
+    {
+      "description": "Original photos and logo",
+      "action": "set_cache_settings",
+      "edge_ttl_seconds": 604800,
+      "cache_key": { "ignore_query_strings_except": ["v"] },
+      "expression": "http.request.uri.path matches \"^/images/\""
+    },
+    {
+      "description": "Hashed JS and CSS",
+      "action": "set_cache_settings",
+      "edge_ttl_seconds": 31536000,
+      "expression": "http.request.uri.path matches \"^/assets/\""
+    }
+  ]
+}

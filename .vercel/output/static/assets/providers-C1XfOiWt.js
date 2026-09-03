@@ -1,0 +1,1 @@
+var e=[{providerId:`grok-google`,idp:`google`,label:`Google`},{providerId:`grok-microsoft`,idp:`microsoft`,label:`Microsoft`},{providerId:`grok-x`,idp:`twitter`,label:`X`}];export{e as t};

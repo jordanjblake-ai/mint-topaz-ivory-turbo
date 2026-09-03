@@ -11,7 +11,7 @@ import { grokPwaPlugin } from "./scripts/grok-pwa-plugin.mjs";
 // @ts-expect-error JS plugin alongside the TS vite config
 import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
-import { applyCacheToNodeResponse } from "./src/lib/cache-headers";
+import { applyCacheToNodeResponse, SECURITY_HEADERS } from "./src/lib/cache-headers";
 import { edgeCacheKey, nitroRouteRules } from "./src/lib/edge-cache";
 import {
   clientIp,
@@ -43,13 +43,9 @@ function pgliteBootstrapPlugin(): Plugin {
     apply: "serve",
     async configureServer(server) {
       server.middlewares.use((_req, res, next) => {
-        res.setHeader("X-Content-Type-Options", "nosniff");
-        res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-        res.setHeader(
-          "Permissions-Policy",
-          "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
-        );
-        res.setHeader("X-DNS-Prefetch-Control", "off");
+        for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+          res.setHeader(key, value);
+        }
         next();
       });
       if (!hasGlobbedMigrations(server.config.root)) return;
@@ -101,13 +97,17 @@ function authPopupPlugin(): Plugin {
             return;
           }
 
-          const host = String(
-            req.headers["x-forwarded-host"] ?? req.headers.host ?? "localhost:8080",
-          );
-          const proto = String(
-            req.headers["x-forwarded-proto"] ??
-              ((req.socket as { encrypted?: boolean } | undefined)?.encrypted ? "https" : "http"),
-          );
+          const xfHost = String(req.headers["x-forwarded-host"] ?? "")
+            .split(",")[0]
+            .trim();
+          const xfProto = String(req.headers["x-forwarded-proto"] ?? "")
+            .split(",")[0]
+            .trim();
+          const host = xfHost || String(req.headers.host ?? "localhost:8080");
+          const proto = host.endsWith(".grok-sandbox.com")
+            ? "https"
+            : xfProto ||
+              ((req.socket as { encrypted?: boolean } | undefined)?.encrypted ? "https" : "http");
           const requestHeaders = new Headers();
           for (const [key, value] of Object.entries(req.headers)) {
             if (value === undefined) continue;
@@ -117,9 +117,12 @@ function authPopupPlugin(): Plugin {
               requestHeaders.set(key, value);
             }
           }
-          // Ensure Host is the public preview host so Better Auth's dynamic
-          // baseURL / redirect_uri match the popup origin.
-          if (!requestHeaders.has("host")) requestHeaders.set("host", host);
+          // Always overwrite Host. The Node socket is loopback; Better Auth
+          // would otherwise mint redirect_uri=http://localhost:8080/... which
+          // the broker preview client rejects.
+          requestHeaders.set("host", host);
+          requestHeaders.set("x-forwarded-host", host);
+          requestHeaders.set("x-forwarded-proto", proto);
 
           const request = new Request(`${proto}://${host}${rawUrl}`, {
             method: "GET",

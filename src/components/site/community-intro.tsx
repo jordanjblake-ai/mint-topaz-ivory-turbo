@@ -6,6 +6,8 @@ import {
   communityImages,
   communityStory,
   muralRowCount,
+  muralSrc,
+  muralSrcSet,
   pickCommunitySlots,
 } from "@/data/community";
 import { Container, Display, Kicker } from "@/components/site/section";
@@ -207,7 +209,16 @@ export function CommunityIntro() {
                   return (
                     <div key={`${row}-${col}`} className="community-cell">
                       <div className="community-cell-inner">
-                        <img src={src} alt="" className="community-cell-img" draggable={false} />
+                        <img
+                          src={muralSrc(src)}
+                          srcSet={muralSrcSet(src)}
+                          sizes="(min-width: 768px) 14vw, 42vw"
+                          alt=""
+                          className="community-cell-img"
+                          draggable={false}
+                          loading="lazy"
+                          decoding="async"
+                        />
                       </div>
                     </div>
                   );
@@ -234,6 +245,16 @@ export function CommunityIntro() {
           <Display className="mt-3 text-5xl sm:text-7xl">The people that make Hybrid</Display>
           <p className="mt-6 text-lg leading-relaxed text-muted">
             Come for the sport. Stay for the people. Leave with memories.
+          </p>
+          <p className="mt-6">
+            <Link to="/community/club" className="text-sm font-semibold uppercase tracking-wide text-accent hover:text-accent-hover">
+              The Club
+            </Link>
+          </p>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
+            <Link to="/story-time" className="text-fg underline decoration-accent/60 underline-offset-4 hover:text-accent">
+              Story Time — how Hybrid got from a name to a world-tour court.
+            </Link>
           </p>
 
           <div className="mt-16 grid gap-16">

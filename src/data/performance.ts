@@ -82,9 +82,9 @@ export const CAMP_WEEKS = [
 ] as const;
 
 export const COACHING_FORMATS = [
-  { value: "private", label: "Private Session" },
+  { value: "private", label: "Private" },
   { value: "clinic", label: "Clinic" },
-  { value: "mini-camp", label: "Mini-Camp" },
+  { value: "mini-camp", label: "Mini-camp" },
 ] as const;
 
 export type PerformanceLevel = (typeof ALL_LEVELS)[number]["value"];
@@ -136,16 +136,22 @@ export function usesVest(sport: FormSport) {
   return sport === "beach";
 }
 
+/** Playing kit (vest/T-shirt, sports bra, sizes) only belongs on court sports. */
+export function usesPlayingKit(sport: FormSport) {
+  return sport === "beach" || sport === "tennis" || sport === "padel";
+}
+
 export function topsForSport(sport: FormSport) {
   const shirt = usesVest(sport)
     ? ALL_TOPS.find((item) => item.value === "vest")!
     : ALL_TOPS.find((item) => item.value === "t-shirt")!;
+  if (!usesPlayingKit(sport)) return [shirt];
   const bra = ALL_TOPS.find((item) => item.value === "sports-bra")!;
   return [shirt, bra];
 }
 
 export function defaultTopForSport(sport: FormSport, gender: PerformanceGender): PerformanceTop {
-  if (gender === "female") return "sports-bra";
+  if (gender === "female" && usesPlayingKit(sport)) return "sports-bra";
   return usesVest(sport) ? "vest" : "t-shirt";
 }
 

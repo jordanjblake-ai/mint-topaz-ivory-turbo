@@ -11,6 +11,7 @@ import {
 import { saveCampKit } from "@/lib/camp-kit";
 import { postCampNote, replyCampNote } from "@/lib/camp-mail";
 import { clip, safeJsonParse } from "@/lib/guard";
+import { beginSessionClock, clearSessionClock, sessionStillValid } from "@/lib/session-timeout";
 import type { KitChoice } from "@/data/kit";
 
 export type CampMessage = {
@@ -32,6 +33,9 @@ export type CampReview = {
   at: string;
 };
 
+export type TournamentRsvp = "yes" | "no" | "maybe";
+export type TournamentRsvpBook = Record<string, Record<string, TournamentRsvp>>;
+
 type CampState = {
   ready: boolean;
   me: CampPerson | null;
@@ -42,6 +46,7 @@ type CampState = {
   reviews: Record<string, CampReview>;
   notify: boolean;
   kits: Record<string, KitChoice>;
+  rsvps: TournamentRsvpBook;
   hydrate: () => void;
   login: (email: string) => boolean;
   logout: () => void;
@@ -52,11 +57,13 @@ type CampState = {
   setNotify: (value: boolean) => void;
   saveReview: (body: string, marketing: boolean) => void;
   saveKit: (kit: Omit<KitChoice, "personId" | "updatedAt">) => Promise<void>;
+  setRsvp: (eventId: string, value: TournamentRsvp) => void;
 };
 
 const KEY = "hybrid-camp-v4";
 const SESSION = "hybrid-camp-email";
 const KIT_KEY = "hybrid-camp-kit-v1";
+const RSVP_KEY = "hybrid-camp-tournament-rsvp-v1";
 
 const defaultGroups = (): GroupMap =>
   Object.fromEntries(PEOPLE.filter((p) => p.role === "player").map((p) => [p.id, p.groupId]));
@@ -86,6 +93,11 @@ function persistKits(kits: Record<string, KitChoice>) {
   localStorage.setItem(KIT_KEY, JSON.stringify(kits));
 }
 
+function persistRsvps(rsvps: TournamentRsvpBook) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(RSVP_KEY, JSON.stringify(rsvps));
+}
+
 function withGroup(person: CampPerson, groups: GroupMap): CampPerson {
   if (person.role !== "player") return person;
   return { ...person, groupId: groups[person.id] ?? person.groupId };
@@ -110,6 +122,7 @@ export const useCamp = create<CampState>((set, get) => ({
   reviews: {},
   notify: false,
   kits: {},
+  rsvps: {},
 
   hydrate: () => {
     if (typeof window === "undefined") return;
@@ -120,6 +133,7 @@ export const useCamp = create<CampState>((set, get) => ({
     let reviews: Record<string, CampReview> = {};
     let notify = false;
     let kits: Record<string, KitChoice> = {};
+    let rsvps: TournamentRsvpBook = {};
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
@@ -145,10 +159,23 @@ export const useCamp = create<CampState>((set, get) => ({
         const parsedKits = safeJsonParse<Record<string, KitChoice>>(kitRaw);
         if (parsedKits) kits = parsedKits;
       }
+      const rsvpRaw = localStorage.getItem(RSVP_KEY);
+      if (rsvpRaw) {
+        const parsedRsvps = safeJsonParse<TournamentRsvpBook>(rsvpRaw);
+        if (parsedRsvps) rsvps = parsedRsvps;
+      }
     } catch {
       /* seed */
     }
-    const email = sessionStorage.getItem(SESSION);
+    let email = sessionStorage.getItem(SESSION);
+    if (email) {
+      if (!sessionStillValid()) {
+        sessionStorage.removeItem(SESSION);
+        email = null;
+      } else {
+        beginSessionClock();
+      }
+    }
     const found = email ? PEOPLE.find((p) => p.email.toLowerCase() === email.toLowerCase()) : null;
     set({
       ready: true,
@@ -159,6 +186,7 @@ export const useCamp = create<CampState>((set, get) => ({
       reviews,
       notify,
       kits,
+      rsvps,
       me: found ? withGroup(found, groups) : null,
     });
   },
@@ -166,13 +194,20 @@ export const useCamp = create<CampState>((set, get) => ({
   login: (email) => {
     const found = PEOPLE.find((p) => p.email.toLowerCase() === email.trim().toLowerCase());
     if (!found) return false;
+    const current = get().me;
+    if (current?.email.toLowerCase() === found.email.toLowerCase()) {
+      if (typeof window !== "undefined") sessionStorage.setItem(SESSION, found.email);
+      return true;
+    }
     if (typeof window !== "undefined") sessionStorage.setItem(SESSION, found.email);
+    beginSessionClock();
     set({ me: withGroup(found, get().groups) });
     return true;
   },
 
   logout: () => {
     if (typeof window !== "undefined") sessionStorage.removeItem(SESSION);
+    clearSessionClock();
     set({ me: null });
   },
 
@@ -332,5 +367,14 @@ export const useCamp = create<CampState>((set, get) => ({
     const kits = { ...get().kits, [me.id]: saved };
     persistKits(kits);
     set({ kits });
+  },
+
+  setRsvp: (eventId, value) => {
+    const me = get().me;
+    if (!me || me.role !== "player") return;
+    const mine = { ...(get().rsvps[me.id] ?? {}), [eventId]: value };
+    const rsvps = { ...get().rsvps, [me.id]: mine };
+    persistRsvps(rsvps);
+    set({ rsvps });
   },
 }));

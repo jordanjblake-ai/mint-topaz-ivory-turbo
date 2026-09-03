@@ -5,6 +5,8 @@ import { Canonical } from "@/components/site/canonical";
 import { FONT_STYLESHEET, cdnPreconnectLinks } from "@/lib/cdn";
 import { shareCardUrls } from "@/lib/og/share-host";
 import { SiteShell } from "@/components/layout/site-shell";
+import { SessionTimeoutGuard } from "@/components/site/session-timeout";
+import { SessionRefreshGuard } from "@/components/site/session-refresh";
 import { Button } from "@/components/ui/button";
 import appCss from "../styles.css?url";
 
@@ -12,7 +14,7 @@ const APP_NAME = "Hybrid Vacations";
 
 export const Route = createRootRoute({
   head: () => {
-    const { ogImage, xBanner } = shareCardUrls();
+    const { xBanner } = shareCardUrls();
     return {
       meta: [
         { charSet: "utf-8" },
@@ -25,22 +27,18 @@ export const Route = createRootRoute({
         },
         { name: "theme-color", content: "#0D0E10" },
         { property: "og:site_name", content: APP_NAME },
-        ...(ogImage
-          ? [
-              { property: "og:image", content: ogImage },
-              { property: "og:image:width", content: "1200" },
-              { property: "og:image:height", content: "630" },
-            ]
-          : []),
         ...(xBanner ? [{ property: "x:game:image", content: xBanner }] : []),
       ],
       links: [
         ...cdnPreconnectLinks(),
         { rel: "stylesheet", href: FONT_STYLESHEET },
-        { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+        { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png?v=2" },
+        { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16.png?v=2" },
+        { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=2" },
+        { rel: "shortcut icon", href: "/favicon.ico?v=2" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png?v=2" },
         { rel: "stylesheet", href: appCss },
         { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-        { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
         { rel: "sitemap", type: "application/xml", href: "/sitemap.xml" },
       ],
     };
@@ -59,6 +57,8 @@ function RootDocument() {
       <body>
         <PreviewHostBridge />
         <AuthProvider>
+          <SessionTimeoutGuard />
+          <SessionRefreshGuard />
           <SiteShell>
             <Outlet />
           </SiteShell>

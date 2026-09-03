@@ -310,6 +310,34 @@ export const IMAGE_OPT: Record<string, ImageOpt> = {
     sizes: [480, 800, 1080],
     lqip: "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAACwBACdASoYABIAPymKvFguKSWjqAgBwCUJQBhQAVa0e3OxDQ5A14M3R18B8I0AAP6g3o4OdGlLNPWcZr2+asPIBJRDpZuP7TLr9hG1wZmtyeGc4jXeO1suGZ8mQn1UnSt0OJ4EZW6xV7usOYpk6GbTIEM/Q2SrqUpX10rnverzQsBG8AGEZUzjKr8w+T6RRhP9jrL7IaSgVlstEA6oAA==",
   },
+  "/images/padel-courts.jpg": {
+    stem: "tennis-open",
+    width: 1080,
+    height: 810,
+    sizes: [480, 800, 1080],
+    lqip: "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAACwBACdASoYABIAPymKvFguKSWjqAgBwCUJQBhQAVa0e3OxDQ5A14M3R18B8I0AAP6g3o4OdGlLNPWcZr2+asPIBJRDpZuP7TLr9hG1wZmtyeGc4jXeO1suGZ8mQn1UnSt0OJ4EZW6xV7usOYpk6GbTIEM/Q2SrqUpX10rnverzQsBG8AGEZUzjKr8w+T6RRhP9jrL7IaSgVlstEA6oAA==",
+  },
+  "/images/hv_stock_padel_community_45_001.jpg": {
+    stem: "hv_stock_padel_community_45_001",
+    width: 1080,
+    height: 1350,
+    sizes: [480, 800, 1080],
+    lqip: "data:image/webp;base64,UklGRhoBAABXRUJQVlA4IA4BAAAQBgCdASoYAB4APxFwr1AsJiQisAgBgCIJZgC7BAgBVXde5tFkGYtxZM54uZ5HM58Du5GnTnsw4HQA/d9Qkg62KM784RxpcYVuUvLiJqd8MGHCeCyvDPi3XZIiJo8WI3sErlTBYkxifvmD1urFor6J/v2uSFdtrqh2lAraIgtGBOPf8iFMepWPuR2WOlh7KzfGtj7WoB5DKUayZxbtP7A13Cy4ZXxVI8xvUz3RFLT2Or3532xTdgErBEMvMiqzvBqrYDmO4RruT9MSjEmwt+QSYZoilMDuDbRdXzqXONpCJJMUQX9LsSB6Bmp209ICeW7rTNMIlK/U1B9eCDZ4xtQ9epgAxWpBxGQ2IlSYAAA=",
+  },
+  "/images/Hv_Lanzarote_2026_Pro_Destination_012.jpg": {
+    stem: "Hv_Lanzarote_2026_Pro_Destination_012",
+    width: 2000,
+    height: 1333,
+    sizes: [480, 800, 1280, 1600, 2000],
+    lqip: "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoYABAAPxFysFAsJqSisAgBgCIJZACdMoMqmE5dtFuZAWkapKAA/o1uA6XIL8x0BhG8vDThctIrzEVQs6MrX7q3nB8HIHZ2a6HlyH773dZnE9ORy+KSVztK93GIxJXHjHxaL4dNS78FhNnIKZ2LnhAA",
+  },
+  "/images/DSC_2551.jpg": {
+    stem: "DSC_2551",
+    width: 2000,
+    height: 1333,
+    sizes: [480, 800, 1280, 1600, 2000],
+    lqip: "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAACQBACdASoYABAAPxFysFAsJqSisAgBgCIJbACdMoADgp/CjbVVXe0w8qA3JEAA/tJkJ/U+v7aW5F/KHLqTzNijqQ2zZdMd6hWoh3jL6O5RzfDT0Ka3SohoULtFk5EB4HlskvmcxgYssKglHWHxNz0xNIHykQYZLnLzsKZdEPQf/mcW4p5qLZbc8k1dvkskyOS3uKCVIAsAlOAA",
+  },
 };
 
 export function imageOpt(src: string) {

@@ -36,10 +36,15 @@ export async function handleAuthPopupRequest(request: Request): Promise<Response
   if (done) {
     const errored = url.searchParams.has("error");
     const token = errored ? null : readCookie(request, SESSION_TOKEN_COOKIE);
+    const error = errored
+      ? url.searchParams.get("error") || "sign_in_failed"
+      : token
+        ? undefined
+        : "missing_session";
     const message: PopupMessage = {
       source: "grok-auth-popup",
       token,
-      ...(errored ? { error: url.searchParams.get("error") ?? "sign_in_failed" } : {}),
+      ...(error ? { error } : {}),
     };
     return new Response(completionHtml(message), {
       status: 200,
@@ -59,8 +64,10 @@ export async function handleAuthPopupRequest(request: Request): Promise<Response
     });
   }
 
+  const headers = publicOriginHeaders(request);
+  const origin = `${headers.get("x-forwarded-proto")}://${headers.get("host")}`;
   // Stay first-party for the callback so the session cookie lands in THIS popup.
-  const back = `${url.origin}/auth/popup?done=1`;
+  const back = `${origin}/auth/popup?done=1`;
   try {
     const apiRes = await auth.api.signInWithOAuth2({
       body: {
@@ -68,9 +75,9 @@ export async function handleAuthPopupRequest(request: Request): Promise<Response
         callbackURL: back,
         errorCallbackURL: `${back}&error=1`,
       },
-      // Forward the preview host so Better Auth derives the correct baseURL /
-      // redirect_uri for the dynamic `*.grok-sandbox.com` origin.
-      headers: request.headers,
+      // Public preview host, not the loopback socket, so redirect_uri is
+      // https://<preview>/api/auth/oauth2/callback/<providerId>.
+      headers,
       asResponse: true,
     });
 
@@ -97,11 +104,11 @@ export async function handleAuthPopupRequest(request: Request): Promise<Response
 
     // 302 to the broker (which headlessly forwards to Google/X). Forward any
     // Set-Cookie (OAuth state / PKCE) so the callback can complete in this popup.
-    const headers = new Headers({ location, "cache-control": "no-store" });
+    const redirectHeaders = new Headers({ location, "cache-control": "no-store" });
     for (const cookie of apiRes.headers.getSetCookie()) {
-      headers.append("set-cookie", cookie);
+      redirectHeaders.append("set-cookie", cookie);
     }
-    return new Response(null, { status: 302, headers });
+    return new Response(null, { status: 302, headers: redirectHeaders });
   } catch (err) {
     const message = err instanceof Error ? err.message : "oauth_init_threw";
     return completionResponse({
@@ -110,6 +117,20 @@ export async function handleAuthPopupRequest(request: Request): Promise<Response
       error: message,
     });
   }
+}
+
+function publicOriginHeaders(request: Request): Headers {
+  const url = new URL(request.url);
+  const xfHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const host = xfHost || url.host;
+  const proto = host.endsWith(".grok-sandbox.com")
+    ? "https"
+    : request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() || url.protocol.replace(":", "");
+  const headers = new Headers(request.headers);
+  headers.set("host", host);
+  headers.set("x-forwarded-host", host);
+  headers.set("x-forwarded-proto", proto);
+  return headers;
 }
 
 function completionResponse(message: PopupMessage): Response {
@@ -122,11 +143,13 @@ function completionResponse(message: PopupMessage): Response {
   });
 }
 
-/** Minimal HTML: postMessage the token to the opener and close. No React. */
+/** Minimal HTML: hand the token back even if Google severed window.opener. */
 function completionHtml(message: PopupMessage): string {
-  // JSON is safe inside a <script type="application/json"> block; the inline
-  // script only reads it. Avoids escaping pitfalls of embedding in JS source.
   const payload = JSON.stringify(message).replace(/</g, "\\u003c");
+  const ok = Boolean(message.token);
+  const line = ok
+    ? "Signed in. You can close this tab."
+    : "Sign-in did not finish. Close this tab and try again.";
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -140,17 +163,28 @@ function completionHtml(message: PopupMessage): string {
 </style>
 </head>
 <body>
-<main><p>Signing you in…</p></main>
+<main><p>${line}</p></main>
 <script type="application/json" id="grok-auth-popup-msg">${payload}</script>
 <script>
 (function () {
   var el = document.getElementById("grok-auth-popup-msg");
   var msg = { source: "grok-auth-popup", token: null };
   try { if (el && el.textContent) msg = JSON.parse(el.textContent); } catch (e) {}
+  msg.t = Date.now();
+  try {
+    localStorage.setItem("grok-auth.popup-result", JSON.stringify(msg));
+  } catch (e) {}
+  try {
+    var ch = new BroadcastChannel("grok-auth-popup");
+    ch.postMessage(msg);
+    ch.close();
+  } catch (e) {}
   try {
     if (window.opener) window.opener.postMessage(msg, window.location.origin);
   } catch (e) {}
-  try { window.close(); } catch (e) {}
+  setTimeout(function () {
+    try { window.close(); } catch (e) {}
+  }, 400);
 })();
 </script>
 </body>

@@ -8,9 +8,9 @@ type CtaTo =
   | "/vacations"
   | "/travel"
   | "/coaching"
-  | "/community/performance"
+  | "/community/club/performance"
   | "/community/coaching"
-  | "/community/team";
+  | "/community/club/team";
 
 export function CtaBand({
   title,

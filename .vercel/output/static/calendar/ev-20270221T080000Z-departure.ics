@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hybrid Vacations//Lanzarote Camp//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Departure
+BEGIN:VEVENT
+UID:ev-20270221T080000Z-departure@hybridvacations.com
+DTSTAMP:20260822T110903Z
+DTSTART:20270221T080000Z
+DTEND:20270221T120000Z
+SUMMARY:Departure
+LOCATION:Puerto del Carmen
+DESCRIPTION:Flights are yours unless we arranged them. Leave keys if you were in Moraña.
+END:VEVENT
+END:VCALENDAR

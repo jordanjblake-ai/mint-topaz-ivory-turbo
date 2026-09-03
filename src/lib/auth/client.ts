@@ -21,6 +21,7 @@ export const authClient = createAuthClient({
   plugins: [genericOAuthClient()],
   fetchOptions: {
     onRequest(ctx) {
+      if (isLocalSignedOut()) return ctx;
       const token = getBearerToken();
       if (token) ctx.headers.set("Authorization", `Bearer ${token}`);
       return ctx;
@@ -46,6 +47,10 @@ export { GROK_PROVIDERS };
 // to server functions, via `@/lib/auth/middleware`). Empty everywhere except the
 // preview after a popup sign-in, so the cookie path is untouched elsewhere.
 const BEARER_KEY = "grok-auth.bearer-token";
+const SIGNED_OUT_KEY = "hybrid-signed-out";
+const CAMP_SESSION_KEY = "hybrid-camp-email";
+const POPUP_RESULT_KEY = "grok-auth.popup-result";
+const POPUP_CHANNEL = "grok-auth-popup";
 
 /** The stored preview bearer token, or null. */
 export function getBearerToken(): string | null {
@@ -60,10 +65,41 @@ export function getBearerToken(): string | null {
 function setBearerToken(token: string | null): void {
   if (typeof window === "undefined") return;
   try {
-    if (token) window.sessionStorage.setItem(BEARER_KEY, token);
-    else window.sessionStorage.removeItem(BEARER_KEY);
+    if (token) {
+      window.sessionStorage.setItem(BEARER_KEY, token);
+      window.sessionStorage.removeItem(SIGNED_OUT_KEY);
+    } else window.sessionStorage.removeItem(BEARER_KEY);
   } catch {
     /* storage unavailable — ignore */
+  }
+}
+
+export function markLocalSignedOut() {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(SIGNED_OUT_KEY, "1");
+    window.sessionStorage.removeItem(BEARER_KEY);
+    window.sessionStorage.removeItem(CAMP_SESSION_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearLocalSignedOut() {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(SIGNED_OUT_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function isLocalSignedOut() {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(SIGNED_OUT_KEY) === "1";
+  } catch {
+    return false;
   }
 }
 
@@ -72,15 +108,25 @@ function setBearerToken(token: string | null): void {
  * host, where a full-page redirect to the broker can't work — so sign-in uses a
  * popup there and a normal redirect everywhere else.
  */
-function inLivePreview(): boolean {
+export function inLivePreview(): boolean {
   return (
     typeof window !== "undefined" &&
     window.location.hostname.endsWith(".grok-sandbox.com")
   );
 }
 
+export function authPopupHref(providerId: string) {
+  return `/auth/popup?providerId=${encodeURIComponent(providerId)}`;
+}
+
+export function authPopupTarget(providerId: string) {
+  return `grok-signin-${providerId}`;
+}
+
 /** Message the popup posts back to the opener once sign-in completes. */
 type PopupMessage = { source: "grok-auth-popup"; token: string | null; error?: string };
+
+type PopupResult = { token: string | null; error?: string };
 
 /**
  * Start sign-in with one upstream provider (`providerId` from `GROK_PROVIDERS`),
@@ -98,15 +144,20 @@ type PopupMessage = { source: "grok-auth-popup"; token: string | null; error?: s
  */
 export async function signIn(
   providerId: string,
-  opts: { callbackURL?: string; errorCallbackURL?: string } = {},
+  opts: { callbackURL?: string; errorCallbackURL?: string; openedByLink?: boolean } = {},
 ): Promise<void> {
   const callbackURL = opts.callbackURL ?? "/";
   const errorCallbackURL = opts.errorCallbackURL ?? "/";
+  const providerLabel = GROK_PROVIDERS.find((item) => item.providerId === providerId)?.label ?? "Google";
 
-  // Open the popup SYNCHRONOUSLY on the user gesture — before any await
+  try {
+  // Open the window SYNCHRONOUSLY on the user gesture — before any await
   // (including signOut). Awaiting first drops user-gesture privilege in some
   // browsers when the opener is a cross-origin live-preview iframe.
   const popup = inLivePreview() ? openSignInPopup(providerId) : null;
+  const incoming = inLivePreview() ? waitForPopupToken(popup) : null;
+
+  clearLocalSignedOut();
 
   // Clear any prior session so switching providers actually switches identity.
   // Bounded because the popup is already open — a request that never settles
@@ -121,16 +172,21 @@ export async function signIn(
   });
 
   if (inLivePreview()) {
-    if (!popup) throw new Error("Pop-up blocked — allow pop-ups for sign-in");
-    const token = await waitForPopupToken(popup);
-    if (!token) throw new Error("Sign-in was cancelled or failed");
-    setBearerToken(token);
-    // Refresh the client session store with the bearer attached (onRequest).
-    // Avoid a full iframe reload when we're already on the destination — that
-    // reload was the slow "still loading after the popup closed" feeling.
+    if (!popup) {
+      throw new Error(signInErrorMessage("blocked", providerLabel));
+    }
+    const result = await incoming!;
+    if (!result.token) {
+      throw new Error(signInErrorMessage(result.error, providerLabel));
+    }
+    setBearerToken(result.token);
     try {
-      await authClient.getSession();
-    } catch {
+      const session = await authClient.getSession();
+      if (session.error) {
+        throw new Error(signInErrorMessage("missing_session", providerLabel));
+      }
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("did not receive")) throw err;
       /* session store will recover on next useSession fetch */
     }
     if (typeof window !== "undefined") {
@@ -148,8 +204,42 @@ export async function signIn(
     callbackURL,
     errorCallbackURL,
   });
-  if (error) throw new Error(error.message ?? "Sign-in failed");
-  if (data?.url) window.location.href = data.url;
+  if (error) throw new Error(signInErrorMessage(error.message ?? "sign_in_failed", providerLabel));
+  if (!data?.url) throw new Error(signInErrorMessage("oauth_init_missing_url", providerLabel));
+  window.location.href = data.url;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(signInErrorMessage(err.message, providerLabel));
+    }
+    throw new Error(signInErrorMessage("sign_in_failed", providerLabel));
+  }
+}
+
+function signInErrorMessage(error: string | undefined, providerLabel: string) {
+  const name = providerLabel || "Google";
+  const raw = (error ?? "").trim();
+  if (!raw || raw === "cancelled") {
+    return `${name} did not finish. Keep the sign-in window open, then try again.`;
+  }
+  if (raw === "timeout") {
+    return `${name} is taking too long. Close that window and try again.`;
+  }
+  if (raw === "missing_session" || raw.includes("did not receive")) {
+    return `${name} signed in, but this page did not receive the session. Try again.`;
+  }
+  if (raw === "blocked" || /pop-?up blocked/i.test(raw)) {
+    return `Pop-up blocked. Allow pop-ups for this site, then try ${name} again.`;
+  }
+  if (raw.includes("oauth_init") || raw.includes("oauth_redirect") || raw.includes("could not start")) {
+    return `${name} could not start. Try again, or open with email.`;
+  }
+  if (raw === "sign_in_failed") {
+    return `${name} was cancelled or failed. Try again, or open with email.`;
+  }
+  if (/keep the sign-in window|taking too long|open with email|Allow pop-ups/i.test(raw)) {
+    return raw;
+  }
+  return `${name} did not finish. Try again, or open with email.`;
 }
 
 /**
@@ -163,46 +253,110 @@ export async function signIn(
  */
 function openSignInPopup(providerId: string): Window | null {
   const origin = window.location.origin;
-  const url = `${origin}/auth/popup?providerId=${encodeURIComponent(providerId)}`;
-  // Unique name per attempt so a prior attempt stuck on the SPA is not reused.
-  const name = `grok-signin-${Date.now()}`;
-  return window.open(url, name, "popup,width=500,height=650");
+  const url = `${origin}${authPopupHref(providerId)}`;
+  const name = `${authPopupTarget(providerId)}-${Date.now()}`;
+  const opened = window.open(url, name, "width=520,height=720");
+  if (!opened || opened.closed) return null;
+  try {
+    opened.focus();
+  } catch {
+    /* ignore */
+  }
+  return opened;
+}
+
+function readStoredPopupResult(): PopupResult | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(POPUP_RESULT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PopupMessage & { t?: number };
+    if (!parsed || parsed.source !== "grok-auth-popup") return null;
+    if (parsed.t && Date.now() - parsed.t > 60_000) return null;
+    return { token: parsed.token ?? null, error: parsed.error };
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredPopupResult() {
+  try {
+    window.localStorage.removeItem(POPUP_RESULT_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 /**
- * Wait for the popup's completion page to postMessage the session bearer (or
- * for the user to dismiss the popup).
+ * Wait for the Google tab to hand back a session token. Google often severs
+ * window.opener, so we listen on postMessage, BroadcastChannel, and localStorage.
  */
-function waitForPopupToken(popup: Window): Promise<string | null> {
+function waitForPopupToken(popup: Window | null): Promise<PopupResult> {
   return new Promise((resolve) => {
     const origin = window.location.origin;
     let settled = false;
     let closeTimer: number | undefined;
-    const settle = (token: string | null) => {
+    let channel: BroadcastChannel | undefined;
+    const settle = (result: PopupResult) => {
       if (settled) return;
       settled = true;
       cleanup();
-      resolve(token);
+      clearStoredPopupResult();
+      resolve(result);
+    };
+    const take = (data: PopupMessage | undefined) => {
+      if (!data || data.source !== "grok-auth-popup") return;
+      settle({ token: data.token ?? null, error: data.error });
     };
     const onMessage = (event: MessageEvent) => {
       if (event.origin !== origin) return;
-      const data = event.data as PopupMessage | undefined;
-      if (!data || data.source !== "grok-auth-popup") return;
-      settle(data.token ?? null);
+      take(event.data as PopupMessage | undefined);
     };
-    // Fallback when the user dismisses the popup. Grace period lets the
-    // completion page's postMessage win over a racing `popup.closed`.
-    const pollTimer = window.setInterval(() => {
-      if (!popup.closed) return;
-      window.clearInterval(pollTimer);
-      closeTimer = window.setTimeout(() => settle(null), 400);
-    }, 300);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== POPUP_RESULT_KEY || !event.newValue) return;
+      try {
+        take(JSON.parse(event.newValue) as PopupMessage);
+      } catch {
+        /* ignore */
+      }
+    };
+    const existing = readStoredPopupResult();
+    if (existing?.token) {
+      settle(existing);
+      return;
+    }
+    try {
+      channel = new BroadcastChannel(POPUP_CHANNEL);
+      channel.onmessage = (event) => take(event.data as PopupMessage | undefined);
+    } catch {
+      channel = undefined;
+    }
+    const pollTimer =
+      popup &&
+      window.setInterval(() => {
+        if (!popup.closed) return;
+        window.clearInterval(pollTimer);
+        closeTimer = window.setTimeout(() => {
+          const stored = readStoredPopupResult();
+          if (stored?.token) settle(stored);
+          else settle({ token: null, error: "cancelled" });
+        }, 800);
+      }, 200);
+    const timeoutTimer = window.setTimeout(() => settle({ token: null, error: "timeout" }), 120_000);
     function cleanup() {
-      window.clearInterval(pollTimer);
+      if (pollTimer) window.clearInterval(pollTimer);
       if (closeTimer !== undefined) window.clearTimeout(closeTimer);
+      window.clearTimeout(timeoutTimer);
       window.removeEventListener("message", onMessage);
+      window.removeEventListener("storage", onStorage);
+      try {
+        channel?.close();
+      } catch {
+        /* ignore */
+      }
     }
     window.addEventListener("message", onMessage);
+    window.addEventListener("storage", onStorage);
   });
 }
 
@@ -219,18 +373,19 @@ function waitForPopupToken(popup: Window): Promise<string | null> {
  * preview the local clear is sufficient, so it always resolves.
  */
 export async function signOut(redirectTo = "/"): Promise<void> {
+  markLocalSignedOut();
   await runSignOut({
-    livePreview: inLivePreview(),
-    hasBearer: Boolean(getBearerToken()),
-    // Better Auth resolves with `{ error }` instead of rejecting, so surface a
-    // failed response as a rejection for the sequence to act on.
+    livePreview: true,
+    hasBearer: true,
     requestSignOut: async () => {
       const { error } = await authClient.signOut();
       if (error) throw new Error(error.message ?? "Sign-out failed");
     },
     clearToken: () => setBearerToken(null),
     redirect: () => {
-      window.location.href = redirectTo;
+      const dest = new URL(redirectTo, window.location.origin);
+      dest.searchParams.set("signedout", "1");
+      window.location.replace(dest.pathname + dest.search + dest.hash);
     },
   });
 }

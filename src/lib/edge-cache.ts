@@ -38,6 +38,8 @@ export const EDGE_HTML_PATHS = [
   "/terms",
   "/privacy",
   "/cookies",
+  "/security",
+  "/privacy/request",
 ] as const;
 
 export const EDGE_BYPASS_PATHS = [
@@ -55,6 +57,8 @@ export const EDGE_BYPASS_PATHS = [
   "/camp/**",
   "/portal",
   "/portal/**",
+  "/account",
+  "/account/**",
   "/coaches-corner",
   "/coaches-corner/**",
   "/book",

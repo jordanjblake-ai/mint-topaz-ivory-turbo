@@ -16,6 +16,102 @@
       "handle": "filesystem"
     },
     {
+      "src": "(?<__isr_route>/api/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/health)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/health/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/healthz)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/livez)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/readyz)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/login)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/login/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/ops)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/ops/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/camp)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/camp/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/portal)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/portal/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/account)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/account/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/coaches-corner)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/coaches-corner/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/book)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/book/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/auth)",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/auth/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/__grok/(?:.*))",
+      "dest": "/__server"
+    },
+    {
+      "src": "(?<__isr_route>/__app-env)",
+      "dest": "/__server"
+    },
+    {
       "src": "/(.*)",
       "dest": "/__server"
     }

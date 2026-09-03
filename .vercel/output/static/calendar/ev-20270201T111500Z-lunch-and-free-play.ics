@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hybrid Vacations//Lanzarote Camp//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Lunch and free play
+BEGIN:VEVENT
+UID:ev-20270201T111500Z-lunch-and-free-play@hybridvacations.com
+DTSTAMP:20260822T110903Z
+DTSTART:20270201T111500Z
+DTEND:20270201T144500Z
+SUMMARY:Lunch and free play
+LOCATION:Playa Grande
+DESCRIPTION:Eat. Then the courts are open if you want touches. Not a session.
+END:VEVENT
+END:VCALENDAR

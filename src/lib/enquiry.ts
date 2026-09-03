@@ -20,8 +20,9 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     if (data.company?.trim()) return { status: "logged" };
     if (!isEmail(data.email)) throw new Error("That email does not look right.");
 
-    const { assertSameSiteRequest } = await import("@/lib/auth/isolation.server");
-    assertSameSiteRequest();
+    const { assertZeroTrustRequest, auditEvent } = await import("@/lib/zero-trust.server");
+    await assertZeroTrustRequest();
+    await auditEvent({ action: "enquiry.submit", outcome: "allow" });
 
     const key = data.email.trim().toLowerCase();
     if (!allowAttempt(`enquiry:${key}`, 5, 10 * 60_000)) {
