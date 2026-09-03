@@ -1,14 +1,45 @@
 import { teamHybridKings, teamHybridQueens } from "@/data/team-hybrid";
 
 export const communityNav = [
-  { label: "Performance Squad", href: "/community/performance" },
-  { label: "Team Hybrid", href: "/community/team" },
+  { label: "The Club", href: "/community/club" },
   { label: "Partners", href: "/community/partners" },
   { label: "Coaches", href: "/coaches" },
   { label: "Private Coaching", href: "/community/coaching" },
   { label: "Clinics & Mini-Camps", href: "/coaching" },
-  { label: "Hall of Fame", href: "/community/hall-of-fame" },
-  { label: "Story Time", href: "/story-time" },
+] as const;
+
+export const clubNav = [
+  { label: "The Club", href: "/community/club" },
+  { label: "Performance Squad", href: "/community/club/performance" },
+  { label: "Team Hybrid", href: "/community/club/team" },
+  { label: "Hall of Fame", href: "/community/club/hall-of-fame" },
+] as const;
+
+export const clubDoors = [
+  {
+    title: "Performance Squad",
+    kicker: "2027",
+    body: "An 18-week UKBT 4★ Beach Volleyball programme. Enquire first.",
+    href: "/community/club/performance",
+    image: "/images/club/performance-door.jpg?v=20260903",
+    alt: "Performance Squad",
+  },
+  {
+    title: "Team Hybrid",
+    kicker: "Athletes",
+    body: "The Kings and Queens who compete and stand for the club.",
+    href: "/community/club/team",
+    image: "/images/team/door.jpg?v=20260903",
+    alt: "Team Hybrid",
+  },
+  {
+    title: "Hall of Fame",
+    kicker: "The first to believe",
+    body: "The people who showed up first and helped start Hybrid.",
+    href: "/community/club/hall-of-fame",
+    image: "/images/club/hall-door.jpg?v=20260903",
+    alt: "Hall of Fame",
+  },
 ] as const;
 
 export const squadFacts = [
@@ -18,70 +49,26 @@ export const squadFacts = [
 ];
 
 export const squadPurpose = [
-  "Players regularly competing at UKBT 4★ and above",
-  "Athletes who want a true performance environment",
-  "Players ready to train with intent, structure, and accountability",
-  "Competitors who care about tactics, not just volume",
+  "Players competing at UKBT 4★ and above",
+  "A small group. One court. Two hours",
+  "Work with people of a similar standard, not a mixed drop-in",
 ];
 
 export const squadDifference = [
-  "Train only with players of a similar level",
-  "Coached by people who still compete at the top of the UK game",
-  "A coach who is invested in your results across the season, not one session",
-  "Work built around decision-making, tactics, and match execution. Not generic drills",
-];
-
-export const squadExpect = [
-  {
-    title: "High-performance training",
-    points: [
-      "Two-hour sessions built to feel like match conditions",
-      "Coaches who know what UKBT 4★ and above actually asks of you",
-      "Every session has a tactical and performance focus. Nothing is filler",
-    ],
-  },
-  {
-    title: "Tactical and competitive development",
-    points: [
-      "Decision-making under pressure",
-      "Game-specific scenarios that show up on tour",
-      "Training with a purpose, not a drill circuit",
-    ],
-  },
-  {
-    title: "Individual and partnership feedback",
-    points: [
-      "Live, on-court feedback during the session",
-      "Out-of-court reviews to keep the season moving",
-      "Partnership coaching, so both players develop together",
-    ],
-  },
-  {
-    title: "The squad",
-    points: [
-      "A dedicated group with the same standards",
-      "A team mentality between you, your partner, and your coach",
-      "A community that cares about the result and the work behind it",
-    ],
-  },
+  "A season-long squad, not one-off sessions",
+  "Coaches who still compete at the top of the UK game",
+  "Guest coaches through the summer",
 ];
 
 export const squadPerks = [
   "Official training shirt",
-  "Priority access to Hybrid trips, tournaments, and competitive extras",
-  "Third-party playing opportunities in the sport you love",
+  "Priority access to Hybrid trips and tournaments once the week is locked",
 ];
 
-export const squadSchedule = [
-  { label: "Start", body: "Tuesday 4 May or Wednesday 5 May 2027" },
-  { label: "Duration", body: "18-week performance programme" },
-  { label: "End", body: "Tuesday 31 August or Wednesday 1 September 2027" },
-  {
-    label: "Why those dates",
-    body: "The block finishes just before the UKBT Tour Finals, so the work lands when it matters.",
-  },
-  { label: "Days", body: "Tuesday or Wednesday" },
-  { label: "Time", body: "6:30pm to 8:30pm. Two hours." },
+export const squadShape = [
+  { label: "When", body: "May to September 2027. Eighteen weeks." },
+  { label: "Who", body: "UKBT 4★ and above. Pair, individual, or a group of 8." },
+  { label: "Ask by", body: "Wednesday 25 March 2027." },
 ];
 
 export const squadCoaches = [
@@ -120,26 +107,56 @@ export const teamAthletes = {
   women: teamHybridQueens.map((athlete) => ({ name: athlete.name })),
 };
 
-export const partners = [
+export const featuredPartners = [
   {
+    id: "fireball",
     name: "Fireball Beach Volleyball",
     href: null as string | null,
+    logo: "/logos/partners/fireball.png",
+    mark: "badge" as const,
     image: "/images/community/40.jpg",
-    intro: "London Beach Volleyball. A club that treats training, competing, and the people around the court as the same job.",
+    intro:
+      "London Beach Volleyball. A club that treats training, competing, and the people around the court as the same job.",
     what: "Domestic Beach Volleyball: sessions, squads, and a club culture that Hybrid players already know.",
     withHybrid:
       "We put the first domestic performance group together with Fireball London for summer 2026. In June 2026 the Fireball / Hybrid men's team won the UK Beach Tour Club Championships, Men's Championship Division, and qualified for Europe.",
   },
   {
+    id: "beachvolleycamps",
     name: "beachvolleycamps.ch",
     href: "https://beachvolleycamps.ch/",
+    logo: "/logos/partners/beachvolleycamps.png",
+    mark: "wordmark" as const,
     image: "/images/partner-1.jpg",
     intro: "Swiss coaches and camp organisers. Long experience on the European Beach Volleyball circuit.",
     what: "Camps, coaching networks, and the Swiss standard Hybrid wanted next to our own.",
     withHybrid:
       "We ran the first Lanzarote Beach Volleyball camp with them in January and February 2026. The week still sits on that partnership: their network, our group, one camp.",
   },
-];
+] as const;
+
+export const supportingPartners = [
+  {
+    id: "playa-grande",
+    name: "Playa Grande Volley",
+    href: null as string | null,
+    logo: "/logos/partners/playa-grande.png",
+    mark: "badge" as const,
+    intro: "The local club in Puerto del Carmen.",
+    withHybrid: "Optional weekend tournament with the club next to camp, if you want a match that is not Hybrid-only.",
+  },
+  {
+    id: "la-morana",
+    name: "La Moraña Apartments",
+    href: "https://www.lamoranalanzarote.com/",
+    logo: "/logos/partners/la-morana.png",
+    mark: "wordmark" as const,
+    intro: "Seafront stay in Puerto del Carmen.",
+    withHybrid: "Check-in from 14:00, Saturday to Saturday. Heated winter pool, a walk from Playa Grande.",
+  },
+] as const;
+
+export const partners = [...featuredPartners, ...supportingPartners];
 
 export const hallItems = [
   {

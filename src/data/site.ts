@@ -1,3 +1,5 @@
+import { assertSportImage, sportHero, type CourtSport } from "@/data/sport-images";
+
 export const site = {
   name: "Hybrid Vacations",
   tagline: "Travel Through What You Love",
@@ -69,6 +71,26 @@ export const coaches = [
     image: "/images/coach-katya.jpg",
     imageClass: "object-top",
   },
+  {
+    slug: "ella",
+    name: "Ella Watson",
+    handle: "@umbrellas_ella",
+    url: "https://www.instagram.com/umbrellas_ella/",
+    role: "England player and coach",
+    bio: "England Beach Volleyball player and Hybrid coach. Ella competes on the Beach Pro Tour, has represented England at senior level, and is one of the strongest hitters in the UK group. She is part of the 2027 Performance Squad coaching team.",
+    image: "/images/portrait-ella.jpg",
+    imageClass: "object-top",
+  },
+  {
+    slug: "david",
+    name: "David Silva",
+    handle: "",
+    url: "",
+    role: "Coach",
+    bio: "UK Beach Volleyball coach who works across camp providers and domestic programmes. David is part of the 2027 Performance Squad coaching team.",
+    image: "",
+    imageClass: "",
+  },
 ];
 
 export const testimonials = [
@@ -104,7 +126,7 @@ export type ExperienceStatus = "bookable" | "preregister" | "coming";
 
 export type Experience = {
   slug: string;
-  sport: string;
+  sport: CourtSport;
   title: string;
   destination: string;
   dates: string;
@@ -112,7 +134,7 @@ export type Experience = {
   status: ExperienceStatus;
   priceFrom: string;
   image: string;
-  href: "/vacations" | "/vacations/lanzarote" | "/vacations/tennis" | "/vacations/padel" | "/contact";
+  href: "/vacations" | "/vacations/lanzarote" | "/vacations/tennis" | "/vacations/padel" | "/vacations/golf" | "/contact";
   interest?: string;
   cta: string;
   blurb: string;
@@ -132,7 +154,7 @@ export const experiences: Experience[] = [
     ],
     status: "bookable",
     priceFrom: "From £425",
-    image: "/images/card-lanzarote.jpg",
+    image: sportHero("Beach Volleyball"),
     href: "/vacations/lanzarote",
     cta: "View camp",
     blurb:
@@ -147,7 +169,7 @@ export const experiences: Experience[] = [
     weeks: ["April 2027"],
     status: "preregister",
     priceFrom: "Pre-register",
-    image: "/images/tennis-open.jpg",
+    image: sportHero("Tennis"),
     href: "/vacations/tennis",
     cta: "Pre-register",
     blurb: "Clay courts minutes from the coast. Serious sessions, island living, and a social week around the game.",
@@ -161,7 +183,7 @@ export const experiences: Experience[] = [
     weeks: ["5 to 9 April 2027"],
     status: "preregister",
     priceFrom: "Pre-register",
-    image: "/images/tennis-clay.jpg",
+    image: sportHero("Padel"),
     href: "/vacations/padel",
     cta: "Pre-register",
     blurb: "Coaching, match play, and a spring week on Mallorca. Pre-register and we will send the details.",
@@ -175,13 +197,16 @@ export const experiences: Experience[] = [
     weeks: ["Coming 2028"],
     status: "coming",
     priceFrom: "Coming 2028",
-    image: "/images/golf.jpg",
-    href: "/contact",
-    interest: "golf",
+    image: sportHero("Golf"),
+    href: "/vacations/golf",
     cta: "Get notified",
     blurb: "Golf, the Hybrid way. Train, travel, community. Destination follows in 2028.",
   },
 ];
+
+for (const experience of experiences) {
+  assertSportImage(experience.image, experience.sport);
+}
 
 export const lanzarote = {
   included: [
@@ -195,7 +220,7 @@ export const lanzarote = {
   ],
   optional: [
     "Weekend tournament with local club partner Playa Grande Volley",
-    "Custom playing shorts",
+    "Custom playing shorts (£50 extra)",
     "Wednesday evening camp excursion",
     "Airport transfers",
   ],
@@ -275,7 +300,9 @@ export const lanzarote = {
     },
     {
       q: "What level do I need?",
-      a: "Improver through to advanced. Groups are split using the Hybrid playing levels guide so you train with the right people.",
+      a: "Improver through to advanced. Groups are split so you train with the right people.",
+      href: "/playing-levels" as const,
+      link: "Read the playing levels guide",
     },
     {
       q: "Is it the same coach all week?",
@@ -319,16 +346,58 @@ export const coachingOffers = [
   },
 ];
 
+export const upcomingClinics = [
+  {
+    id: "sideout-worthing-2026-09-05",
+    title: "Skills Clinic with Mark Garcia-Kidd",
+    host: "SideOut Beach Volleyball Club",
+    level: "Intermediate and advanced",
+    dateLabel: "Saturday 5 September 2026",
+    dateIso: "2026-09-05",
+    time: "10:00 to 17:00",
+    endsAt: "2026-09-05T17:00",
+    venue: "SideOut Worthing",
+    postcode: "BN11 2FG",
+    cost: "£40 per person",
+    body: "Morning sessions on sideout and attack. Afternoon sessions on defence and transition.",
+    bookHref: "https://registration.sideout.co.uk/user/events/1382",
+    infoHref: "https://www.sideout.co.uk/beach-volleyball/train/skills-clinics",
+    logo: "/logos/partners/sideout.png",
+    notes: [
+      "Spaces are limited. First come, first served. Your place is confirmed when SideOut have the entry and payment.",
+      "Booking and refunds sit with SideOut. Cancel 7 days or more before the clinic for a full refund: email info@sideout.co.uk. Within 7 days, a refund only if the clinic is full and they replace you from the waiting list. No refund within 48 hours of the start.",
+    ],
+  },
+] as const;
+
+export function londonStamp(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
+}
+
+export function liveClinics(now = new Date()) {
+  const stamp = londonStamp(now);
+  return upcomingClinics.filter((clinic) => stamp < clinic.endsAt);
+}
+
 export const nav = [
   {
     label: "Vacations",
     href: "/vacations",
     children: [
-      { label: "All Camps", href: "/vacations", note: "2027 and 2028" },
       { label: "Lanzarote Beach Volleyball", href: "/vacations/lanzarote", note: "Jan to Feb 2027" },
       { label: "Mallorca Tennis", href: "/vacations/tennis", note: "April 2027" },
       { label: "Mallorca Padel", href: "/vacations/padel", note: "5 to 9 April 2027" },
-      { label: "Golf", href: "/contact", note: "2028", search: { interest: "golf" } },
+      { label: "Golf", href: "/vacations/golf", note: "2028" },
       { label: "Vacations Player Portal", href: "/portal" },
     ],
   },
@@ -336,18 +405,40 @@ export const nav = [
     label: "Community",
     href: "/community",
     children: [
-      { label: "Performance Squad", href: "/community/performance" },
-      { label: "Team Hybrid", href: "/community/team" },
+      { label: "The Club", href: "/community/club", note: "Squad, Team, Hall of Fame" },
       { label: "Partners", href: "/community/partners" },
       { label: "Coaches", href: "/coaches" },
       { label: "Private Coaching", href: "/community/coaching" },
       { label: "Clinics & Mini-Camps", href: "/coaching" },
-      { label: "Hall of Fame", href: "/community/hall-of-fame" },
-      { label: "Story Time", href: "/story-time" },
     ],
   },
   { label: "About", href: "/about" },
 ] as const;
+
+export function primaryCta(pathname: string) {
+  if (pathname.startsWith("/vacations/lanzarote") || pathname.startsWith("/book")) {
+    return { label: "Book", href: "/book" as const };
+  }
+  if (pathname.startsWith("/vacations/tennis")) {
+    return { label: "Pre-register", href: "/vacations/tennis" as const };
+  }
+  if (pathname.startsWith("/vacations/padel")) {
+    return { label: "Pre-register", href: "/vacations/padel" as const };
+  }
+  if (pathname.startsWith("/vacations/golf")) {
+    return { label: "Enquire", href: "/contact" as const, search: { interest: "golf" } };
+  }
+  if (pathname.startsWith("/community/coaching")) {
+    return { label: "Enquire", href: "/community/coaching" as const };
+  }
+  if (pathname.startsWith("/coaching")) {
+    return { label: "Enquire", href: "/coaching" as const };
+  }
+  if (pathname.startsWith("/community/club/performance") || pathname.startsWith("/community/performance")) {
+    return { label: "Enquire", href: "/contact" as const, search: { interest: "performance" } };
+  }
+  return { label: "Enquire", href: "/contact" as const };
+}
 
 export const enquireInterests = [
   { value: "lanzarote", label: "Lanzarote Beach Volleyball 2027" },
