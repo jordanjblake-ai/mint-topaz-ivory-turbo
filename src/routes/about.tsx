@@ -157,12 +157,21 @@ function AboutPage() {
               <Link to="/coaches">Meet the coaches</Link>
             </Button>
           </div>
-          <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
             {coaches.slice(0, 4).map((coach) => (
-              <div key={coach.slug}>
-                <Photo src={coach.image} alt={coach.name} className={`aspect-3/4 w-full rounded-md ${coach.imageClass}`} />
-                <p className="mt-3 font-display text-2xl text-fg">{coach.name}</p>
-                <p className="text-xs uppercase tracking-wider text-muted">{coach.role}</p>
+              <div key={coach.slug} className="min-w-0">
+                {coach.image ? (
+                  <Photo
+                    src={coach.image}
+                    alt={coach.name}
+                    className={`block aspect-3/4 w-full rounded-md ${coach.imageClass}`}
+                    sizes="(min-width: 768px) 22vw, 100vw"
+                  />
+                ) : null}
+                <p className="mt-3 font-display text-xl leading-tight break-words text-fg sm:text-2xl">
+                  {coach.name}
+                </p>
+                <p className="mt-1 text-xs uppercase tracking-wider text-muted">{coach.role}</p>
               </div>
             ))}
           </div>
