@@ -263,7 +263,7 @@ export const lanzarote = {
     },
   ],
   payment: [
-    "£100 non-refundable deposit to hold your place",
+    "£100 deposit to book your place",
     "Accommodation balance due 1 January 2027",
     "Camp balance due 15 January 2027",
   ],
@@ -329,8 +329,8 @@ export const lanzarote = {
       a: "Lanzarote in February is usually playable. If wind or rain hits, we move times, adapt the session, or wait it out. Weather is not a refund on its own.",
     },
     {
-      q: "How do I hold a place?",
-      a: "£100 non-refundable deposit. Accommodation balance 1 January 2027. Camp balance 15 January 2027.",
+      q: "How do I book a place?",
+      a: "£100 deposit. Accommodation balance 1 January 2027. Camp balance 15 January 2027.",
     },
   ],
 };
