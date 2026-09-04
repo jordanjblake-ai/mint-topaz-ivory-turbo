@@ -54,7 +54,7 @@ function LanzarotePage() {
             ))}
           </div>
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted">
-            Camp only from £425 per person. £100 non-refundable deposit holds your place.
+            Camp only from £425 per person. £100 deposit books your place.
           </p>
         </Container>
       </Section>
@@ -261,14 +261,14 @@ function LanzarotePage() {
             <Kicker>Book now</Kicker>
             <Display className="mt-2 text-5xl">£100 deposit. We take it from there.</Display>
             <p className="mt-4 text-sm leading-relaxed text-muted">
-              Pay the £100 deposit here to hold the week. We will email confirmation, then the
+              Pay the £100 deposit here to book the week. We will email confirmation, then the
               balances later. Prefer to talk first?{" "}
               <a className="text-accent hover:text-accent-hover" href="mailto:support@hybridvacations.com">
                 support@hybridvacations.com
               </a>
             </p>
             <Button asChild size="lg" className="mt-6">
-              <Link to="/book">Pay the deposit</Link>
+              <Link to="/book">Book now</Link>
             </Button>
           </div>
           <EnquireForm defaultInterest="lanzarote" variant="lanzarote" />
