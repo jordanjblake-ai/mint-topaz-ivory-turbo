@@ -263,7 +263,7 @@ export const lanzarote = {
     },
   ],
   payment: [
-    "£100 deposit to book your place",
+    "The £100 deposit holds the place under the cancellation schedule 15/40/70/100 (more than 12 weeks 15% or the deposit if higher; 8–12 weeks 40%; 4–8 weeks 70%; inside 4 weeks 100%).",
     "Accommodation balance due 1 January 2027",
     "Camp balance due 15 January 2027",
   ],
@@ -329,8 +329,8 @@ export const lanzarote = {
       a: "Lanzarote in February is usually playable. If wind or rain hits, we move times, adapt the session, or wait it out. Weather is not a refund on its own.",
     },
     {
-      q: "How do I book a place?",
-      a: "£100 deposit. Accommodation balance 1 January 2027. Camp balance 15 January 2027.",
+      q: "How do I hold a place?",
+      a: "The £100 deposit holds the place under the cancellation schedule 15/40/70/100 (more than 12 weeks 15% or the deposit if higher; 8–12 weeks 40%; 4–8 weeks 70%; inside 4 weeks 100%).",
     },
   ],
 };
