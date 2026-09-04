@@ -330,7 +330,7 @@ export const lanzarote = {
     },
     {
       q: "How do I hold a place?",
-      a: "The £100 deposit holds the place under the cancellation schedule 15/40/70/100 (more than 12 weeks 15% or the deposit if higher; 8–12 weeks 40%; 4–8 weeks 70%; inside 4 weeks 100%).",
+      a: "£100 deposit holds the place under the cancellation schedule 15/40/70/100 (more than 12 weeks 15% or the deposit if higher; 8–12 weeks 40%; 4–8 weeks 70%; inside 4 weeks 100%). Accommodation balance 1 January 2027. Camp balance 15 January 2027.",
     },
   ],
 };
