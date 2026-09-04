@@ -54,7 +54,7 @@ function LanzarotePage() {
             ))}
           </div>
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted">
-            Camp only from £425 per person. £100 deposit holds the place under the cancellation schedule 15/40/70/100 (more than 12 weeks 15% or the deposit if higher; 8–12 weeks 40%; 4–8 weeks 70%; inside 4 weeks 100%).
+            Camp only from £425 per person. The £100 deposit holds the place under the cancellation schedule 15/40/70/100 (more than 12 weeks 15% or the deposit if higher; 8–12 weeks 40%; 4–8 weeks 70%; inside 4 weeks 100%).
           </p>
         </Container>
       </Section>
