@@ -1,16 +1,26 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import { portalCamps } from "@/data/portals";
-import { personByEmail } from "@/data/camp";
-import { useCamp } from "@/lib/camp-store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { GoogleSignInButton } from "@/components/site/google-sign-in";
+import {
+  COACH_OWNS,
+  DRAFT_GRID_LABEL,
+  DRAFT_GROUP_GRID,
+  DRAFT_WEEKS,
+  GROUP_SIZE_COPY,
+  MARK_OWNS,
+  NOT_COACH,
+  ROSTER_PLACEHOLDER,
+  SESSION_HOURS_COPY,
+  UNKNOWN_COACH_COPY,
+  coachByEmail,
+  dutiesFor,
+  type CoachAllowlistEntry,
+  type DraftGroup,
+} from "@/data/coaches-corner";
+import { GoogleSignInButton, MicrosoftSignInButton } from "@/components/site/google-sign-in";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
-import { allowAttempt, isEmail } from "@/lib/guard";
 import { authEnabled, signOut } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/coaches-corner")({
   head: () => ({
@@ -22,60 +32,11 @@ export const Route = createFileRoute("/coaches-corner")({
   component: CoachesCornerPage,
 });
 
-const COACH_DEMOS = [
-  { email: "mark@hybridvacations.com", label: "Mark Garcia-Kidd · Head coach, all three weeks" },
-  { email: "martha@hybridvacations.com", label: "Martha Bullen · Group A" },
-  { email: "issa@hybridvacations.com", label: "Issa Batrane · Group B" },
-  { email: "dave@hybridvacations.com", label: "Dave Panah · Group C, weeks 2–3" },
-  { email: "katya@hybridvacations.com", label: "Katya Kate · Camp coach" },
-];
+const GROUPS: DraftGroup[] = ["A", "B", "C"];
 
 function CoachesCornerPage() {
-  const navigate = useNavigate();
-  const ready = useCamp((s) => s.ready);
-  const me = useCamp((s) => s.me);
-  const hydrate = useCamp((s) => s.hydrate);
-  const login = useCamp((s) => s.login);
-  const logout = useCamp((s) => s.logout);
   const { user, isPending } = useCurrentUserState();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    hydrate();
-  }, [hydrate]);
-
-  useEffect(() => {
-    if (isPending || !user?.primaryEmail) return;
-    const person = personByEmail(user.primaryEmail);
-    if (person && person.role !== "player") login(person.email);
-  }, [user?.id, user?.primaryEmail, isPending, login]);
-
-  function enter(address: string) {
-    if (!allowAttempt("coaches-corner", 8, 60_000)) {
-      setError("Too many tries. Wait a minute and try again.");
-      return;
-    }
-    if (!isEmail(address)) {
-      setError("That email does not look right.");
-      return;
-    }
-    const person = personByEmail(address);
-    if (!person) {
-      setError("That email is not on staff for a live camp.");
-      return;
-    }
-    if (person.role === "player") {
-      setError("That email is a player booking. Use the Player Portal.");
-      return;
-    }
-    login(person.email);
-    navigate({ to: "/camp" });
-  }
-
-  const googlePerson = user?.primaryEmail ? personByEmail(user.primaryEmail) : null;
-  const googlePlayer = googlePerson?.role === "player";
-  const signedInStaff = me && me.role !== "player";
+  const coach = coachByEmail(user?.primaryEmail);
 
   return (
     <main className="min-h-dvh bg-bg text-fg">
@@ -87,113 +48,18 @@ function CoachesCornerPage() {
               Your weeks on staff
             </Display>
             <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted">
-              Groups, duties, and the players in front of you. Sign in with the Google account we
-              have you on. Lanzarote is live. Other camps will use this same corner when they run.
+              Groups, duties, and the players in front of you. Sign in with Google or Microsoft.
+              Lanzarote is live. Other camps will use this same corner when they run.
             </p>
             <div className="mt-8 rounded-md bg-surface p-6 shadow-border sm:p-8">
-              {!ready || isPending ? (
+              {isPending ? (
                 <p className="text-sm text-muted">Loading Coaches Corner.</p>
-              ) : signedInStaff ? (
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">On staff</p>
-                  <h2 className="mt-2 font-display text-4xl text-fg">{me.name.split(" ")[0]}</h2>
-                  <ul className="mt-6 grid gap-3">
-                    {portalCamps
-                      .filter((camp) => camp.status === "open")
-                      .map((camp) => (
-                        <li key={camp.id}>
-                          <Button asChild size="lg" className="w-full">
-                            <Link to="/camp">Open {camp.name}</Link>
-                          </Button>
-                        </li>
-                      ))}
-                  </ul>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      logout();
-                      if (authEnabled) void signOut().catch(() => undefined);
-                    }}
-                    className="mt-6 text-sm text-muted hover:text-fg"
-                  >
-                    Sign out
-                  </button>
-                </div>
+              ) : !user ? (
+                <SignInPanel />
+              ) : coach ? (
+                <CoachHome coach={coach} email={user.primaryEmail} />
               ) : (
-                <div className="grid gap-6">
-                  <GoogleSignInButton callbackURL="/coaches-corner" label="Sign in with Google" />
-                  {user && !googlePerson ? (
-                    <p className="text-sm text-accent">That Google account is not on staff for a live camp.</p>
-                  ) : null}
-                  {googlePlayer ? (
-                    <p className="text-sm text-accent">
-                      That account is a player booking.{" "}
-                      <Link to="/portal" className="text-fg underline-offset-2 hover:underline">
-                        Open the Player Portal
-                      </Link>
-                      .
-                    </p>
-                  ) : null}
-                  <form
-                    className="grid gap-4 border-t border-border pt-6"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      setError("");
-                      if (!email.trim()) {
-                        setError("Enter the staff email we have you on.");
-                        return;
-                      }
-                      enter(email);
-                    }}
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-                      Or use your staff email
-                    </p>
-                    <div>
-                      <Label htmlFor="coach-email">Staff email</Label>
-                      <Input
-                        id="coach-email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          setError("");
-                        }}
-                        autoComplete="email"
-                        required
-                      />
-                    </div>
-                    {error ? (
-                      <p className="text-sm text-accent">
-                        {error}{" "}
-                        {error.includes("Player Portal") ? (
-                          <Link to="/portal" className="text-fg underline-offset-2 hover:underline">
-                            Open Player Portal
-                          </Link>
-                        ) : null}
-                      </p>
-                    ) : null}
-                    <Button type="submit" variant="secondary" size="lg">
-                      Open with email
-                    </Button>
-                  </form>
-                  <div className="border-t border-border pt-6">
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Preview</p>
-                    <div className="mt-3 grid gap-2">
-                      {COACH_DEMOS.map((item) => (
-                        <button
-                          key={item.email}
-                          type="button"
-                          onClick={() => enter(item.email)}
-                          className="rounded-sm bg-bg px-3 py-3 text-left text-sm shadow-border hover:shadow-border-hover"
-                        >
-                          <span className="block text-fg">{item.label}</span>
-                          <span className="text-xs text-muted">{item.email}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <UnknownEmail email={user.primaryEmail} />
               )}
             </div>
           </div>
@@ -215,5 +81,174 @@ function CoachesCornerPage() {
         </Container>
       </Section>
     </main>
+  );
+}
+
+function SignInPanel() {
+  if (!authEnabled) {
+    return <p className="text-sm text-muted">Sign-in is disabled.</p>;
+  }
+
+  return (
+    <div className="grid gap-3">
+      <GoogleSignInButton callbackURL="/coaches-corner" label="Sign in with Google" />
+      <MicrosoftSignInButton callbackURL="/coaches-corner" label="Sign in with Microsoft" />
+    </div>
+  );
+}
+
+function UnknownEmail({ email }: { email: string | null }) {
+  return (
+    <div>
+      <p className="text-sm text-accent" role="status">
+        {UNKNOWN_COACH_COPY}
+      </p>
+      {email ? <p className="mt-2 text-xs text-muted">{email}</p> : null}
+      <SignOutLink />
+    </div>
+  );
+}
+
+function CoachHome({
+  coach,
+  email,
+}: {
+  coach: CoachAllowlistEntry;
+  email: string | null;
+}) {
+  const duties = dutiesFor(coach);
+
+  return (
+    <div className="grid gap-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">On staff</p>
+        <h2 className="mt-2 font-display text-4xl text-fg">{coach.shortName}</h2>
+        <p className="mt-1 text-sm text-muted">{coach.title}</p>
+        {email ? <p className="mt-1 text-xs text-muted">{email}</p> : null}
+        <p className="mt-4 text-sm text-muted">
+          {GROUP_SIZE_COPY}. {SESSION_HOURS_COPY} on court.
+        </p>
+      </div>
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">You own</p>
+        <ul className="mt-3 grid gap-2 text-sm leading-relaxed text-fg">
+          {duties.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Coach owns</p>
+          <ul className="mt-3 grid gap-2 text-sm leading-relaxed text-muted">
+            {COACH_OWNS.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+            Not coach — route to Mark / ops
+          </p>
+          <ul className="mt-3 grid gap-2 text-sm leading-relaxed text-muted">
+            {NOT_COACH.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {coach.id !== "mark" ? (
+            <ul className="mt-4 grid gap-2 text-sm leading-relaxed text-muted">
+              {MARK_OWNS.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      </div>
+
+      <DraftGrid coach={coach} />
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Roster</p>
+        <p className="mt-3 text-sm leading-relaxed text-muted">{ROSTER_PLACEHOLDER}</p>
+      </div>
+
+      <SignOutLink />
+    </div>
+  );
+}
+
+function DraftGrid({ coach }: { coach: CoachAllowlistEntry }) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+        {DRAFT_GRID_LABEL}
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">
+        Dedicated coach stays with the group for all 9 sessions. Dave is Group C weeks 2–3 only.
+      </p>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full min-w-[20rem] border-collapse text-left text-sm">
+          <thead>
+            <tr className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+              <th className="py-2 pr-3 font-semibold">Week</th>
+              {GROUPS.map((group) => (
+                <th key={group} className="py-2 pr-3 font-semibold">
+                  Group {group}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {DRAFT_WEEKS.map((week) => (
+              <tr key={week.id} className="border-t border-border">
+                <td className="py-3 pr-3 align-top">
+                  <span className="block text-fg">{week.label}</span>
+                  <span className="text-xs text-muted">{week.range}</span>
+                </td>
+                {GROUPS.map((group) => {
+                  const cell = DRAFT_GROUP_GRID.find(
+                    (item) => item.week === week.id && item.group === group,
+                  );
+                  const mine = Boolean(cell && cell.coachId === coach.id);
+                  return (
+                    <td key={group} className="py-3 pr-3 align-top">
+                      <span
+                        className={cn(
+                          "inline-block rounded-sm px-2 py-1",
+                          mine ? "bg-accent text-bg" : "bg-bg text-fg shadow-border",
+                        )}
+                      >
+                        {cell?.label ?? "TBC"}
+                        {cell?.note ? (
+                          <span className={cn("ml-1 text-xs", mine ? "text-bg/80" : "text-muted")}>
+                            ({cell.note})
+                          </span>
+                        ) : null}
+                      </span>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function SignOutLink() {
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        if (authEnabled) void signOut().catch(() => undefined);
+      }}
+      className="justify-self-start text-sm text-muted hover:text-fg"
+    >
+      Sign out
+    </button>
   );
 }
