@@ -45,6 +45,7 @@ export const WIX_REDIRECTS: Record<string, string> = {
 
   "/termsandconditions": "/terms",
   "/privacy-policy": "/privacy",
+  "/legal": "/terms",
 
   "/book-online": "/book",
 

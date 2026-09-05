@@ -19,6 +19,10 @@ export function SiteFooter() {
             {company.name}
             <br />
             Company no. {company.number}
+            <br />
+            Registered office: {company.address}
+            <br />
+            Registered in {company.registeredIn}
           </p>
         </div>
         <div>
