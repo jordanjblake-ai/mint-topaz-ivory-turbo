@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { portalCamps } from "@/data/portals";
 import {
+  COACH_ALLOWLIST,
+  COACH_EMAIL_MAP,
   COACH_OWNS,
   DRAFT_GRID_LABEL,
   DRAFT_GROUP_GRID,
   DRAFT_WEEKS,
   GROUP_SIZE_COPY,
+  MAP_EDIT_NOTE,
+  MAP_EMPTY_LABEL,
   MARK_OWNS,
   NOT_COACH,
   ROSTER_PLACEHOLDER,
@@ -174,7 +178,42 @@ function CoachHome({
         <p className="mt-3 text-sm leading-relaxed text-muted">{ROSTER_PLACEHOLDER}</p>
       </div>
 
+      {coach.id === "mark" ? <StaffEmailMap /> : null}
+
       <SignOutLink />
+    </div>
+  );
+}
+
+function StaffEmailMap() {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Staff email map</p>
+      <p className="mt-3 text-sm leading-relaxed text-muted">{MAP_EDIT_NOTE}</p>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full min-w-[20rem] border-collapse text-left text-sm">
+          <thead>
+            <tr className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+              <th className="py-2 pr-3 font-semibold">Coach</th>
+              <th className="py-2 pr-3 font-semibold">Kind</th>
+              <th className="py-2 pr-3 font-semibold">Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {COACH_EMAIL_MAP.map((row, index) => {
+              const coach = COACH_ALLOWLIST.find((item) => item.id === row.coachId);
+              const filled = Boolean(row.email.trim());
+              return (
+                <tr key={`${row.coachId}-${row.kind}-${index}`} className="border-t border-border">
+                  <td className="py-2 pr-3">{coach?.shortName ?? row.coachId}</td>
+                  <td className="py-2 pr-3 text-muted">{row.kind}</td>
+                  <td className="py-2 pr-3">{filled ? row.email : MAP_EMPTY_LABEL}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

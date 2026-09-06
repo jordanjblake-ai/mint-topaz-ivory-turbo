@@ -2,8 +2,11 @@
  * Coaches Corner v1 config.
  *
  * Auth model: email → coach map. Hybrid addresses are filled.
- * Personal Google / Microsoft rows stay empty until Jordan adds them —
+ * Personal Google / Microsoft rows stay empty until Jordan/Mark add them —
  * do not invent personal emails.
+ *
+ * To add a staff email: set `email` on the matching personal row in
+ * COACH_EMAIL_MAP, then Publish. Empty / whitespace never grants staff.
  *
  * Draft group grid is independent of /camp (camp.ts GROUP_LEAD is left alone).
  */
@@ -96,6 +99,11 @@ export function coachByEmail(email: string | null | undefined): CoachAllowlistEn
   if (!row) return null;
   return COACH_ALLOWLIST.find((coach) => coach.id === row.coachId) ?? null;
 }
+
+export const MAP_EDIT_NOTE =
+  "To add a personal Google or Microsoft address: set the empty personal row for that coach in src/data/coaches-corner.ts, then Publish. Do not invent addresses.";
+
+export const MAP_EMPTY_LABEL = "empty";
 
 export const DRAFT_GRID_LABEL = "DRAFT · Mark assigns closer to camp";
 
