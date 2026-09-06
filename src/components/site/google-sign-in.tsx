@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { GROK_PROVIDERS, authEnabled, signIn } from "@/lib/auth/client";
+import { setPortalEntry, type PortalEntry } from "@/lib/portal-entry";
 import { Button } from "@/components/ui/button";
 
 function BrokerButton({
@@ -7,11 +8,13 @@ function BrokerButton({
   callbackURL,
   label,
   variant = "primary",
+  intent,
 }: {
   idp: "google" | "microsoft";
   callbackURL: string;
   label: string;
   variant?: "primary" | "secondary";
+  intent?: PortalEntry;
 }) {
   const provider = GROK_PROVIDERS.find((item) => item.idp === idp);
   const [busy, setBusy] = useState(false);
@@ -30,8 +33,9 @@ function BrokerButton({
         className="h-auto min-h-12 w-full whitespace-normal px-4 text-center leading-snug"
         disabled={busy}
         onClick={() => {
-          // signIn opens the Google window synchronously on this click.
+          // Persist which door started this sign-in before the pop-up opens.
           // Do not setState first — a re-render can swallow the pop-up.
+          if (intent) setPortalEntry(intent);
           const job = signIn(provider.providerId, {
             callbackURL,
             errorCallbackURL: callbackURL,
@@ -60,22 +64,42 @@ export function GoogleSignInButton({
   callbackURL,
   label = "Continue with Google",
   variant = "primary",
+  intent,
 }: {
   callbackURL: string;
   label?: string;
   variant?: "primary" | "secondary";
+  intent?: PortalEntry;
 }) {
-  return <BrokerButton idp="google" callbackURL={callbackURL} label={label} variant={variant} />;
+  return (
+    <BrokerButton
+      idp="google"
+      callbackURL={callbackURL}
+      label={label}
+      variant={variant}
+      intent={intent}
+    />
+  );
 }
 
 export function MicrosoftSignInButton({
   callbackURL,
   label = "Sign in with Microsoft",
   variant = "primary",
+  intent,
 }: {
   callbackURL: string;
   label?: string;
   variant?: "primary" | "secondary";
+  intent?: PortalEntry;
 }) {
-  return <BrokerButton idp="microsoft" callbackURL={callbackURL} label={label} variant={variant} />;
+  return (
+    <BrokerButton
+      idp="microsoft"
+      callbackURL={callbackURL}
+      label={label}
+      variant={variant}
+      intent={intent}
+    />
+  );
 }

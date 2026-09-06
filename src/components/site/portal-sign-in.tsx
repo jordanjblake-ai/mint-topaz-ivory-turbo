@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
-import { GoogleSignInButton, MicrosoftSignInButton } from "@/components/site/google-sign-in";
+import { GoogleSignInButton } from "@/components/site/google-sign-in";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requestPortalCode, verifyPortalCode } from "@/lib/portal-otp";
+import { setPortalEntry } from "@/lib/portal-entry";
 
 export function NoCampYet() {
   return (
@@ -56,6 +57,7 @@ export function PortalSignIn({
     try {
       const result = await verifyPortalCode({ data: { email, code } });
       if (result.status === "ok") {
+        setPortalEntry("player");
         onVerified(result.email, result.hasBooking);
         return;
       }
@@ -79,8 +81,7 @@ export function PortalSignIn({
   return (
     <div className="grid gap-4">
       <div className="grid gap-3">
-        <GoogleSignInButton callbackURL={callbackURL} label="Sign in with Google" />
-        <MicrosoftSignInButton callbackURL={callbackURL} label="Sign in with Microsoft" />
+        <GoogleSignInButton callbackURL={callbackURL} label="Sign in with Google" intent="player" />
       </div>
       <form className="grid gap-4" onSubmit={sent ? confirmCode : sendCode}>
         <div>
