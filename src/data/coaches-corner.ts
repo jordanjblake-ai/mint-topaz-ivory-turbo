@@ -1,9 +1,9 @@
 /**
  * Coaches Corner v1 config.
  *
- * Allowlist emails are the only thing that grants a coach view after real
- * Google / Microsoft sign-in. Add personal Google or Microsoft addresses to
- * `emails` later — do not invent them here.
+ * Auth model: email → coach map. Hybrid addresses are filled.
+ * Personal Google / Microsoft rows stay empty until Jordan adds them —
+ * do not invent personal emails.
  *
  * Draft group grid is independent of /camp (camp.ts GROUP_LEAD is left alone).
  */
@@ -15,10 +15,17 @@ export type CoachAllowlistEntry = {
   name: string;
   shortName: string;
   title: string;
-  /** Case-insensitive match. Append personal Google/Microsoft emails later. */
-  emails: string[];
   weeks: number[];
   role: "head" | "coach";
+};
+
+export type CoachEmailKind = "hybrid" | "personal";
+
+export type CoachEmailRow = {
+  coachId: CoachId;
+  /** Empty string = reserved slot. Ignored by coachByEmail. */
+  email: string;
+  kind: CoachEmailKind;
 };
 
 export const COACH_ALLOWLIST: CoachAllowlistEntry[] = [
@@ -27,7 +34,6 @@ export const COACH_ALLOWLIST: CoachAllowlistEntry[] = [
     name: "Mark Garcia-Kidd",
     shortName: "Mark",
     title: "Head coach, all weeks",
-    emails: ["mark@hybridvacations.com"],
     weeks: [1, 2, 3],
     role: "head",
   },
@@ -36,7 +42,6 @@ export const COACH_ALLOWLIST: CoachAllowlistEntry[] = [
     name: "Martha Bullen",
     shortName: "Martha",
     title: "Camp coach",
-    emails: ["martha@hybridvacations.com"],
     weeks: [1, 2, 3],
     role: "coach",
   },
@@ -45,7 +50,6 @@ export const COACH_ALLOWLIST: CoachAllowlistEntry[] = [
     name: "Issa Batrane",
     shortName: "Issa",
     title: "Camp coach",
-    emails: ["issa@hybridvacations.com"],
     weeks: [1, 2, 3],
     role: "coach",
   },
@@ -54,7 +58,6 @@ export const COACH_ALLOWLIST: CoachAllowlistEntry[] = [
     name: "Dave Panah",
     shortName: "Dave",
     title: "Camp coach · Group C, weeks 2–3",
-    emails: ["dave@hybridvacations.com"],
     weeks: [2, 3],
     role: "coach",
   },
@@ -63,19 +66,35 @@ export const COACH_ALLOWLIST: CoachAllowlistEntry[] = [
     name: "Katya Kate",
     shortName: "Katya",
     title: "Camp coach",
-    emails: ["katya@hybridvacations.com"],
     weeks: [1, 2, 3],
     role: "coach",
   },
 ];
 
+/**
+ * Source of truth for Coaches Corner auth.
+ * Fill a personal row later by setting `email` — do not invent addresses.
+ */
+export const COACH_EMAIL_MAP: CoachEmailRow[] = [
+  { coachId: "mark", email: "mark@hybridvacations.com", kind: "hybrid" },
+  { coachId: "mark", email: "", kind: "personal" },
+  { coachId: "martha", email: "martha@hybridvacations.com", kind: "hybrid" },
+  { coachId: "martha", email: "", kind: "personal" },
+  { coachId: "issa", email: "issa@hybridvacations.com", kind: "hybrid" },
+  { coachId: "issa", email: "", kind: "personal" },
+  { coachId: "dave", email: "dave@hybridvacations.com", kind: "hybrid" },
+  { coachId: "dave", email: "", kind: "personal" },
+  { coachId: "katya", email: "katya@hybridvacations.com", kind: "hybrid" },
+  { coachId: "katya", email: "", kind: "personal" },
+];
+
 export function coachByEmail(email: string | null | undefined): CoachAllowlistEntry | null {
   if (!email) return null;
   const needle = email.trim().toLowerCase();
-  return (
-    COACH_ALLOWLIST.find((coach) => coach.emails.some((item) => item.toLowerCase() === needle)) ??
-    null
-  );
+  if (!needle) return null;
+  const row = COACH_EMAIL_MAP.find((item) => item.email.trim().toLowerCase() === needle);
+  if (!row) return null;
+  return COACH_ALLOWLIST.find((coach) => coach.id === row.coachId) ?? null;
 }
 
 export const DRAFT_GRID_LABEL = "DRAFT · Mark assigns closer to camp";
