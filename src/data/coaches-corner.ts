@@ -11,7 +11,7 @@
  * Draft group grid is independent of /camp (camp.ts GROUP_LEAD is left alone).
  */
 
-export type CoachId = "mark" | "martha" | "issa" | "dave" | "katya";
+export type CoachId = "mark" | "martha" | "issa" | "dave" | "katya" | "jordan";
 
 export type CoachAllowlistEntry = {
   id: CoachId;
@@ -72,6 +72,14 @@ export const COACH_ALLOWLIST: CoachAllowlistEntry[] = [
     weeks: [1, 2, 3],
     role: "coach",
   },
+  {
+    id: "jordan",
+    name: "Jordan Blake",
+    shortName: "Jordan",
+    title: "Camp coach · weeks 2–3",
+    weeks: [2, 3],
+    role: "coach",
+  },
 ];
 
 /**
@@ -89,6 +97,7 @@ export const COACH_EMAIL_MAP: CoachEmailRow[] = [
   { coachId: "dave", email: "", kind: "personal" },
   { coachId: "katya", email: "katya@hybridvacations.com", kind: "hybrid" },
   { coachId: "katya", email: "", kind: "personal" },
+  { coachId: "jordan", email: "jordinioh1@hotmail.com", kind: "personal" },
 ];
 
 export function coachByEmail(email: string | null | undefined): CoachAllowlistEntry | null {
@@ -198,6 +207,15 @@ export function dutiesFor(coach: CoachAllowlistEntry): string[] {
     return [
       "Camp coach — Mark assigns the week-by-week picture closer to camp",
       "Not a Hybrid group lead on this draft grid",
+      ...COACH_OWNS,
+      PRO_EXHIBITION_NOTE,
+    ];
+  }
+
+  if (coach.id === "jordan") {
+    return [
+      "On staff weeks 2–3 only — not on Week 1",
+      "Not a Hybrid group lead on this draft grid — Mark assigns closer to camp",
       ...COACH_OWNS,
       PRO_EXHIBITION_NOTE,
     ];
