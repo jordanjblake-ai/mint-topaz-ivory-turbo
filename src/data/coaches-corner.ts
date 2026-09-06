@@ -98,6 +98,7 @@ export const COACH_EMAIL_MAP: CoachEmailRow[] = [
   { coachId: "katya", email: "katya@hybridvacations.com", kind: "hybrid" },
   { coachId: "katya", email: "", kind: "personal" },
   { coachId: "jordan", email: "jordinioh1@hotmail.com", kind: "personal" },
+  { coachId: "jordan", email: "jordanjblake@gmail.com", kind: "personal" },
 ];
 
 export function coachByEmail(email: string | null | undefined): CoachAllowlistEntry | null {
