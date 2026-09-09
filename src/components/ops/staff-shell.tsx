@@ -1,25 +1,43 @@
-import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Logo } from "@/components/site/logo";
 import { GoogleSignInButton } from "@/components/site/google-sign-in";
 import { DESK_SUB, DESK_TITLE, UNKNOWN_OPS_COPY, isOpsEmail } from "@/data/ops-desk";
 import { authEnabled, signOut } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { clearOpsSession, isOpsPreview, readOpsSession, setOpsSession } from "@/lib/ops-session";
+import {
+  clearOpsSession,
+  isOpsPreview,
+  readOpsSession,
+  setOpsSession,
+} from "@/lib/ops-session";
 
 const MARK_OPS_EMAIL = "mark@hybridvacations.com";
 
 export function StaffShell({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { user, isPending } = useCurrentUserState();
-  const [staffEmail, setStaffEmail] = useState<string | null>(null);
-  const [preview, setPreview] = useState(false);
+  const [opsEmail, setOpsEmail] = useState<string | null>(null);
+  const [previewing, setPreviewing] = useState(false);
   const onDesk = pathname === "/ops" || pathname === "/ops/";
 
   useEffect(() => {
-    setStaffEmail(readOpsSession());
-    setPreview(isOpsPreview());
+    setOpsEmail(readOpsSession());
+    setPreviewing(isOpsPreview());
   }, []);
+
+  function enterMarkPreview() {
+    setOpsSession(MARK_OPS_EMAIL, true);
+    setOpsEmail(MARK_OPS_EMAIL);
+    setPreviewing(true);
+  }
+
+  function exitSession() {
+    clearOpsSession();
+    setOpsEmail(null);
+    setPreviewing(false);
+    if (authEnabled && user) void signOut("/ops").catch(() => undefined);
+  }
 
   if (isPending) {
     return (
@@ -29,24 +47,11 @@ export function StaffShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  function enterPreview() {
-    setOpsSession(MARK_OPS_EMAIL, true);
-    setStaffEmail(MARK_OPS_EMAIL);
-    setPreview(true);
-  }
+  const previewAllowed = previewing && isOpsEmail(opsEmail);
+  const signedInAllowed = Boolean(user && !user.isDevFallback && isOpsEmail(user.primaryEmail));
+  const allowed = previewAllowed || signedInAllowed;
 
-  function leaveDesk() {
-    clearOpsSession();
-    setStaffEmail(null);
-    setPreview(false);
-    if (!preview && authEnabled) void signOut("/ops").catch(() => undefined);
-  }
-
-  const email = staffEmail || (!preview ? user?.primaryEmail : null) || null;
-  const signedIn = Boolean(email);
-  const allowed = Boolean(email && isOpsEmail(email));
-
-  if (!signedIn) {
+  if (!user && !previewAllowed) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Staff only</p>
@@ -56,22 +61,19 @@ export function StaffShell({ children }: { children: React.ReactNode }) {
           {authEnabled ? (
             <GoogleSignInButton callbackURL="/ops" label="Sign in with Google" />
           ) : (
-            <p className="text-sm text-muted">Sign-in is disabled.</p>
+            <p className="text-sm text-muted">Google sign-in is disabled. Use preview below.</p>
           )}
-        </div>
-        <div className="mt-8 grid gap-3 border-t border-border pt-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Preview</p>
-          <p className="text-sm leading-relaxed text-muted">
-            Walk the desk as Mark without a live sign-in. This is a preview, not his account.
-          </p>
-          <button
-            type="button"
-            onClick={enterPreview}
-            className="rounded-sm bg-surface px-3 py-3 text-left shadow-border hover:bg-bg"
-          >
-            <span className="block text-sm text-fg">Preview as Mark Garcia-Kidd</span>
-            <span className="mt-1 block text-xs text-muted">Head coach / ops — Hybrid desk</span>
-          </button>
+          <div className="mt-3 border-t border-border pt-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Preview</p>
+            <button
+              type="button"
+              onClick={enterMarkPreview}
+              className="mt-3 w-full rounded-sm bg-surface px-3 py-3 text-left text-sm shadow-border hover:shadow-border-hover"
+            >
+              <span className="block text-fg">Mark Garcia-Kidd</span>
+              <span className="text-xs text-muted">Head coach · ops privileges</span>
+            </button>
+          </div>
         </div>
         <Link to="/" className="mt-8 text-sm text-muted hover:text-fg">
           Back to the site
@@ -88,8 +90,8 @@ export function StaffShell({ children }: { children: React.ReactNode }) {
         <p className="mt-4 text-sm text-accent" role="status">
           {UNKNOWN_OPS_COPY}
         </p>
-        {email ? <p className="mt-2 text-xs text-muted">{email}</p> : null}
-        <SignOutControl preview={preview} onLeave={leaveDesk} />
+        {user?.primaryEmail ? <p className="mt-2 text-xs text-muted">{user.primaryEmail}</p> : null}
+        <SignOutControl onExit={exitSession} previewing={false} />
         <Link to="/" className="mt-6 text-sm text-muted hover:text-fg">
           Back to the site
         </Link>
@@ -106,7 +108,7 @@ export function StaffShell({ children }: { children: React.ReactNode }) {
             <div className="min-w-0">
               <p className="truncate font-display text-lg leading-none tracking-wide">{DESK_TITLE}</p>
               <p className="text-[0.65rem] uppercase tracking-[0.18em] text-muted">
-                {preview ? "Preview · Mark / ops" : "Mark / ops"}
+                {previewing ? "Preview · Mark / ops" : "Mark / ops"}
               </p>
             </div>
           </div>
@@ -119,28 +121,29 @@ export function StaffShell({ children }: { children: React.ReactNode }) {
             >
               Desk
             </Link>
-            <SignOutControl preview={preview} onLeave={leaveDesk} />
+            <SignOutControl onExit={exitSession} previewing={previewing} />
           </nav>
         </div>
       </header>
-      {preview ? (
-        <p className="mx-auto max-w-6xl px-4 pt-4 text-sm text-muted sm:px-6" role="status">
-          Preview · Mark Garcia-Kidd · Hybrid desk. Not a live sign-in.
-        </p>
-      ) : null}
       {children}
     </div>
   );
 }
 
-function SignOutControl({ preview, onLeave }: { preview: boolean; onLeave: () => void }) {
+function SignOutControl({
+  onExit,
+  previewing,
+}: {
+  onExit: () => void;
+  previewing: boolean;
+}) {
   return (
     <button
       type="button"
-      onClick={onLeave}
+      onClick={onExit}
       className="inline-flex h-11 items-center px-3 text-sm text-muted hover:text-fg"
     >
-      {preview ? "Leave preview" : "Sign out"}
+      {previewing ? "Exit preview" : "Sign out"}
     </button>
   );
 }
