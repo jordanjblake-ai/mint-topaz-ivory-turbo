@@ -1,7 +1,7 @@
-const EMAIL_KEY = "hybrid-coach-email";
-const PREVIEW_KEY = "hybrid-coach-preview";
+const EMAIL_KEY = "hybrid-ops-email";
+const PREVIEW_KEY = "hybrid-ops-preview";
 
-export function setCoachSession(email: string, preview = false) {
+export function setOpsSession(email: string, preview = false) {
   if (typeof window === "undefined") return;
   try {
     window.sessionStorage.setItem(EMAIL_KEY, email.trim().toLowerCase());
@@ -12,7 +12,7 @@ export function setCoachSession(email: string, preview = false) {
   }
 }
 
-export function readCoachSession(): string | null {
+export function readOpsSession(): string | null {
   if (typeof window === "undefined") return null;
   try {
     const value = window.sessionStorage.getItem(EMAIL_KEY);
@@ -22,7 +22,7 @@ export function readCoachSession(): string | null {
   }
 }
 
-export function isCoachPreview(): boolean {
+export function isOpsPreview(): boolean {
   if (typeof window === "undefined") return false;
   try {
     return window.sessionStorage.getItem(PREVIEW_KEY) === "1";
@@ -31,7 +31,7 @@ export function isCoachPreview(): boolean {
   }
 }
 
-export function clearCoachSession() {
+export function clearOpsSession() {
   if (typeof window === "undefined") return;
   try {
     window.sessionStorage.removeItem(EMAIL_KEY);
