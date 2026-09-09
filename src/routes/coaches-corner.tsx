@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { portalCamps } from "@/data/portals";
 import {
   COACH_ALLOWLIST,
@@ -20,10 +21,16 @@ import {
   type CoachAllowlistEntry,
   type DraftGroup,
 } from "@/data/coaches-corner";
-import { GoogleSignInButton, MicrosoftSignInButton } from "@/components/site/google-sign-in";
+import { GoogleSignInButton } from "@/components/site/google-sign-in";
 import { Container, Display, Kicker, Section } from "@/components/site/section";
 import { authEnabled, signOut } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import {
+  clearCoachSession,
+  isCoachPreview,
+  readCoachSession,
+  setCoachSession,
+} from "@/lib/coach-session";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/coaches-corner")({
@@ -38,9 +45,43 @@ export const Route = createFileRoute("/coaches-corner")({
 
 const GROUPS: DraftGroup[] = ["A", "B", "C"];
 
+const PREVIEW_MARK = {
+  email: "mark@hybridvacations.com",
+  name: "Mark Garcia-Kidd",
+  note: "Head coach — staff map, all weeks, medical / under-18",
+};
+
+const PREVIEW_DAVE = {
+  email: "dave@hybridvacations.com",
+  name: "Dave Panah",
+  note: "Camp coach — Group C, weeks 2–3 only",
+};
+
 function CoachesCornerPage() {
   const { user, isPending } = useCurrentUserState();
-  const coach = coachByEmail(user?.primaryEmail);
+  const [staffEmail, setStaffEmail] = useState<string | null>(null);
+  const [preview, setPreview] = useState(false);
+
+  useEffect(() => {
+    setStaffEmail(readCoachSession());
+    setPreview(isCoachPreview());
+  }, []);
+
+  function enterPreview(email: string) {
+    setCoachSession(email, true);
+    setStaffEmail(email);
+    setPreview(true);
+  }
+
+  function leaveCorner() {
+    clearCoachSession();
+    setStaffEmail(null);
+    setPreview(false);
+    if (!preview && authEnabled) void signOut().catch(() => undefined);
+  }
+
+  const email = staffEmail || (!preview ? user?.primaryEmail : null) || null;
+  const coach = coachByEmail(email);
 
   return (
     <main className="min-h-dvh bg-bg text-fg">
@@ -52,18 +93,25 @@ function CoachesCornerPage() {
               Your weeks on staff
             </Display>
             <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted">
-              Groups, duties, and the players in front of you. Sign in with Google or Microsoft.
-              Lanzarote is live. Other camps will use this same corner when they run.
+              Groups, duties, and the players in front of you. Sign in with Google, or preview
+              Mark and Dave to walk the two coach doors. Lanzarote is live. Other camps will use
+              this same corner when they run.
             </p>
             <div className="mt-8 rounded-md bg-surface p-6 shadow-border sm:p-8">
               {isPending ? (
                 <p className="text-sm text-muted">Loading Coaches Corner.</p>
-              ) : !user ? (
-                <SignInPanel />
+              ) : !email ? (
+                <SignInPanel onPreview={enterPreview} />
               ) : coach ? (
-                <CoachHome coach={coach} email={user.primaryEmail} />
+                <CoachHome
+                  coach={coach}
+                  email={email}
+                  preview={preview}
+                  onPreview={enterPreview}
+                  onLeave={leaveCorner}
+                />
               ) : (
-                <UnknownEmail email={user.primaryEmail} />
+                <UnknownEmail email={email} preview={preview} onLeave={leaveCorner} />
               )}
             </div>
           </div>
@@ -88,27 +136,72 @@ function CoachesCornerPage() {
   );
 }
 
-function SignInPanel() {
-  if (!authEnabled) {
-    return <p className="text-sm text-muted">Sign-in is disabled.</p>;
-  }
-
+function SignInPanel({ onPreview }: { onPreview: (email: string) => void }) {
   return (
-    <div className="grid gap-3">
-      <GoogleSignInButton callbackURL="/coaches-corner" label="Sign in with Google" />
-      <MicrosoftSignInButton callbackURL="/coaches-corner" label="Sign in with Microsoft" />
+    <div className="grid gap-6">
+      {authEnabled ? (
+        <GoogleSignInButton callbackURL="/coaches-corner" label="Sign in with Google" />
+      ) : (
+        <p className="text-sm text-muted">Sign-in is disabled.</p>
+      )}
+      <div className="grid gap-3 border-t border-border pt-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Preview</p>
+        <p className="text-sm leading-relaxed text-muted">
+          Walk Coaches Corner as Mark or Dave without a live sign-in. This is a preview, not their
+          account.
+        </p>
+        <PreviewButton
+          name={PREVIEW_MARK.name}
+          note={PREVIEW_MARK.note}
+          onClick={() => onPreview(PREVIEW_MARK.email)}
+        />
+        <PreviewButton
+          name={PREVIEW_DAVE.name}
+          note={PREVIEW_DAVE.note}
+          onClick={() => onPreview(PREVIEW_DAVE.email)}
+        />
+      </div>
     </div>
   );
 }
 
-function UnknownEmail({ email }: { email: string | null }) {
+function PreviewButton({
+  name,
+  note,
+  onClick,
+}: {
+  name: string;
+  note: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-sm bg-bg px-3 py-3 text-left shadow-border hover:bg-surface"
+    >
+      <span className="block text-sm text-fg">Preview as {name}</span>
+      <span className="mt-1 block text-xs text-muted">{note}</span>
+    </button>
+  );
+}
+
+function UnknownEmail({
+  email,
+  preview,
+  onLeave,
+}: {
+  email: string | null;
+  preview: boolean;
+  onLeave: () => void;
+}) {
   return (
     <div>
       <p className="text-sm text-accent" role="status">
         {UNKNOWN_COACH_COPY}
       </p>
       {email ? <p className="mt-2 text-xs text-muted">{email}</p> : null}
-      <SignOutLink />
+      <LeaveControl preview={preview} onLeave={onLeave} />
     </div>
   );
 }
@@ -116,16 +209,29 @@ function UnknownEmail({ email }: { email: string | null }) {
 function CoachHome({
   coach,
   email,
+  preview,
+  onPreview,
+  onLeave,
 }: {
   coach: CoachAllowlistEntry;
   email: string | null;
+  preview: boolean;
+  onPreview: (email: string) => void;
+  onLeave: () => void;
 }) {
   const duties = dutiesFor(coach);
 
   return (
     <div className="grid gap-8">
+      {preview ? (
+        <p className="text-sm text-muted" role="status">
+          Preview · {coach.name}. Not a live sign-in.
+        </p>
+      ) : null}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">On staff</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
+          {preview ? "Preview · on staff" : "On staff"}
+        </p>
         <h2 className="mt-2 font-display text-4xl text-fg">{coach.shortName}</h2>
         <p className="mt-1 text-sm text-muted">{coach.title}</p>
         {email ? <p className="mt-1 text-xs text-muted">{email}</p> : null}
@@ -133,6 +239,26 @@ function CoachHome({
           {GROUP_SIZE_COPY}. {SESSION_HOURS_COPY} on court.
         </p>
       </div>
+
+      {preview ? (
+        <div className="grid gap-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">
+            Switch preview
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <PreviewButton
+              name={PREVIEW_MARK.name}
+              note={PREVIEW_MARK.note}
+              onClick={() => onPreview(PREVIEW_MARK.email)}
+            />
+            <PreviewButton
+              name={PREVIEW_DAVE.name}
+              note={PREVIEW_DAVE.note}
+              onClick={() => onPreview(PREVIEW_DAVE.email)}
+            />
+          </div>
+        </div>
+      ) : null}
 
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">You own</p>
@@ -180,7 +306,7 @@ function CoachHome({
 
       {coach.id === "mark" ? <StaffEmailMap /> : null}
 
-      <SignOutLink />
+      <LeaveControl preview={preview} onLeave={onLeave} />
     </div>
   );
 }
@@ -278,16 +404,14 @@ function DraftGrid({ coach }: { coach: CoachAllowlistEntry }) {
   );
 }
 
-function SignOutLink() {
+function LeaveControl({ preview, onLeave }: { preview: boolean; onLeave: () => void }) {
   return (
     <button
       type="button"
-      onClick={() => {
-        if (authEnabled) void signOut().catch(() => undefined);
-      }}
+      onClick={onLeave}
       className="justify-self-start text-sm text-muted hover:text-fg"
     >
-      Sign out
+      {preview ? "Leave preview" : "Sign out"}
     </button>
   );
 }
